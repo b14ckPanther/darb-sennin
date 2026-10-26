@@ -38,6 +38,11 @@ const pairs: [fg: string, bg: string, min: number][] = [
   ['tab-active', 'bar', ui],
   ['plot-measured', 'surface', ui],
   ['plot-target', 'surface', ui],
+  ['fail-ink', 'fail-wash', text],
+  ['ink', 'fail-wash', text],
+  ['ink', 'highlight', text],
+  ['ink-muted', 'highlight', text],
+  ['line-strong', 'surface-sunk', ui],
 ]
 
 const css = readFileSync(resolve(import.meta.dirname, 'tokens.css'), 'utf8')

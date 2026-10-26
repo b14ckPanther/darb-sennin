@@ -1,0 +1,50 @@
+{
+  "$comment": "Changeable interface copy (CLAUDE.md 1.2). Plain sentences, sentence case, no exclamation marks. {name} marks a value filled at runtime. Phase 4 adds the JSON Schema.",
+  "verdict": {
+    "pass": "Pass",
+    "fail": "Fail",
+    "limit": "Time limit",
+    "pending": "Waiting",
+    "caseLabel": "Case {n}",
+    "ledgerLabel": "Hidden tests",
+    "ledgerProgress": "{done} of {total} resolved"
+  },
+  "severity": {
+    "major": "Major",
+    "minor": "Minor",
+    "nit": "Nit"
+  },
+  "evidence": {
+    "jump": "Show {label}"
+  },
+  "score": {
+    "label": "Score",
+    "outOf": "out of {max}",
+    "breakdown": "How this score was reached"
+  },
+  "plot": {
+    "measured": "Measured",
+    "target": "Target",
+    "axisX": "Input size n",
+    "axisY": "CPU time",
+    "summary": "Measured growth n^{exponent} (R² {r2}), target {target}",
+    "skipped": "Complexity not measured",
+    "pointsCaption": "Measured points"
+  },
+  "praise": {
+    "stamp": "Earned"
+  },
+  "sheet": {
+    "close": "Close",
+    "handle": "Drag to resize"
+  },
+  "toast": {
+    "dismiss": "Dismiss"
+  },
+  "list": {
+    "actions": "Actions for {title}"
+  },
+  "demo": {
+    "banner": "Demo data"
+  }
+}
