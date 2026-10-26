@@ -40,6 +40,7 @@ One row per completed task. "Skills" lists every skill invoked for the task.
 | 2026-10-26 | 0 | 4-6. SDK pin, props, CPM, editorconfig, solution skeleton, architecture tests | bdaae3e | 8 smoke + 12 architecture; smoke red on missing markers; magic-number guard red on planted `MemoryLimitMb = 256` in Domain, then removed | superpowers:test-driven-development | ADR-020, ADR-021 |
 | 2026-10-26 | 0 | 8. Compose: MongoDB replica set, Service Bus emulator + SQL Edge | 7a853be | 3 integration smoke tests, red on missing env then green | superpowers:test-driven-development, superpowers:systematic-debugging | Mongo 8.3/8.0 crash on kernel 7.0.12, pinned 8.2 (ADR-022); emulator fine on arm64 (ADR-023) |
 | 2026-10-26 | 0 | 9-11. Web scaffold, CI workflow, licence, ASSETS, PR template, .env.example | ca37368 | Vitest 2, Playwright + axe 4 (desktop and 390 px), red on missing heading/title first | superpowers:test-driven-development | CI not pushed (no remote) |
+| 2026-10-26 | 2 (proposal) | Three Verdict Sheet directions as a static page, marked "Proposal, not approved" | see git log | visual check at 1400 px and 390 px | frontend-design | `docs/proposals/phase-02-directions.html`; Inter swapped out per font rule; not a Phase 2 start |
 | 2026-10-26 | 0 | Clean-clone verification, docs, rulings, Phase 1 review file | see git log | clean clone: 23/23 .NET, 2/2 Vitest, 4/4 Playwright, 3/3 shell test files | superpowers:verification-before-completion | `docs/REVIEW_FOR_NOUR.md` |
 
 ## Screen approvals (Phases 2-3, and any later UI change)
