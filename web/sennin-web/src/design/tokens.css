@@ -1,0 +1,173 @@
+/*
+  Darb Sennin design tokens: the Ensō brand (brand/src/tokens.json) carried into the product.
+  Direction: "Examiner's Report on the Ensō", ADR-041. Light is ivory paper with forest ink;
+  dark is Darb night with ivory ink. Gold belongs to the ensō and to earned praise only.
+  Vermilion belongs to the earned stamp only. Pass, fail and time limit always pair colour
+  with a mark and a word, never colour alone.
+
+  Contrast pairs are verified by src/design/tokens.test.ts. The three theme markers below are
+  read by that test, so keep them in front of their blocks.
+*/
+
+/* theme:light */
+@theme {
+  --color-canvas: #EFE6D2;
+  --color-surface: #FBF7EC;
+  --color-surface-sunk: #F4EDDC;
+  --color-bar: #FBF7EC;
+  --color-ink: #0B2219;
+  --color-ink-muted: #4B5E55;
+  --color-line: #DCD2BC;
+  --color-line-strong: #8C8270;
+  --color-primary: #0E3527;
+  --color-primary-ink: #FBF7EC;
+  --color-pass-ink: #1E6A4F;
+  --color-pass-mark: #2F8A68;
+  --color-fail-ink: #A1203D;
+  --color-fail-mark: #A1203D;
+  --color-fail-wash: #F5E4E2;
+  --color-limit-ink: #34468A;
+  --color-limit-mark: #4558A0;
+  --color-pending-mark: #8C8270;
+  --color-praise-ink: #6D4C17;
+  --color-stamp: #C8432F;
+  --color-focus: #1E6A4F;
+  --color-tab-active: #0E3527;
+  --color-plot-measured: #0E3527;
+  --color-plot-target: #4B5E55;
+  --color-highlight: #E1ECE3;
+  --color-brand-gold: #D9A54C;
+}
+
+/* theme:dark */
+:root[data-theme='dark'] {
+  --color-canvas: #03110C;
+  --color-surface: #0B241B;
+  --color-surface-sunk: #071A13;
+  --color-bar: #0B241B;
+  --color-ink: #FBF7EC;
+  --color-ink-muted: #9DB3A9;
+  --color-line: #1C3A2E;
+  --color-line-strong: #5E7A6E;
+  --color-primary: #FBF7EC;
+  --color-primary-ink: #0B2219;
+  --color-pass-ink: #6CC9A2;
+  --color-pass-mark: #5BBF97;
+  --color-fail-ink: #F2869A;
+  --color-fail-mark: #E9677F;
+  --color-fail-wash: #2A1519;
+  --color-limit-ink: #A9B8F2;
+  --color-limit-mark: #8EA0EA;
+  --color-pending-mark: #5E7A6E;
+  --color-praise-ink: #E3B865;
+  --color-stamp: #E5664F;
+  --color-focus: #9DB8AE;
+  --color-tab-active: #FBF7EC;
+  --color-plot-measured: #FBF7EC;
+  --color-plot-target: #9DB3A9;
+  --color-highlight: #12382B;
+  --color-brand-gold: #D9A54C;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  /* theme:dark-system */
+  :root:not([data-theme='light']) {
+    --color-canvas: #03110C;
+    --color-surface: #0B241B;
+    --color-surface-sunk: #071A13;
+    --color-bar: #0B241B;
+    --color-ink: #FBF7EC;
+    --color-ink-muted: #9DB3A9;
+    --color-line: #1C3A2E;
+    --color-line-strong: #5E7A6E;
+    --color-primary: #FBF7EC;
+    --color-primary-ink: #0B2219;
+    --color-pass-ink: #6CC9A2;
+    --color-pass-mark: #5BBF97;
+    --color-fail-ink: #F2869A;
+    --color-fail-mark: #E9677F;
+    --color-fail-wash: #2A1519;
+    --color-limit-ink: #A9B8F2;
+    --color-limit-mark: #8EA0EA;
+    --color-pending-mark: #5E7A6E;
+    --color-praise-ink: #E3B865;
+    --color-stamp: #E5664F;
+    --color-focus: #9DB8AE;
+    --color-tab-active: #FBF7EC;
+    --color-plot-measured: #FBF7EC;
+    --color-plot-target: #9DB3A9;
+    --color-highlight: #12382B;
+    --color-brand-gold: #D9A54C;
+    color-scheme: dark;
+  }
+}
+
+/* Type, space, radius, elevation and motion. One family per role, chosen in ADR-041. */
+@theme {
+  --font-display: 'Zen Antique', 'Hiragino Mincho ProN', serif;
+  --font-sans: 'Geist Variable', 'Geist', ui-sans-serif, sans-serif;
+  --font-mono: 'Geist Mono Variable', 'Geist Mono', ui-monospace, monospace;
+
+  /* Scale: 12, 13, 15, 16, 18, 20, 24, 32, 40, 56. Display sizes use Zen Antique. */
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-footnote: 0.8125rem;
+  --text-footnote--line-height: 1.125rem;
+  --text-callout: 0.9375rem;
+  --text-callout--line-height: 1.375rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5rem;
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.625rem;
+  --text-title-3: 1.25rem;
+  --text-title-3--line-height: 1.625rem;
+  --text-title-2: 1.5rem;
+  --text-title-2--line-height: 1.875rem;
+  --text-title-1: 2rem;
+  --text-title-1--line-height: 2.375rem;
+  --text-large-title: 2.5rem;
+  --text-large-title--line-height: 2.875rem;
+  --text-score: 3.5rem;
+  --text-score--line-height: 1;
+
+  --tracking-display: -0.01em;
+  --tracking-tight: -0.011em;
+
+  --spacing: 0.25rem;
+  --spacing-touch: 2.75rem; /* 44 pt minimum target */
+
+  /* Radius rule: chips 6, controls 10, sheets and panels 16, pills only for the tab bar. */
+  --radius-chip: 6px;
+  --radius-control: 10px;
+  --radius-panel: 16px;
+
+  --shadow-raised: 0 1px 2px var(--shade-near), 0 12px 32px -16px var(--shade-far);
+  --shadow-sheet: 0 -1px 0 var(--shade-near), 0 -16px 48px -24px var(--shade-far);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-micro: 120ms;
+  --duration-state: 200ms;
+  --duration-layout: 320ms;
+
+  --blur-bar: 20px;
+}
+
+:root {
+  --shade-near: rgb(11 34 25 / 0.08);
+  --shade-far: rgb(11 34 25 / 0.28);
+  --press-scale: 0.97;
+}
+
+:root[data-theme='dark'] {
+  --shade-near: rgb(0 0 0 / 0.4);
+  --shade-far: rgb(0 0 0 / 0.7);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --shade-near: rgb(0 0 0 / 0.4);
+    --shade-far: rgb(0 0 0 / 0.7);
+  }
+}
