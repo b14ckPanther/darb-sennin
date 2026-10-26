@@ -1,6 +1,6 @@
 # Architecture
 
-Status: the stack (C# 13, ASP.NET Core, MongoDB, Azure, Docker sandboxes, Service Bus, SignalR, xUnit, LLM review with rubric and evidence) comes from Nour's roadmap. Project split, document shapes, Azure service choices, the web client stack and all limits are **proposed, confirm with Nour in Phase 1**.
+Status: the stack (C# 14, ASP.NET Core, MongoDB, Azure, Docker sandboxes, Service Bus, SignalR, xUnit, LLM review with rubric and evidence) comes from Nour's roadmap. Project split, document shapes, Azure service choices, the web client stack and hosting were decided in Phase 1 (`docs/specs/2026-10-26-phase-01-product-spec.md`, ADR-025 to ADR-040); limits are set in config in Phase 4.
 
 ## 1. Shape in one paragraph
 
@@ -68,7 +68,7 @@ Why separate Judge from API: the judge needs the Docker socket, which is effecti
 8. API `ResultsConsumer` stores results, runs the **Grader** (deterministic score from `config/grading.yaml`), then the **Reviewer**, then **Progression**. SignalR pushes `caseResolved`, `graded`, `reviewed` to the user's group.
 9. Outbox row for `sennin.submission.graded` (consumed by the optional Darb Budokai adapter later).
 
-Pseudo code path: the reviewer translates pseudo code to Python (structured output with a line map), the translation runs through the same sandbox, and the UI labels every result "ran on a translation of your pseudo code" with the translation shown side by side. Evidence tier: `translated`. Proposed, confirm with Nour in Phase 1 (Q7).
+Pseudo code path: the reviewer translates pseudo code to Python (structured output with a line map), the translation runs through the same sandbox, and the UI labels every result "ran on a translation of your pseudo code" with the translation shown side by side. Evidence tier: `translated`. Decided in Phase 1 (ADR-030).
 
 ## 5. Storage (MongoDB)
 
@@ -87,7 +87,7 @@ Why MongoDB (fixed by roadmap, and it fits): problems are nested documents (stat
 
 Writes that must be atomic (submission graded + profile updated + outbox row) use a MongoDB multi-document transaction (requires a replica set; local compose runs a single-node replica set `--replSet rs0`).
 
-EF Core: the roadmap lists EF Core. Proposed use: the **MongoDB EF Core Provider** (`MongoDB.EntityFrameworkCore`) for the `profiles` and `boss_weeks` aggregates where change tracking helps, raw `MongoDB.Driver` for problems and submissions. Confirm with Nour in Phase 1 (Q8); dropping EF Core is the cheap fallback.
+EF Core: not used. All data access goes through `MongoDB.Driver` 3.x, so the Phase 8 boss transaction (profile, boss, outbox) runs in one driver session (ADR-037).
 
 ## 6. Config, not code
 
@@ -128,7 +128,7 @@ npm --prefix web/sennin-web run dev          # :5173
 
 `SENNIN_LLM_MODE=fixture` (default locally) serves recorded reviewer responses; `live` needs a key and Nour's approval. On macOS the sandbox runs inside Docker Desktop's Linux VM; seccomp and cgroup v2 behave as on Linux. gVisor is Linux-host only and is tested in CI and on the judge VM.
 
-## 8. Azure (proposed, confirm with Nour in Phase 1; any deploy needs their "yes")
+## 8. Azure (decided in Phase 1, ADR-038; any deploy needs Nour's "yes")
 
 | Piece | Service | Why |
 |---|---|---|

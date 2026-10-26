@@ -84,7 +84,7 @@ docker run --rm --init
 - Revealing the breaking input is the product design. Per-case `revealOnFail` (content data) can hide it for boss problems, showing only tags and a shrunk description. Rate limits on submissions per problem per hour slow down enumeration (T11).
 
 ### Layer F: images and supply chain
-- Images: `python:3.13-slim`, `mcr.microsoft.com/dotnet/sdk` (compile) and `mcr.microsoft.com/dotnet/runtime` (run), `node:22-slim`, each pinned by **digest** in `config/sandbox/images.yaml`, rebuilt by a scheduled workflow, scanned with Trivy (fail on HIGH/CRITICAL with a fix available). No package manager or network tools at runtime (`apt-get` removed, `curl`/`wget` absent). Harness code is in-repo and reviewed (T10).
+- Images: `python:3.14-slim`, `mcr.microsoft.com/dotnet/sdk` (compile) and `mcr.microsoft.com/dotnet/runtime` (run), `node:24-slim`, each pinned by **digest** in `config/sandbox/images.yaml`, rebuilt by a scheduled workflow, scanned with Trivy (fail on HIGH/CRITICAL with a fix available). No package manager or network tools at runtime (`apt-get` removed, `curl`/`wget` absent). Harness code is in-repo and reviewed (T10).
 
 ### Layer G: the reviewer (prompt injection)
 - **The score is computed before the LLM is called**, by the deterministic Grader, from test results and measured complexity. The LLM never receives a field it could write back into the score (T8).

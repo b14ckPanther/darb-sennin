@@ -18,11 +18,11 @@ Over weeks it learns which mistakes Nour repeats (off-by-one, empty input, integ
 
 ## 3. Non-goals
 
-- Not a public competitive judge with leaderboards for strangers (single user or small invited group; see open question Q4).
+- Not a public competitive judge with leaderboards for strangers (one owner submits; visitors get a read-only demo on seed data, ADR-029).
 - Not a course platform. No videos, no lessons; the statement and the review are the teaching.
 - Not a general online IDE. No file trees, no package installs, no debugger.
 - Not a LeetCode clone or mirror. Problems are original.
-- No support for every language. Three runtimes in v1 (proposed: Python, C#, JavaScript), plus pseudo code.
+- No support for every language. Three runtimes in v1 (Python 3.14, C# 14, JavaScript on Node 24, ADR-031), plus pseudo code.
 
 ## 4. Anti-goals (it would be a failure even if it works)
 
@@ -36,7 +36,7 @@ Over weeks it learns which mistakes Nour repeats (off-by-one, empty input, integ
 
 ## 5. Why this stack for the Israeli junior market
 
-- C# and .NET are common in Israeli fintech and enterprise. ChargeAfter's intern role names .NET Core, MongoDB and Azure; this project is the same stack end to end.
+- C# and .NET are common in Israeli fintech and enterprise. Israeli fintech and enterprise .NET roles ask for .NET, MongoDB and Azure; this project is that stack end to end.
 - From 431 Israeli listings: Azure 72, MongoDB 65, Microservices 127, Cloud 256, AI 287. Darb Sennin touches all of them with real depth: a queue-backed worker service, a document store with real modelling choices, cloud deployment, and an LLM used with a rubric and evidence instead of as a chatbot.
 - Sandboxed execution of untrusted code is a recognised hard backend problem. Being able to explain seccomp, cgroups, namespaces and prompt-injection defences in an interview is rare for a junior.
 - It fills the main gap in Nour's GitHub, which is about 90% Next.js, Supabase and TypeScript. This repo shows they can work in a typed, compiled, enterprise backend stack.
