@@ -4,14 +4,14 @@ Solve problems in real code or rough pseudo code. A .NET backend runs your code 
 
 **Signature:** every grade shows its evidence. The failing test, the input that broke it, the measured complexity. Praise only appears when you have earned it.
 
-Status: planning package. No code yet. Phase 0 has not started.
+Status: Phase 0 (repo bootstrap) done: .NET 10 solution skeleton, architecture and hygiene checks, local MongoDB + Service Bus emulator stack, React web scaffold and CI. Phase 1 (confirm the spec) is next. No product features yet.
 
 ## Stack
 
 | Layer | Choice | Status |
 |---|---|---|
 | Language | C# 13 | fixed by roadmap |
-| Runtime | .NET 9 (C# 13). .NET 9 support ends 10 Nov 2026, so .NET 10 LTS is the proposed target | open question Q2 |
+| Runtime | .NET 10 LTS (C# 13 language level; C# 14 proposed) | ruling ADR-020, confirm Q2 |
 | API | ASP.NET Core minimal APIs + SignalR | fixed by roadmap |
 | Database | MongoDB 8 (MongoDB.Driver 3.x) | fixed by roadmap |
 | Job queue | Azure Service Bus (local: official Service Bus emulator) | fixed by roadmap |
@@ -22,6 +22,20 @@ Status: planning package. No code yet. Phase 0 has not started.
 | Tests | xUnit v3, Testcontainers for .NET, WireMock.Net, Vitest, Playwright + axe | proposed, confirm with Nour in Phase 1 |
 
 The stack mirrors ChargeAfter's .NET intern role (C#, .NET Core, MongoDB, Azure).
+
+## Run it locally
+
+Needs the .NET 10 SDK, Docker and Node 24.
+
+```bash
+cp .env.example .env                      # set SENNIN_SQL_PASSWORD to a strong local value
+tools/compose-up.sh                       # MongoDB replica set + Service Bus emulator, waits until healthy
+dotnet build -warnaserror && dotnet test  # unit, architecture and compose smoke tests
+npm --prefix web/sennin-web ci
+npm --prefix web/sennin-web test -- --run # Vitest
+npm --prefix web/sennin-web run e2e       # Playwright + axe at desktop and 390 px
+tests/tools/run-all.sh                    # commit hook, emoji and attribution checks
+```
 
 ## Folder map (target, created in Phase 0)
 

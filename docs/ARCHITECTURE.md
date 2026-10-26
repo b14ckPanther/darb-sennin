@@ -115,8 +115,8 @@ Hidden tests in a public repo are not hidden. `content/demo/` (public) holds 5 t
 
 ```bash
 cp .env.example .env                      # fill local values only
-docker compose -f deploy/compose/compose.yml up -d
-#   mongo:8 (replica set rs0, :27017)
+tools/compose-up.sh                       # docker compose --env-file .env ... up -d, then waits until healthy
+#   mongo (image from SENNIN_MONGO_IMAGE, currently mongo:8.2; replica set rs0, :27017)
 #   mcr.microsoft.com/azure-messaging/servicebus-emulator (:5672) + mcr.microsoft.com/azure-sql-edge
 #   config: deploy/compose/servicebus/Config.json declares judge-jobs, judge-results
 docker build -t sennin-sandbox-python:dev sandbox/images/python   # and dotnet, node
