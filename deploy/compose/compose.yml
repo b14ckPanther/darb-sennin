@@ -1,0 +1,58 @@
+# Local infrastructure for Darb Sennin. Values come from the repo-root .env
+# (copy .env.example). Run from the repo root:
+#   docker compose -f deploy/compose/compose.yml up -d
+name: darb-sennin
+
+services:
+  mongo:
+    image: ${SENNIN_MONGO_IMAGE:?set in .env}
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    ports:
+      - "${SENNIN_MONGO_PORT:?set in .env}:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      # Initiates the single-node replica set on first start, then reports healthy once primary.
+      test: ["CMD", "mongosh", "--quiet", "--eval", "try { rs.status().ok } catch (e) { rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'localhost:27017'}]}).ok }"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 10s
+
+  mongo-express:
+    image: mongo-express:1
+    profiles: ["dev-tools"]
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      ME_CONFIG_MONGODB_URL: "mongodb://mongo:27017/?replicaSet=rs0&directConnection=true"
+      ME_CONFIG_BASICAUTH: "false"
+    ports:
+      - "127.0.0.1:${SENNIN_MONGO_EXPRESS_PORT:?set in .env}:8081"
+
+  sqledge:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    environment:
+      ACCEPT_EULA: "${SENNIN_SQL_ACCEPT_EULA:?set in .env}"
+      MSSQL_SA_PASSWORD: "${SENNIN_SQL_PASSWORD:?set in .env}"
+    volumes:
+      - sqledge-data:/var/opt/mssql
+
+  servicebus:
+    image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
+    depends_on:
+      - sqledge
+    environment:
+      SQL_SERVER: sqledge
+      MSSQL_SA_PASSWORD: "${SENNIN_SQL_PASSWORD:?set in .env}"
+      ACCEPT_EULA: "${SENNIN_SQL_ACCEPT_EULA:?set in .env}"
+    volumes:
+      - ./servicebus/Config.json:/ServiceBus_Emulator/ConfigFiles/Config.json:ro
+    ports:
+      - "${SENNIN_SERVICEBUS_AMQP_PORT:?set in .env}:5672"
+      - "${SENNIN_SERVICEBUS_HTTP_PORT:?set in .env}:5300"
+
+volumes:
+  mongo-data:
+  sqledge-data:
