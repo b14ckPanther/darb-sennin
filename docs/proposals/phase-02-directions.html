@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sennin Directions</title>
+<!-- Proposal only. Fonts load from Google Fonts here for review; the real app self-hosts them (CLAUDE.md, typography). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --page-bg: #e9ebe8;
+  --page-ink: #1d2124;
+  --page-muted: #5a6166;
+  --page-rule: #c9cdc9;
+  --flag-bg: #1d2124;
+  --flag-ink: #f3f4f1;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page-bg: #1a1e22;
+    --page-ink: #e6e8e5;
+    --page-muted: #9aa1a6;
+    --page-rule: #33393e;
+    --flag-bg: #e6e8e5;
+    --flag-ink: #1a1e22;
+  }
+}
+:root[data-theme="dark"] {
+  --page-bg: #1a1e22; --page-ink: #e6e8e5; --page-muted: #9aa1a6; --page-rule: #33393e;
+  --flag-bg: #e6e8e5; --flag-ink: #1a1e22;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--page-ink);
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.page { max-width: 1320px; margin: 0 auto; padding: 32px 16px 64px; }
+.flag {
+  display: inline-block;
+  background: var(--flag-bg);
+  color: var(--flag-ink);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.intro h1 { font-family: "Newsreader", serif; font-weight: 600; font-size: clamp(28px, 4vw, 40px); line-height: 1.15; margin: 16px 0 8px; }
+.intro p { max-width: 68ch; color: var(--page-muted); margin: 0 0 8px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 32px; }
+@media (max-width: 1080px) { .grid { grid-template-columns: 1fr; max-width: 560px; } }
+.direction > header { margin-bottom: 12px; }
+.direction > header h2 { font-size: 20px; margin: 0; font-weight: 600; }
+.direction > header p { margin: 4px 0 0; color: var(--page-muted); font-size: 14px; max-width: 60ch; }
+
+/* ---------- Shared Verdict Sheet structure; each direction sets the tokens ---------- */
+.sheet {
+  background: var(--s-bg);
+  color: var(--s-ink);
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius);
+  padding: 20px;
+  font-family: var(--s-ui);
+  font-size: 15px;
+  overflow: hidden;
+}
+.sheet .problem { font-family: var(--s-display); font-size: 24px; line-height: 1.2; margin: 0; font-weight: var(--s-display-weight); letter-spacing: var(--s-display-track); }
+.sheet .meta { color: var(--s-muted); font-size: 13px; margin: 4px 0 16px; }
+.verdict { display: flex; gap: 12px; align-items: baseline; padding: 12px 0; border-top: 1px solid var(--s-line); border-bottom: 1px solid var(--s-line); }
+.verdict .score { font-family: var(--s-num); font-size: 40px; line-height: 1; font-variant-numeric: tabular-nums; }
+.verdict .score small { font-size: 16px; color: var(--s-muted); }
+.verdict .label { font-weight: 600; color: var(--s-fail); }
+.verdict .label span { display: block; color: var(--s-muted); font-weight: 400; font-size: 13px; }
+.rows { list-style: none; margin: 12px 0; padding: 0; }
+.rows li { display: grid; grid-template-columns: 20px 1fr auto; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px dashed var(--s-line); font-size: 14px; }
+.rows li:last-child { border-bottom: 0; }
+.rows code, .chip, .plate, .finding code { font-family: var(--s-mono); }
+.rows code { white-space: nowrap; }
+.rows .t { font-variant-numeric: tabular-nums; color: var(--s-muted); font-family: var(--s-mono); font-size: 13px; }
+.rows .pass svg { color: var(--s-pass); }
+.rows .fail svg { color: var(--s-fail); }
+.rows .tle svg { color: var(--s-warn); }
+.rows .fail { color: var(--s-ink); }
+.finding { background: var(--s-note); border-left: 3px solid var(--s-fail); padding: 12px 14px; border-radius: 0 var(--s-radius-sm) var(--s-radius-sm) 0; margin: 16px 0; font-size: 14px; }
+.finding p { margin: 0 0 8px; }
+.finding pre { margin: 0; font-family: var(--s-mono); font-size: 12.5px; white-space: pre-wrap; color: var(--s-muted); }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 32px; padding: 0 10px;
+  border: 1px solid var(--s-chip-line); border-radius: var(--s-radius-sm);
+  background: transparent; color: var(--s-ink); font-size: 12.5px; cursor: pointer;
+  transition: transform 180ms cubic-bezier(.2,.9,.3,1.3), background 120ms;
+}
+.chip:hover { background: var(--s-note); }
+.chip:active { transform: scale(.96); }
+.chip:focus-visible { outline: 2px solid var(--s-focus); outline-offset: 2px; }
+.plate { display: grid; grid-template-columns: 1fr 120px; gap: 12px; align-items: center; border: 1px solid var(--s-line); border-radius: var(--s-radius-sm); padding: 12px; font-size: 13px; }
+.plate dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; }
+.plate dt { color: var(--s-muted); }
+.plate dd { margin: 0; font-variant-numeric: tabular-nums; }
+.plate svg { width: 120px; height: 72px; }
+.plate .curve { stroke: var(--s-fail); }
+.plate .ref { stroke: var(--s-muted); }
+.plate .pt { fill: var(--s-ink); }
+.praise { margin-top: 14px; font-size: 13px; color: var(--s-muted); }
+@media (prefers-reduced-motion: reduce) { .chip { transition: none; } .chip:active { transform: none; } }
+
+/* ---------- A. Examiner's Report ---------- */
+.dir-a {
+  --s-bg: #f6f6f2; --s-ink: #1f2326; --s-muted: #5d6468; --s-line: #d5d8d2; --s-note: #ecede7;
+  --s-pass: #2f6b4f; --s-fail: #b0241c; --s-warn: #8a5a00; --s-chip-line: #b9bdb6; --s-focus: #1f2326;
+  --s-display: "Newsreader", serif; --s-display-weight: 600; --s-display-track: 0;
+  --s-ui: "Instrument Sans", sans-serif; --s-mono: "JetBrains Mono", monospace; --s-num: "Newsreader", serif;
+  --s-radius: 4px; --s-radius-sm: 3px;
+}
+.dir-a .sheet { background-image: repeating-linear-gradient(to bottom, transparent 0 27px, rgba(31,35,38,.045) 27px 28px); }
+
+/* ---------- B. Forge ---------- */
+.dir-b {
+  --s-bg: #171c27; --s-ink: #e7e3da; --s-muted: #9aa0ad; --s-line: #2c3343; --s-note: #1f2534;
+  --s-pass: #e3a043; --s-fail: #e0705a; --s-warn: #7fa6c9; --s-chip-line: #3a4357; --s-focus: #e3a043;
+  --s-display: "Space Grotesk", sans-serif; --s-display-weight: 700; --s-display-track: -0.01em;
+  --s-ui: "IBM Plex Sans", sans-serif; --s-mono: "IBM Plex Mono", monospace; --s-num: "Space Grotesk", sans-serif;
+  --s-radius: 14px; --s-radius-sm: 8px;
+}
+.dir-b .sheet {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' fill='none' stroke='%23e7e3da' stroke-opacity='.035'%3E%3Cpath d='M0 60c40-20 80 20 120 0s80-20 120 0M0 120c40-20 80 20 120 0s80-20 120 0M0 180c40-20 80 20 120 0s80-20 120 0'/%3E%3C/svg%3E");
+}
+
+/* ---------- C. Instrument ---------- */
+.dir-c {
+  --s-bg: #0f1214; --s-ink: #dfe5e3; --s-muted: #8b9592; --s-line: #252b2e; --s-note: #161b1d;
+  --s-pass: #8fa39d; --s-fail: #f08a7a; --s-warn: #d8b86a; --s-chip-line: #313a3d; --s-focus: #6fe3a8;
+  --s-display: "Geist", sans-serif; --s-display-weight: 500; --s-display-track: -0.02em;
+  --s-ui: "Geist", sans-serif; --s-mono: "Geist Mono", monospace; --s-num: "Geist Mono", monospace;
+  --s-radius: 2px; --s-radius-sm: 2px;
+}
+.dir-c .sheet {
+  background-image:
+    linear-gradient(rgba(223,229,227,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(223,229,227,.03) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+.dir-c .verdict .score { font-size: 36px; }
+.dir-c .praise-earned { color: #6fe3a8; }
+</style>
+</head>
+<body>
+<div class="page">
+  <section class="intro">
+    <span class="flag">Proposal, not approved</span>
+    <h1>Three directions for the Verdict Sheet</h1>
+    <p>The same graded submission drawn three ways, from the candidates in docs/UI_DESIGN.md section 4. Nothing here is the real app; pick one (or mix parts) in Phase 2.</p>
+    <p>Changes from UI_DESIGN.md: Inter and Inter Tight are swapped out (Instrument Sans in A, Geist in C) because the project rules forbid default faces. Icons are custom-drawn line SVGs standing in for Solar or Lucide.</p>
+  </section>
+
+  <div class="grid">
+    <!-- Template repeated per direction so each can be read on its own. -->
+    <article class="direction dir-a" aria-labelledby="a-title">
+      <header>
+        <h2 id="a-title">A. Examiner's Report</h2>
+        <p>Ruled paper, margin notes, one red ink kept for failures. Newsreader, Instrument Sans, JetBrains Mono. Rigorous and adult.</p>
+      </header>
+      <div class="sheet"></div>
+    </article>
+
+    <article class="direction dir-b" aria-labelledby="b-title">
+      <header>
+        <h2 id="b-title">B. Forge</h2>
+        <p>Night ink with faint contour lines, ember for passes, steel for info, oxide for failures. Space Grotesk, IBM Plex. Ties to Darb Budokai's Forge.</p>
+      </header>
+      <div class="sheet"></div>
+    </article>
+
+    <article class="direction dir-c" aria-labelledby="c-title">
+      <header>
+        <h2 id="c-title">C. Instrument</h2>
+        <p>A measuring panel: hairline grid, tabular readouts, signal green reserved for earned praise. Geist and Geist Mono. Lab equipment.</p>
+      </header>
+      <div class="sheet"></div>
+    </article>
+  </div>
+</div>
+
+<template id="sheet">
+  <h3 class="problem">Merge overlapping bookings</h3>
+  <p class="meta">Python 3.13, submitted 21:42, demo data</p>
+  <div class="verdict">
+    <div class="score">58<small>/100</small></div>
+    <div class="label">Wrong answer on 3 of 18 hidden tests<span>Tests 42 of 60, complexity 16 of 30, review 0 of 10</span></div>
+  </div>
+  <ul class="rows">
+    <li class="pass"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Sample cases <code>s-01</code> to <code>s-03</code></span><span class="t">3 passed</span></li>
+    <li class="fail"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span>Bookings that share a start time <code>h-07</code></span><span class="t">0.04 s</span></li>
+    <li class="fail"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span>Single booking <code>h-02</code></span><span class="t">0.03 s</span></li>
+    <li class="tle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2.5"/></svg><span>100 000 bookings <code>h-15</code></span><span class="t">over 2.0 s</span></li>
+  </ul>
+  <div class="finding">
+    <p>Line 14 sorts by end time, so two bookings with the same start are merged in the wrong order and one is dropped.</p>
+    <pre>input  [[9,12],[9,10],[11,13]]
+want   [[9,13]]
+got    [[9,10],[11,13]]</pre>
+  </div>
+  <div class="plate">
+    <dl>
+      <dt>Measured</dt><dd>n<sup>1.98</sup>, R² 0.99</dd>
+      <dt>Expected</dt><dd>n log n</dd>
+      <dt>Evidence</dt><dd><button class="chip" type="button">probe:4</button> <button class="chip" type="button">lines:12-19</button></dd>
+    </dl>
+    <svg viewBox="0 0 120 72" role="img" aria-label="CPU time grows with the square of input size">
+      <path class="ref" d="M6 66 L114 40" stroke-dasharray="3 3" fill="none"/>
+      <path class="curve" d="M6 66 C40 64 70 52 114 8" fill="none" stroke-width="1.5"/>
+      <circle class="pt" cx="6" cy="66" r="2"/><circle class="pt" cx="33" cy="63" r="2"/><circle class="pt" cx="60" cy="54" r="2"/><circle class="pt" cx="87" cy="36" r="2"/><circle class="pt" cx="114" cy="8" r="2"/>
+    </svg>
+  </div>
+  <p class="praise">No praise on this run: the praise gate needs every hidden test passing.</p>
+</template>
+
+<script>
+  const tpl = document.getElementById('sheet');
+  document.querySelectorAll('.sheet').forEach((el) => el.appendChild(tpl.content.cloneNode(true)));
+</script>
+</body>
+</html>

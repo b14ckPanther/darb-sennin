@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <ProjectReference Include="..\DarbSennin.Domain\DarbSennin.Domain.csproj" />
+    <ProjectReference Include="..\DarbSennin.Infrastructure\DarbSennin.Infrastructure.csproj" />
+    <ProjectReference Include="..\DarbSennin.Reviewer\DarbSennin.Reviewer.csproj" />
+  </ItemGroup>
+</Project>

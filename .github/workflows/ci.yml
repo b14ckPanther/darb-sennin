@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  push:
+    branches: [main, 'phase/**']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  hygiene:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          # On pull requests check the branch head, not GitHub's synthetic merge commit,
+          # which is authored by GitHub and would fail the identity check.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Shell tool tests (hook, emoji, attribution)
+        run: tests/tools/run-all.sh
+      - name: Emoji check
+        run: tools/check-emoji.sh
+      - name: Author and attribution checks
+        run: tools/check-no-attribution.sh
+
+  dotnet:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - run: dotnet restore
+      - run: dotnet format --verify-no-changes --no-restore
+      - run: dotnet build -warnaserror --no-restore
+      - name: Start local stack
+        run: |
+          cp .env.example .env
+          sed -i "s/^SENNIN_SQL_PASSWORD=.*/SENNIN_SQL_PASSWORD=Ci-$(openssl rand -hex 8)-Aa1!/" .env
+          tools/compose-up.sh
+      - run: dotnet test --no-build
+      - name: Stop local stack
+        if: always()
+        run: docker compose --env-file .env -f deploy/compose/compose.yml down -v
+
+  web:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: web/sennin-web
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: web/sennin-web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/sennin-web/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm test -- --run
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e

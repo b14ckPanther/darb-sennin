@@ -58,3 +58,28 @@ Context: Monaco is heavy and weak on mobile; CodeMirror 6 is accessible, small, 
 
 ## ADR-019 One SVG icon set, no emoji — fixed (Rule 11)
 Decision: Solar (Iconify) or Lucide, chosen in Phase 2; `tools/check-emoji.sh` in CI.
+
+## Phase 0 rulings (agent, 2026-10-26) — ruling, confirm with Nour in Phase 1
+
+Nour was away during Phase 0. Each ruling below takes the plan's proposed default or the cheapest reversible option, and is listed again in `docs/REVIEW_FOR_NOUR.md`.
+
+## ADR-020 .NET SDK 10.0.403 pinned, LangVersion 13 — ruling (Q2)
+Context: Q2 proposes .NET 10 LTS; `PLAN.md` Phase 0 task 4 says `LangVersion 13`. Decision: `global.json` pins SDK 10.0.403 with `rollForward: latestFeature`; all projects target `net10.0` with `LangVersion 13`. Installed user-locally at `~/.dotnet` with Microsoft's `dotnet-install.sh`. Cost if wrong: low (one line in `global.json`, one in `Directory.Build.props`; moving to C# 14 is a superset).
+
+## ADR-021 xUnit v3 on Microsoft.Testing.Platform — ruling
+Context: the .NET 10 SDK no longer runs Microsoft.Testing.Platform test projects through the old VSTest path, and xUnit v3 4.x is built on it. Decision: `xunit.v3.mtp-v2`, opted in through `global.json` (`"test": {"runner": "Microsoft.Testing.Platform"}`). One project runs with `dotnet test --project tests/<Name>` (the bare-path form in older docs no longer works); `dotnet test` at the root runs all. Shouldly for assertions (ADR-008). Cost if wrong: low.
+
+## ADR-022 MongoDB image is config, pinned to mongo:8.2 locally — ruling
+Context: `mongo:8` (8.3.x) and `mongo:8.0.34` exit at startup on Linux kernels 6.19 to 7.0.13 (MongoDB SERVER-121912, TCMalloc and rseq). Docker Desktop on Nour's Mac runs kernel 7.0.12. `mongo:8.2` starts and passes the smoke tests. Decision: compose reads `SENNIN_MONGO_IMAGE` from `.env`; `.env.example` sets `mongo:8.2`. Still MongoDB 8 (ADR-001). Revisit when Docker Desktop ships kernel 7.0.14 or later. Cost if wrong: low (one env value).
+
+## ADR-023 Service Bus emulator runs natively on Apple Silicon — ruling
+Context: the plan allowed skipping the emulator smoke test on Apple Silicon. Both `servicebus-emulator` and `azure-sql-edge` publish arm64 images, and the round-trip test passes on both queues, so nothing is skipped. Note: Microsoft retired Azure SQL Edge in September 2025; the image still pulls and works. If it stops, swap to `mcr.microsoft.com/mssql/server` (amd64 only, runs under Rosetta). Cost if wrong: low.
+
+## ADR-024 Tooling details chosen in Phase 0 — ruling
+- Compose reads the repo-root `.env` through `--env-file .env`; `tools/compose-up.sh` starts the stack and waits until Mongo is primary and the emulator's `/health` is healthy.
+- `tools/check-emoji.sh` uses `perl` (macOS grep has no `-P`) with the same code-point ranges, and also scans `tests/`.
+- Web lint is ESLint with `typescript-eslint` `strictTypeChecked` (the current Vite template ships oxlint; `CONVENTIONS.md` asks for ESLint). CI uses Node 24 LTS.
+- The no-magic-number guard uses a small reflection scanner in `tests/DarbSennin.ArchitectureTests` (NetArchTest cannot read constant values); layering rules use NetArchTest.Rules.
+- The web shell is a placeholder with no chosen typeface; fonts and tokens are a Phase 2 decision and nothing ships before then.
+- Licence MIT (Q18 proposal); repo path `~/Documents/GitHub/darb-sennin` (Q21 proposal), no remote created.
+Cost if wrong: low for each.

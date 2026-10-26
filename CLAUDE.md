@@ -162,8 +162,9 @@ Exact paths are created in Phase 0. Until then, these are the targets.
 
 ```bash
 # Local infra: MongoDB 8, Service Bus emulator (+ its SQL Edge dependency), Mongo Express (dev only)
-docker compose -f deploy/compose/compose.yml up -d
-docker compose -f deploy/compose/compose.yml down              # keep volumes
+tools/compose-up.sh                                            # up -d with .env, waits until Mongo primary + emulator healthy
+docker compose --env-file .env -f deploy/compose/compose.yml up -d
+docker compose --env-file .env -f deploy/compose/compose.yml down              # keep volumes
 
 # Sandbox images (pinned by digest in config/sandbox/images.yaml after build)
 docker build -t sennin-sandbox-python:dev sandbox/images/python
@@ -174,8 +175,8 @@ docker build -t sennin-sandbox-node:dev   sandbox/images/node
 dotnet restore
 dotnet build -warnaserror
 dotnet test                                                    # all test projects
-dotnet test tests/DarbSennin.Domain.Tests                        # fast unit tests
-dotnet test tests/DarbSennin.Sandbox.SecurityTests               # malicious corpus (needs Docker)
+dotnet test --project tests/DarbSennin.Domain.Tests              # fast unit tests
+dotnet test --project tests/DarbSennin.Sandbox.SecurityTests    # malicious corpus (needs Docker)
 dotnet format --verify-no-changes
 dotnet run --project src/DarbSennin.Api                          # http://localhost:5080
 dotnet run --project src/DarbSennin.Judge
@@ -191,7 +192,8 @@ npm --prefix web/sennin-web run e2e                              # Playwright + 
 npm --prefix web/sennin-web run build
 
 # Hygiene
-tools/check-emoji.sh                                           # fails on any emoji code point in src, web, config, content
+tools/check-emoji.sh                                           # fails on any emoji code point in src, web, config, content, tests
+tests/tools/run-all.sh                                         # shell tests for the hook and both checks
 tools/check-no-attribution.sh                                  # the two push checks below
 
 # Push checks (see §8)

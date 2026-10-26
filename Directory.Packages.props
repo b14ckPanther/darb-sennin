@@ -1,0 +1,19 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Runtime -->
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
+    <!-- Tests -->
+    <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.2" />
+    <PackageVersion Include="Shouldly" Version="4.3.0" />
+    <PackageVersion Include="NetArchTest.Rules" Version="1.3.2" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.14" />
+    <PackageVersion Include="Testcontainers" Version="4.16.0" />
+    <PackageVersion Include="Testcontainers.MongoDb" Version="4.16.0" />
+    <PackageVersion Include="MongoDB.Driver" Version="3.13.0" />
+    <PackageVersion Include="Azure.Messaging.ServiceBus" Version="7.21.0" />
+  </ItemGroup>
+</Project>
