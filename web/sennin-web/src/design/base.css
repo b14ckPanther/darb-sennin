@@ -1,0 +1,86 @@
+/* Browser surfaces carry the design too: selection, caret, focus, scrollbars, numerals. */
+@layer base {
+  html {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 100%;
+    font-feature-settings: 'ss01' 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+    accent-color: var(--color-primary);
+    caret-color: var(--color-ink);
+    scrollbar-color: var(--color-line-strong) transparent;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--color-canvas);
+  }
+
+  ::selection {
+    background: var(--color-highlight);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-chip);
+  }
+
+  :where(h1, h2, h3) {
+    text-wrap: balance;
+  }
+
+  :where(p) {
+    text-wrap: pretty;
+  }
+
+  a {
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+    font-variant-ligatures: none;
+  }
+}
+
+@utility num {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+@utility material-bar {
+  background: color-mix(in oklab, var(--color-bar) 78%, transparent);
+  backdrop-filter: blur(var(--blur-bar)) saturate(1.6);
+  -webkit-backdrop-filter: blur(var(--blur-bar)) saturate(1.6);
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    background: var(--color-bar);
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    background: var(--color-bar);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
