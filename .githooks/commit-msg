@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Rejects commit messages that carry attribution lines or name AI tools.
+# Enabled with: git config core.hooksPath .githooks
+set -euo pipefail
+msg_file="$1"
+# Ignore git's comment lines (the commented-out help text in the editor).
+if grep -v '^#' "$msg_file" | grep -qiE 'co-authored|claude|anthropic|generated with'; then
+  echo "commit-msg: rejected. Messages must not contain attribution or AI tool names" >&2
+  echo "(pattern: co-authored|claude|anthropic|generated with)." >&2
+  exit 1
+fi
