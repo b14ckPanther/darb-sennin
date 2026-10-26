@@ -15,6 +15,9 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          # On pull requests check the branch head, not GitHub's synthetic merge commit,
+          # which is authored by GitHub and would fail the identity check.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Shell tool tests (hook, emoji, attribution)
         run: tests/tools/run-all.sh
       - name: Emoji check
