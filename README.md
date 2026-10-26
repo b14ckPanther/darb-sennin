@@ -4,24 +4,24 @@ Solve problems in real code or rough pseudo code. A .NET backend runs your code 
 
 **Signature:** every grade shows its evidence. The failing test, the input that broke it, the measured complexity. Praise only appears when you have earned it.
 
-Status: Phase 0 (repo bootstrap) done: .NET 10 solution skeleton, architecture and hygiene checks, local MongoDB + Service Bus emulator stack, React web scaffold and CI. Phase 1 (confirm the spec) is next. No product features yet.
+Status: Phase 0 (repo bootstrap) and Phase 1 (product spec in `docs/specs/`) done: .NET 10 solution skeleton, architecture and hygiene checks, local MongoDB + Service Bus emulator stack, React web scaffold and CI. Phase 2 (design system) is next. No product features yet.
 
 ## Stack
 
 | Layer | Choice | Status |
 |---|---|---|
-| Language | C# 13 | fixed by roadmap |
-| Runtime | .NET 10 LTS (C# 13 language level; C# 14 proposed) | ruling ADR-020, confirm Q2 |
+| Language | C# 14 | ADR-036 |
+| Runtime | .NET 10 LTS | ADR-013, ADR-036 |
 | API | ASP.NET Core minimal APIs + SignalR | fixed by roadmap |
 | Database | MongoDB 8 (MongoDB.Driver 3.x) | fixed by roadmap |
 | Job queue | Azure Service Bus (local: official Service Bus emulator) | fixed by roadmap |
 | Sandbox | Docker, one throwaway container per run: no network, CPU/memory/pids/time limits, custom seccomp, read-only root, non-root user | fixed by roadmap |
-| Reviewer | LLM with a rubric that lives in data; every claim must cite evidence | fixed by roadmap; provider is open question Q6 |
-| Cloud | Azure: Container Apps (API), a Linux VM for the judge, Static Web Apps (web), Key Vault | Azure fixed; services proposed |
-| Web client | React 19 + Vite + TypeScript + CodeMirror 6 + Tailwind CSS 4 | proposed, confirm with Nour in Phase 1 |
-| Tests | xUnit v3, Testcontainers for .NET, WireMock.Net, Vitest, Playwright + axe | proposed, confirm with Nour in Phase 1 |
+| Reviewer | LLM with a rubric that lives in data; every claim must cite evidence | Anthropic Claude API (`claude-sonnet-5-5`, id in config), 5 USD monthly cap (ADR-033) |
+| Cloud | Azure: Container Apps (API), a Linux VM for the judge, Static Web Apps (web), Key Vault | decided (ADR-038); nothing created yet |
+| Web client | React 19 + Vite + TypeScript + CodeMirror 6 + Tailwind CSS 4 | ADR-014 |
+| Tests | xUnit v3, Testcontainers for .NET, WireMock.Net, Vitest, Playwright + axe | ADR-008, ADR-021 |
 
-The stack mirrors ChargeAfter's .NET intern role (C#, .NET Core, MongoDB, Azure).
+The stack is what Israeli fintech and enterprise .NET roles ask for: C#, .NET, MongoDB and Azure.
 
 ## Run it locally
 
