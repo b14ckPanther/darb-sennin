@@ -1,0 +1,18 @@
+/* Generated from src/tokens.json by scripts/build.mjs. Edit the JSON, not this file. */
+:root {
+  --night: #03110C; /* Darb night: base surface */
+  --forest: #0E3527; /* Darb forest: raised surfaces */
+  --gold: #D9A54C; /* Darb gold: the ensō and earned praise */
+  --gold-light: #FBE7BD; /* Gold highlights */
+  --gold-deep: #6D4C17; /* Gold in shadow */
+  --jade: #3E9C7A; /* Jade: the sage's stone, calm and exact */
+  --vermilion: #C8432F; /* Seal red: the verdict, used only for the stamp */
+  --mist: #9DB8AE; /* Soft light and secondary surfaces */
+  --paper: #EFE6D2; /* Light surface and the earned-stamp paper */
+  --ivory: #FBF7EC; /* Text on night */
+  --ink: #0B2219; /* Text on ivory */
+  --muted: #8FA399; /* Secondary text on night */
+  --font-seal: 'Yuji Boku', 'Hiragino Mincho ProN', serif;
+  --font-display: 'Zen Antique', 'Hiragino Mincho ProN', serif;
+  --font-ui: 'Geist', system-ui, sans-serif;
+}

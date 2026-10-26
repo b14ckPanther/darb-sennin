@@ -1,0 +1,268 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Sennin directions</title>
+<style>html,body{margin:0;background:#000}canvas{display:block}</style>
+<script type="importmap">{ "imports": {
+  "three": "../node_modules/three/build/three.module.js",
+  "three/addons/": "../node_modules/three/examples/jsm/",
+  "opentype": "../node_modules/opentype.js/dist/opentype.module.js" } }</script>
+</head><body><canvas id="c"></canvas>
+<script type="module">
+// Four Darb Sennin brand directions, all procedural and original.
+// ?d=summit | island | seal | enso   ?size=1024
+import * as THREE from 'three'
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js'
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
+import { Reflector } from 'three/addons/objects/Reflector.js'
+import opentype from 'opentype'
+
+const q = new URLSearchParams(location.search)
+const D = q.get('d') || 'summit'
+const S = +q.get('size') || 1024
+const T = await (await fetch('../src/tokens.json')).json()
+const C = Object.fromEntries(Object.entries(T.color).map(([k, v]) => [k, new THREE.Color(v.hex)]))
+
+const canvas = document.getElementById('c')
+canvas.style.width = canvas.style.height = S + 'px'
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true })
+renderer.setSize(S, S, false)
+renderer.toneMapping = THREE.ACESFilmicToneMapping
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = THREE.PCFSoftShadowMap
+const scene = new THREE.Scene()
+const pmrem = new THREE.PMREMGenerator(renderer)
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
+scene.environmentIntensity = 0.5
+const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 400)
+
+let seed = 11
+const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647)
+
+// night sky: Darb night, mist low, a moon and fine stars
+function sky({ horizon = -0.05, moon = null, haze = 0.5 } = {}) {
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(150, 48, 24), new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite: false,
+    uniforms: { uTop: { value: C.night }, uMid: { value: C.forest }, uMist: { value: C.mist }, uY: { value: horizon }, uH: { value: haze },
+      uMoon: { value: moon ? moon.clone().normalize() : new THREE.Vector3(0, -1, 0) } },
+    vertexShader: 'varying vec3 vD; void main(){ vD = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }',
+    fragmentShader: `uniform vec3 uTop; uniform vec3 uMid; uniform vec3 uMist; uniform float uY; uniform float uH; uniform vec3 uMoon; varying vec3 vD;
+      float h(vec3 p){ return fract(sin(dot(p, vec3(12.9898,78.233,45.164))) * 43758.5453); }
+      void main(){ float y = vD.y;
+        vec3 c = mix(uMid * .7, uTop * .5, smoothstep(uY, .75, y));
+        c += uMist * exp(-pow((y - uY) * 9., 2.)) * .22 * uH;
+        c += vec3(1., .96, .88) * step(.9986, h(floor(vD * 520.))) * smoothstep(uY + .05, .5, y) * .8;
+        float m = dot(vD, uMoon);
+        c += vec3(1., .95, .82) * smoothstep(.99965, .9998, m) * 1.6;
+        c += vec3(1., .9, .7) * pow(max(m, 0.), 600.) * .5;
+        gl_FragColor = vec4(c, 1.); }` })))
+}
+
+function canvasTex(n, draw) {
+  const cv = document.createElement('canvas'); cv.width = cv.height = n
+  draw(cv.getContext('2d'), n)
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8
+  return t
+}
+const grain = (base, amount = 0.08) => canvasTex(512, (g, n) => {
+  g.fillStyle = '#' + base.getHexString(); g.fillRect(0, 0, n, n)
+  for (let i = 0; i < 12000; i++) { g.fillStyle = `rgba(${rnd() < .5 ? '0,0,0' : '255,250,240'},${rnd() * amount})`; g.fillRect(rnd() * n, rnd() * n, 1 + rnd() * 3, 1 + rnd() * 3) }
+})
+const gold = () => new THREE.MeshPhysicalMaterial({ color: C.gold, metalness: 1, roughness: 0.22, clearcoat: 0.5, clearcoatRoughness: 0.15 })
+const glow = (c, k) => new THREE.MeshBasicMaterial({ color: c.clone().multiplyScalar(k) })
+
+async function glyphGeometry(fontFile, char, size, depth, bevel = true) {
+  const font = opentype.parse(await (await fetch('../fonts/' + fontFile)).arrayBuffer())
+  const contours = []; let cur = null
+  for (const c of font.getPath(char, 0, 0, 1000).commands) { if (c.type === 'M') contours.push((cur = [c])); else if (c.type !== 'Z') cur.push(c) }
+  const area = (cs) => cs.reduce((a, p, i) => { const q2 = cs[(i + 1) % cs.length]; return a + (p.x * -q2.y - q2.x * -p.y) }, 0)
+  const items = contours.map((cs) => ({ cs, a: area(cs) }))
+  const outer = Math.sign(items.reduce((m, x) => (Math.abs(x.a) > Math.abs(m.a) ? x : m)).a)
+  const shapes = []
+  for (const { cs, a } of items) {
+    const p = new THREE.Path()
+    for (const c of cs) {
+      if (c.type === 'M') p.moveTo(c.x, -c.y); else if (c.type === 'L') p.lineTo(c.x, -c.y)
+      else if (c.type === 'Q') p.quadraticCurveTo(c.x1, -c.y1, c.x, -c.y); else if (c.type === 'C') p.bezierCurveTo(c.x1, -c.y1, c.x2, -c.y2, c.x, -c.y)
+    }
+    if (Math.sign(a) === outer) shapes.push(new THREE.Shape(p.getPoints(12))); else shapes.at(-1)?.holes.push(new THREE.Path(p.getPoints(12)))
+  }
+  const geo = new THREE.ExtrudeGeometry(shapes, { depth: depth * 1000 / size, bevelEnabled: bevel, bevelThickness: 14, bevelSize: 8, bevelSegments: 4, curveSegments: 10 })
+  geo.computeBoundingBox(); const bb = geo.boundingBox
+  geo.translate(-(bb.min.x + bb.max.x) / 2, -(bb.min.y + bb.max.y) / 2, 0)
+  geo.scale(size / 1000, size / 1000, size / 1000)
+  return geo
+}
+
+function lights({ key = 1.6, keyPos = [-4, 7, 5], warm = C.goldLight, fill = 0.35 } = {}) {
+  const k = new THREE.DirectionalLight(warm, key); k.position.set(...keyPos); k.castShadow = true
+  k.shadow.mapSize.set(2048, 2048); Object.assign(k.shadow.camera, { left: -6, right: 6, top: 6, bottom: -6 }); k.shadow.bias = -0.0005
+  scene.add(k)
+  scene.add(new THREE.HemisphereLight(C.mist, C.night, fill))
+}
+
+let bloom = [0.55, 0.5, 0.85]
+
+if (D === 'summit') {
+  // A. 仙 is a person and a mountain. A stone peak whose terraces step in like indented code,
+  //    a gold path climbing them, and one lamp lit at the summit: practice, one level at a time.
+  sky({ horizon: -0.08, moon: new THREE.Vector3(0.45, 0.5, -1), haze: 0.9 })
+  lights({ key: 1.3, keyPos: [-6, 6, 3] })
+  scene.fog = new THREE.FogExp2(C.night, 0.035)
+  const stone = new THREE.MeshStandardMaterial({ map: grain(C.mist.clone().multiplyScalar(0.2), 0.12), roughness: 0.92, envMapIntensity: 0.25 })
+  // terraces read like lines of code: right edges flush, left edges indenting deeper toward the summit
+  const levels = 6, right = 1.6, h = 0.36
+  const widths = [3.6, 3.0, 2.5, 1.9, 1.4, 0.9]
+  for (let i = 0; i < levels; i++) {
+    const w = widths[i], d = 2.4 - i * 0.28
+    const m = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 3, 0.04), stone)
+    m.position.set(right - w / 2, i * h + h / 2, -i * 0.06); m.castShadow = m.receiveShadow = true; scene.add(m)
+    // a gold rule along each terrace's front edge, shorter than the stone, like a highlighted line
+    const len = w * (0.35 + ((i * 37) % 5) / 10)
+    const edge = new THREE.Mesh(new THREE.BoxGeometry(len, 0.025, 0.025), gold())
+    edge.position.set(right - w + 0.12 + len / 2, (i + 1) * h - 0.01, d / 2 - i * 0.06 - 0.01); scene.add(edge)
+  }
+  const topY = levels * h
+  const lx = right - 0.45
+  const lantern = new THREE.Group()
+  const cage = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.22, 6, 1, true), gold()); cage.position.y = 0.2; lantern.add(cage)
+  const cap = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.1, 6), gold()); cap.position.y = 0.36; lantern.add(cap)
+  const flame = new THREE.Mesh(new THREE.SphereGeometry(0.06, 24, 16), glow(C.goldLight, 8)); flame.position.y = 0.2; lantern.add(flame)
+  const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.02, 0.1, 8), gold()); leg.position.y = 0.05; lantern.add(leg)
+  lantern.position.set(lx, topY, -0.3); scene.add(lantern)
+  const pl = new THREE.PointLight(C.gold, 5, 5, 1.6); pl.position.set(lx, topY + 0.25, -0.1); scene.add(pl)
+  const ground = new THREE.Mesh(new THREE.CircleGeometry(80, 64), new THREE.MeshStandardMaterial({ color: C.night, roughness: 1 }))
+  ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground)
+  // low mist bands in front of the base
+  for (let i = 0; i < 3; i++) {
+    const mist = new THREE.Mesh(new THREE.PlaneGeometry(14, 0.9), new THREE.MeshBasicMaterial({ color: C.mist, transparent: true, opacity: 0.08 - i * 0.02, depthWrite: false }))
+    mist.position.set(0, 0.25 + i * 0.18, 1.8 - i * 0.6); scene.add(mist)
+  }
+  camera.position.set(-1.4, 2.1, 7.6); camera.lookAt(0.2, 1.05, 0)
+  bloom = [0.7, 0.55, 0.85]
+} else if (D === 'island') {
+  // B. The hermit's island: one rock in a still night sea, a single pine, a lamp in the window.
+  //    Away from the noise, the master keeps practising.
+  sky({ horizon: 0.0, moon: new THREE.Vector3(0.5, 0.3, -1), haze: 0.7 })
+  lights({ key: 0.7, keyPos: [5, 5, -6], warm: new THREE.Color(0.85, 0.9, 1.0), fill: 0.3 })
+  const sea = new Reflector(new THREE.CircleGeometry(60, 64), { textureWidth: S, textureHeight: S, color: new THREE.Color(0.32, 0.38, 0.36) })
+  sea.rotation.x = -Math.PI / 2; scene.add(sea)
+  const rockMat = new THREE.MeshStandardMaterial({ map: grain(C.forest.clone().multiplyScalar(0.9), 0.12), roughness: 0.85 })
+  const rockGeo = new THREE.IcosahedronGeometry(1, 6)
+  const p = rockGeo.attributes.position
+  for (let i = 0; i < p.count; i++) {
+    const v = new THREE.Vector3().fromBufferAttribute(p, i)
+    const n = 1 + Math.sin(v.x * 5.1 + v.z * 3.7) * 0.07 + Math.sin(v.y * 7.3 + v.x * 2.1) * 0.05
+    v.multiplyScalar(n); v.y = v.y > 0 ? v.y * 0.75 : v.y * 0.3; p.setXYZ(i, v.x * 1.6, v.y, v.z * 1.2)
+  }
+  rockGeo.computeVertexNormals()
+  const rock = new THREE.Mesh(rockGeo, rockMat); rock.castShadow = rock.receiveShadow = true; scene.add(rock)
+  // hut: a dark box with a lit window and a pitched roof
+  const hut = new THREE.Group()
+  const body = new THREE.Mesh(new RoundedBoxGeometry(0.62, 0.42, 0.5, 2, 0.02), new THREE.MeshStandardMaterial({ color: C.forest.clone().multiplyScalar(0.6), roughness: 0.8 }))
+  body.position.y = 0.21; hut.add(body)
+  const roof = new THREE.Mesh(new THREE.ConeGeometry(0.52, 0.3, 4), new THREE.MeshStandardMaterial({ color: C.night, roughness: 0.6 }))
+  roof.rotation.y = Math.PI / 4; roof.position.y = 0.57; roof.scale.set(1.15, 1, 0.95); hut.add(roof)
+  const win = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.14), glow(C.goldLight, 5)); win.position.set(0.12, 0.24, 0.252); hut.add(win)
+  hut.position.set(-0.25, 0.68, 0.05); hut.rotation.y = 0.25; scene.add(hut)
+  const wl = new THREE.PointLight(C.gold, 2.5, 3, 1.6); wl.position.set(-0.1, 0.95, 0.6); scene.add(wl)
+  // one pine: a leaning trunk and stacked flat canopies
+  const pine = new THREE.Group()
+  const trunk = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.12, 0.5, 0), new THREE.Vector3(0.35, 0.95, 0.05), new THREE.Vector3(0.62, 1.25, 0.05)]), 40, 0.035, 8), new THREE.MeshStandardMaterial({ color: 0x2a1d12, roughness: 0.9 }))
+  pine.add(trunk)
+  const leaf = new THREE.MeshStandardMaterial({ color: C.jade.clone().multiplyScalar(0.45), roughness: 0.8, flatShading: true })
+  for (const [x, y, s] of [[0.62, 1.27, 0.5], [0.34, 1.0, 0.38], [0.8, 1.15, 0.3], [0.5, 1.4, 0.3]]) {
+    const c = new THREE.Mesh(new THREE.CylinderGeometry(s, s * 1.1, 0.07, 9), leaf); c.position.set(x, y, 0.05); c.castShadow = true; pine.add(c)
+  }
+  pine.position.set(0.55, 0.62, -0.15); scene.add(pine)
+  camera.position.set(0, 0.9, 7.2); camera.lookAt(0, 0.55, 0)
+  bloom = [0.6, 0.5, 0.86]
+} else if (D === 'seal') {
+  // C. The verdict seal: a carved jade stamp beside the red impression of 仙 it has just pressed
+  //    onto a page of code. Praise is stamped only when it is earned.
+  sky({ horizon: -0.6, haze: 0 })
+  lights({ key: 1.1, keyPos: [-4, 8, 4] })
+  const page = canvasTex(1024, (g, n) => {
+    g.fillStyle = '#' + C.paper.getHexString(); g.fillRect(0, 0, n, n)
+    for (let i = 0; i < 9000; i++) { g.fillStyle = `rgba(120,100,70,${rnd() * 0.05})`; g.fillRect(rnd() * n, rnd() * n, 1 + rnd() * 2, 1 + rnd() * 2) }
+    // faint lines of code: indents and token widths, no real text
+    let y = 70
+    for (let l = 0; l < 22; l++) {
+      const indent = [0, 1, 2, 2, 1, 2, 3, 3, 2, 1, 0][l % 11] * 42
+      let x = 80 + indent
+      const toks = 2 + Math.floor(rnd() * 5)
+      for (let t = 0; t < toks; t++) {
+        const w = 30 + rnd() * 110; g.fillStyle = t === 0 ? 'rgba(14,53,39,.42)' : 'rgba(40,40,40,.22)'
+        g.fillRect(x, y, w, 12); x += w + 16
+      }
+      y += 40
+    }
+  })
+  const paper = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.02, 4.2), new THREE.MeshStandardMaterial({ map: page, roughness: 0.95, color: new THREE.Color(0.62, 0.6, 0.55) }))
+  paper.receiveShadow = true; paper.rotation.y = -0.12; scene.add(paper)
+  // the red impression: vermilion square with the glyph left as paper, slightly broken at the edges
+  const fontBuf = await (await fetch('../fonts/YujiBoku-Regular.ttf')).arrayBuffer()
+  const ff = new FontFace('YB', fontBuf); await ff.load(); document.fonts.add(ff)
+  const stamp = canvasTex(512, (g, n) => {
+    g.clearRect(0, 0, n, n)
+    g.fillStyle = '#' + C.vermilion.getHexString(); g.fillRect(36, 36, n - 72, n - 72)
+    g.globalCompositeOperation = 'destination-out'
+    g.font = `${n * 0.62}px YB`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('仙', n / 2, n / 2 + 10)
+    g.fillRect(56, 56, n - 112, 10); g.fillRect(56, n - 66, n - 112, 10); g.fillRect(56, 56, 10, n - 112); g.fillRect(n - 66, 56, 10, n - 112)
+    for (let i = 0; i < 1400; i++) { const e = rnd(); const x = e < .5 ? rnd() * n : (rnd() < .5 ? 36 + rnd() * 18 : n - 54 + rnd() * 18); const y = e < .5 ? (rnd() < .5 ? 36 + rnd() * 18 : n - 54 + rnd() * 18) : rnd() * n; g.fillRect(x, y, 2 + rnd() * 5, 2 + rnd() * 5) }
+    for (let i = 0; i < 500; i++) g.fillRect(rnd() * n, rnd() * n, 1 + rnd() * 2, 1 + rnd() * 2)
+  })
+  const mark = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.5), new THREE.MeshStandardMaterial({ map: stamp, transparent: true, roughness: 0.7, depthWrite: false, color: new THREE.Color(1.15, 0.95, 0.92) }))
+  mark.rotation.x = -Math.PI / 2; mark.rotation.z = -0.06; mark.position.set(0.55, 0.012, 0.35); scene.add(mark)
+  // the jade stamp: a tall rounded block with a carved knob, standing beside its print
+  const jade = new THREE.MeshPhysicalMaterial({ color: C.jade.clone().multiplyScalar(0.55), roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.08, sheen: 0.6, sheenColor: C.mist, transmission: 0.25, thickness: 1.2, attenuationColor: C.forest, attenuationDistance: 1.5, ior: 1.6 })
+  const block = new THREE.Mesh(new RoundedBoxGeometry(1.0, 1.7, 1.0, 5, 0.1), jade); block.position.set(-1.05, 0.85, -0.6); block.rotation.y = 0.5; block.castShadow = true; scene.add(block)
+  const knob = new THREE.Mesh(new THREE.SphereGeometry(0.36, 48, 32), jade); knob.scale.set(1, 0.72, 1); knob.position.set(-1.05, 1.86, -0.6); knob.castShadow = true; scene.add(knob)
+  camera.position.set(1.7, 5.6, 5.6); camera.lookAt(-0.25, 0.55, -0.2)
+  bloom = [0.35, 0.45, 0.9]
+} else if (D === 'enso') {
+  // D. The ensō: one unbroken gold stroke, left open, around a pair of code braces.
+  //    Zen practice and code practice are the same circle: never closed, never finished.
+  sky({ horizon: -0.7, haze: 0 })
+  lights({ key: 1.6, keyPos: [-3, 4, 7] })
+  const pts = []
+  const start = 0.5, end = Math.PI * 2 - 0.15
+  for (let i = 0; i <= 200; i++) {
+    const t = i / 200, a = start + (end - start) * t
+    const r = 1.55 + Math.sin(a * 3 + 1) * 0.03 + t * 0.06
+    pts.push(new THREE.Vector3(Math.cos(a) * r, Math.sin(a) * r, Math.sin(a * 2) * 0.05))
+  }
+  const curve = new THREE.CatmullRomCurve3(pts)
+  // a brush stroke: thick where the brush lands, thinning to a dry tail
+  const tube = new THREE.TubeGeometry(curve, 400, 1, 24)
+  const pos = tube.attributes.position, nrm = tube.attributes.normal
+  const ring = 25
+  for (let i = 0; i < pos.count; i++) {
+    const seg = Math.floor(i / ring) / 400
+    const width = 0.2 * Math.pow(Math.sin(Math.min(1, seg * 6) * Math.PI / 2), 0.6) * (1 - seg * 0.75)
+    const c = curve.getPointAt(Math.min(1, seg))
+    const v = new THREE.Vector3().fromBufferAttribute(pos, i).sub(c)
+    v.normalize().multiplyScalar(width); v.z *= 0.45
+    pos.setXYZ(i, c.x + v.x, c.y + v.y, c.z + v.z)
+  }
+  tube.computeVertexNormals()
+  const stroke = new THREE.Mesh(tube, gold()); stroke.castShadow = true; scene.add(stroke)
+  const braces = new THREE.Mesh(await glyphGeometry('Geist.ttf', '{ }', 1.5, 0.22), new THREE.MeshPhysicalMaterial({ color: C.ivory.clone().multiplyScalar(0.62), roughness: 0.4, clearcoat: 0.4 }))
+  braces.castShadow = true; scene.add(braces)
+  const back = new THREE.Mesh(new THREE.PlaneGeometry(14, 14), new THREE.MeshStandardMaterial({ map: grain(C.forest.clone().multiplyScalar(0.55), 0.06), roughness: 0.95 }))
+  back.position.z = -0.3; back.receiveShadow = true; scene.add(back)
+  camera.position.set(0.6, -0.4, 8.6); camera.lookAt(0, 0, 0)
+  bloom = [0.3, 0.4, 0.93]
+}
+
+camera.updateProjectionMatrix()
+const composer = new EffectComposer(renderer)
+composer.setSize(S, S)
+composer.addPass(new RenderPass(scene, camera))
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(S, S), ...bloom))
+composer.addPass(new OutputPass())
+for (let i = 0; i < 3; i++) composer.render()
+window.__ready = true
+</script></body></html>
