@@ -90,13 +90,27 @@
         "queueMaxDeliveries"
       ],
       "additionalProperties": false
+    },
+    "content": {
+      "type": "object",
+      "properties": {
+        "generatorCheckTimeoutMs": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "generatorCheckTimeoutMs"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
     "submission",
     "runSamples",
     "reviewer",
-    "judge"
+    "judge",
+    "content"
   ],
   "additionalProperties": false,
   "description": "config/limits.yaml: request, rate and spend limits."

@@ -15,3 +15,6 @@ reviewer:
 judge:
   maxParallelRuns: 2
   queueMaxDeliveries: 3
+content:
+  # sennin-content validate runs each generator twice at its smallest size to prove it repeats.
+  generatorCheckTimeoutMs: 20000

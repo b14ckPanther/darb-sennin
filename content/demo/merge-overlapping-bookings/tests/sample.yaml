@@ -1,0 +1,18 @@
+cases:
+  - id: sample-1
+    input: |
+      3
+      540 600
+      590 660
+      720 780
+    expected: |
+      540 660
+      720 780
+  - id: sample-2
+    input: |
+      2
+      600 660
+      660 690
+    expected: |
+      600 690
+    note: "Touching bookings merge."

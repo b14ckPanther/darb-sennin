@@ -1,0 +1,85 @@
+cases:
+  - id: case-01
+    input: |
+      2 0
+      3 7
+    expected: |
+      0
+    tags: [zero length]
+  - id: case-02
+    input: |
+      1 1
+      1
+    expected: |
+      1
+    tags: [single tile]
+  - id: case-03
+    input: |
+      3 11
+      2 5 9
+    expected: |
+      2
+    tags: [greedy trap]
+  - id: case-04
+    input: |
+      2 7
+      2 4
+    expected: |
+      -1
+    tags: [impossible, odd length]
+  - id: case-05
+    input: |
+      3 30
+      1 10 25
+    expected: |
+      3
+    tags: [greedy trap]
+  - id: case-06
+    input: |
+      4 100
+      1 7 30 31
+    expected: |
+      4
+    tags: [greedy trap]
+  - id: case-07
+    input: |
+      1 99999
+      3
+    expected: |
+      33333
+    tags: [large length, single tile]
+  - id: case-08
+    input: |
+      2 9973
+      2 4
+    expected: |
+      -1
+    tags: [impossible, large length]
+  - id: case-09
+    input: |
+      4 5
+      5 6 11 27
+    expected: |
+      1
+    tags: [random]
+  - id: case-10
+    input: |
+      6 12
+      4 5 8 15 25 34
+    expected: |
+      2
+    tags: [random]
+  - id: case-11
+    input: |
+      2 40
+      28 29
+    expected: |
+      -1
+    tags: [random]
+  - id: case-12
+    input: |
+      2 200
+      7 17
+    expected: |
+      20
+    tags: [random]

@@ -31,3 +31,20 @@ tags:
     description: Code that is correct but harder to follow than it needs to be.
   - id: locale
     description: Results that change with the machine's language or region settings.
+topics:
+  - id: arrays
+    description: Indexing, scanning and slicing ordered data.
+  - id: hashing
+    description: Lookups and counts in sets and maps.
+  - id: sorting
+    description: Ordering data, and what an order makes cheap.
+  - id: deque
+    description: Double-ended queues and monotonic windows.
+  - id: dynamic-programming
+    description: Building answers from answers to smaller inputs.
+  - id: graphs
+    description: Nodes, edges and searches over them.
+  - id: parsing
+    description: Turning loosely shaped text into data.
+  - id: intervals
+    description: Ranges on a line and how they overlap.

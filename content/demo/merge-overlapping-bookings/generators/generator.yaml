@@ -1,0 +1,4 @@
+entry: generate.py
+seed: 7
+sizes: [1000, 10000, 100000]
+targetComplexity: n log n

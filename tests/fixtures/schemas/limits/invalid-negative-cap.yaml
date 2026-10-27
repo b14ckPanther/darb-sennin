@@ -16,3 +16,5 @@ reviewer:
 judge:
   maxParallelRuns: 2
   queueMaxDeliveries: 3
+content:
+  generatorCheckTimeoutMs: 20000

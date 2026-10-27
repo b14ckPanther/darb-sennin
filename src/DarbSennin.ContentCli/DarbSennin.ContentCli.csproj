@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" />
     <ProjectReference Include="..\DarbSennin.Domain\DarbSennin.Domain.csproj" />
     <ProjectReference Include="..\DarbSennin.Infrastructure\DarbSennin.Infrastructure.csproj" />
   </ItemGroup>

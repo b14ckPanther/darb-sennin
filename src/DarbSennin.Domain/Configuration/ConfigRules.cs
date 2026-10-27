@@ -46,7 +46,7 @@ public static class ConfigRules
     }
 
     public static IEnumerable<string> Check(TagsConfig tags) =>
-        Duplicates(tags.Tags.Select(t => t.Id)).Select(id => $"tag '{id}' is defined twice");
+        Duplicates(tags.Tags.Concat(tags.Topics).Select(t => t.Id)).Select(id => $"tag '{id}' is defined twice");
 
     public static IEnumerable<string> Check(SandboxProfilesConfig profiles) =>
         Duplicates(profiles.Profiles.Select(p => p.Id)).Select(id => $"sandbox profile '{id}' is defined twice");

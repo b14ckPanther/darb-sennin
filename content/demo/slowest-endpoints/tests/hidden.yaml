@@ -1,0 +1,350 @@
+cases:
+  - id: case-01
+    input: |
+      3
+    expected: ""
+    tags: [empty input]
+  - id: case-02
+    input: |
+      2
+      GET /x 200 10
+      GET /y 200 10
+    expected: |
+      GET /x
+      GET /y
+    tags: [ties]
+  - id: case-03
+    input: |
+      1
+      GET /a 200 x
+      GET /a 200 5
+    expected: |
+      GET /a
+    tags: [malformed time]
+  - id: case-04
+    input: |
+      2
+      GET /a 500 100
+      GET /a 200 1
+      GET /a 200 2
+      GET /b 200 3
+    expected: |
+      GET /b
+      GET /a
+    tags: [odd count median]
+  - id: case-05
+    input: |
+      5
+      PUT /z 204 7
+    expected: |
+      PUT /z
+    tags: [k larger than endpoints]
+  - id: case-06
+    input: |
+      1
+      GET /a 200 1 extra
+      GET /b 200 9
+    expected: |
+      GET /b
+    tags: [too many fields]
+  - id: case-07
+    input: |
+      10
+      POST /p0 200 405
+      PUT /p0 200 75
+      PUT /p0 200 375
+      PUT /p0 200 932
+      PUT /p0 200 39
+    expected: |
+      POST /p0
+      PUT /p0
+    tags: [random]
+  - id: case-08
+    input: |
+      10
+      GET /p0 200 429
+      GET /p0 200 93
+      PUT /p0 200 61
+      PUT /p0 200 971
+      GET /p0 200 591
+      PUT /p0 200 51
+      GET /p0 200 571
+      GET /p0 200 430
+      GET /p0 200 585
+      POST /p0 200 106
+      PUT /p0 200 382
+      GET /p0 200 578
+    expected: |
+      GET /p0
+      PUT /p0
+      POST /p0
+    tags: [random]
+  - id: case-09
+    input: |
+      10
+      GET /p2 200 211
+      POST /p2 200 545
+      POST /p1 200 477
+      PUT /p1 200 371
+      POST /p0 200 814
+      GET /p2 200 799
+      GET /p0 200 589
+      POST /p2 200 507
+      POST /p2 200 460
+      POST /p2 200 75
+      GET /p2 200 429
+      GET /p1 200 156
+      POST /p1 200 41
+      PUT /p0 200 783
+      PUT /p2 200 809
+      POST /p1 200 712
+      POST /p2 200 509
+      PUT /p1 200 71
+      GET /p1 200 486
+      PUT /p2 200 67
+      GET /p2 200 719
+      POST /p2 200 592
+      PUT /p1 200 292
+      PUT /p1 200 909
+      PUT /p1 200 24
+      POST /p1 200 173
+      PUT /p0 200 506
+      GET /p0 200 787
+      POST /p0 200 757
+      GET /p1 200 401
+      POST /p0 200 171
+      POST /p1 200 563
+      POST /p0 200 839
+      POST /p2 200 286
+      PUT /p1 200 368
+      PUT /p1 200 981
+      GET /p0 200 85
+      GET /p0 200 238
+      PUT /p0 200 13
+      POST /p2 200 187
+    expected: |
+      POST /p0
+      GET /p2
+      PUT /p0
+      POST /p2
+      POST /p1
+      PUT /p2
+      GET /p0
+      GET /p1
+      PUT /p1
+    tags: [random]
+  - id: case-10
+    input: |
+      10
+      POST /p4 200 5
+      GET /p6 200 548
+      POST /p9 200 580
+      POST /p2 200 708
+      PUT /p9 200 671
+      PUT /p0 200 468
+      PUT /p8 200 402
+      POST /p6 200 404
+      GET /p7 200 650
+      POST /p0 200 196
+      GET /p3 200 452
+      GET /p1 200 349
+      PUT /p0 200 105
+      GET /p9 200 155
+      PUT /p1 200 972
+      POST /p9 200 27
+      GET /p3 200 629
+      POST /p2 200 650
+      POST /p5 200 617
+      POST /p7 200 126
+      GET /p7 200 478
+      POST /p7 200 320
+      GET /p2 200 105
+      PUT /p5 200 759
+      POST /p7 200 849
+      PUT /p2 200 529
+      GET /p3 200 974
+      PUT /p5 200 151
+      PUT /p8 200 937
+      GET /p8 200 306
+      PUT /p1 200 713
+      POST /p8 200 376
+      GET /p5 200 791
+      GET /p8 200 555
+      PUT /p5 200 652
+      GET /p9 200 831
+      GET /p3 200 838
+      POST /p3 200 205
+      PUT /p7 200 365
+      PUT /p0 200 29
+      POST /p7 200 266
+      GET /p9 200 980
+      POST /p7 200 828
+      PUT /p5 200 978
+      POST /p1 200 226
+      GET /p3 200 482
+      GET /p5 200 210
+      POST /p9 200 922
+      PUT /p0 200 491
+      PUT /p5 200 819
+      PUT /p1 200 855
+      PUT /p1 200 932
+      POST /p3 200 490
+      GET /p6 200 809
+      PUT /p5 200 89
+      PUT /p6 200 475
+      POST /p1 200 743
+      GET /p2 200 131
+      GET /p2 200 605
+      POST /p10 200 150
+      PUT /p9 200 486
+      PUT /p5 200 160
+      PUT /p8 200 135
+      GET /p0 200 819
+      PUT /p10 200 106
+      PUT /p2 200 445
+      GET /p3 200 29
+      POST /p3 200 300
+      PUT /p3 200 783
+      PUT /p5 200 266
+      PUT /p6 200 855
+      GET /p0 200 932
+      PUT /p5 200 920
+      POST /p10 200 598
+      PUT /p6 200 847
+      PUT /p2 200 545
+      GET /p8 200 523
+      GET /p7 200 796
+      GET /p9 200 5
+      GET /p2 200 145
+      POST /p9 200 743
+      GET /p8 200 64
+      POST /p10 200 531
+      PUT /p8 200 495
+      GET /p8 200 59
+      GET /p3 200 284
+      GET /p1 200 520
+      POST /p8 200 29
+      GET /p7 200 334
+      PUT /p8 200 621
+      PUT /p3 200 710
+      POST /p7 200 521
+      PUT /p7 200 520
+      GET /p8 200 898
+      POST /p8 200 915
+      GET /p7 200 141
+      POST /p1 200 402
+      POST /p5 200 75
+      PUT /p3 200 439
+      GET /p3 200 686
+      POST /p1 200 919
+      GET /p10 200 677
+      POST /p2 200 260
+      GET /p7 200 225
+      PUT /p1 200 408
+      POST /p2 200 684
+      GET /p2 200 724
+      POST /p8 200 414
+      POST /p6 200 201
+      POST /p5 200 95
+      PUT /p5 200 20
+      POST /p8 200 470
+      POST /p0 200 394
+      POST /p8 200 639
+      POST /p8 200 984
+      GET /p1 200 941
+      GET /p1 200 87
+      POST /p4 200 41
+      GET /p4 200 774
+      GET /p6 200 870
+      PUT /p4 200 416
+      GET /p8 200 942
+      PUT /p9 200 507
+      PUT /p5 200 92
+      POST /p0 200 819
+      PUT /p2 200 436
+      GET /p4 200 961
+      GET /p10 200 91
+      POST /p1 200 623
+      GET /p1 200 271
+      GET /p7 200 12
+      POST /p8 200 428
+      POST /p9 200 133
+      GET /p8 200 727
+      GET /p1 200 993
+      GET /p4 200 52
+      GET /p3 200 955
+      POST /p10 200 313
+      PUT /p3 200 297
+      POST /p8 200 689
+      GET /p4 200 356
+      GET /p4 200 38
+      GET /p0 200 751
+      PUT /p8 200 195
+      PUT /p7 200 252
+      POST /p1 200 675
+      PUT /p6 200 673
+      POST /p8 200 855
+      POST /p8 200 316
+      PUT /p3 200 236
+      POST /p3 200 853
+      PUT /p10 200 144
+      POST /p5 200 56
+      GET /p0 200 73
+      PUT /p4 200 442
+      GET /p0 200 87
+      PUT /p6 200 892
+      PUT /p10 200 995
+      POST /p9 200 249
+      PUT /p4 200 47
+      POST /p2 200 162
+      POST /p7 200 4
+      POST /p5 200 985
+      POST /p8 200 332
+      GET /p0 200 989
+      POST /p3 200 366
+      GET /p0 200 344
+      POST /p1 200 487
+      POST /p8 200 672
+      GET /p3 200 517
+      GET /p1 200 271
+      GET /p2 200 410
+      PUT /p0 200 404
+      GET /p4 200 312
+      PUT /p3 200 87
+      PUT /p8 200 874
+      GET /p10 200 915
+      PUT /p9 200 399
+      POST /p7 200 154
+      POST /p9 200 659
+      GET /p0 200 845
+      PUT /p8 200 643
+      POST /p8 200 143
+      PUT /p8 200 583
+      GET /p10 200 599
+      PUT /p10 200 980
+      PUT /p10 200 236
+      GET /p0 200 43
+      GET /p10 200 370
+      GET /p6 200 856
+      POST /p8 200 52
+      PUT /p0 200 642
+      PUT /p10 200 251
+      POST /p4 200 4
+      POST /p1 200 767
+      PUT /p8 200 95
+      PUT /p8 200 68
+      PUT /p7 200 259
+      GET /p4 200 241
+      PUT /p3 200 237
+    expected: |
+      PUT /p1
+      PUT /p6
+      GET /p6
+      GET /p0
+      POST /p2
+      POST /p1
+      GET /p10
+      POST /p9
+      GET /p3
+      GET /p8
+    tags: [random]

@@ -1,0 +1,37 @@
+id: fewest-tiles
+title: Fewest tiles for a row
+family: classic
+tags: [dynamic-programming, wrong-algorithm]
+difficulty: 2
+isBoss: false
+comparator: trimmed
+limits:
+  timeMs: 2000
+  memoryMb: 256
+target:
+  label: n times length
+  exponent: 1.0
+constraints:
+  - 1 ≤ k ≤ 50 tile lengths
+  - 1 ≤ tile length ≤ 10^4
+  - 0 ≤ L ≤ 10^5
+starters:
+  python: |
+    import sys
+
+
+    def main():
+        data = sys.stdin.read().split()
+        ...
+
+
+    main()
+  csharp: |
+    var data = Console.In.ReadToEnd().Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+  javascript: |
+    import { readFileSync } from 'node:fs'
+
+    const data = readFileSync(0, 'utf8').split(/\s+/).filter(Boolean)
+  pseudo: |
+    read the input
+    print the answer

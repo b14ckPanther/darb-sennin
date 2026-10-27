@@ -1,0 +1,4 @@
+set: demo
+contentVersion: demo-2026.10
+demo: true
+description: Public demo problems. Their hidden tests are visible on purpose; the real set lives in a private content repo.

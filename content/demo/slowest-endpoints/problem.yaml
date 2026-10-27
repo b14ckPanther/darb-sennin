@@ -1,0 +1,37 @@
+id: slowest-endpoints
+title: Slowest endpoints in an access log
+family: practical
+tags: [parsing, off-by-one]
+difficulty: 1
+isBoss: false
+comparator: exact
+limits:
+  timeMs: 1000
+  memoryMb: 256
+target:
+  label: n log n
+  exponent: 1.1
+constraints:
+  - 0 ≤ lines ≤ 10^5
+  - 1 ≤ k ≤ 100
+  - Times are whole milliseconds up to 10^6
+starters:
+  python: |
+    import sys
+
+
+    def main():
+        data = sys.stdin.read().split()
+        ...
+
+
+    main()
+  csharp: |
+    var data = Console.In.ReadToEnd().Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+  javascript: |
+    import { readFileSync } from 'node:fs'
+
+    const data = readFileSync(0, 'utf8').split(/\s+/).filter(Boolean)
+  pseudo: |
+    read the input
+    print the answer

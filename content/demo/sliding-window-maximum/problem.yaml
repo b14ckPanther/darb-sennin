@@ -1,0 +1,37 @@
+id: sliding-window-maximum
+title: Sliding window maximum
+family: classic
+tags: [deque, empty-input]
+difficulty: 2
+isBoss: false
+comparator: trimmed
+limits:
+  timeMs: 1500
+  memoryMb: 256
+target:
+  label: n
+  exponent: 1.0
+constraints:
+  - 0 ≤ n ≤ 10^6
+  - 1 ≤ k ≤ 10^6
+  - -10^4 ≤ reading ≤ 10^4
+starters:
+  python: |
+    import sys
+
+
+    def main():
+        data = sys.stdin.read().split()
+        ...
+
+
+    main()
+  csharp: |
+    var data = Console.In.ReadToEnd().Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+  javascript: |
+    import { readFileSync } from 'node:fs'
+
+    const data = readFileSync(0, 'utf8').split(/\s+/).filter(Boolean)
+  pseudo: |
+    read the input
+    print the answer

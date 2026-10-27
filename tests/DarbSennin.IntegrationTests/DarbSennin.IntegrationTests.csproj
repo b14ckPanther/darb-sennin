@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Azure.Messaging.ServiceBus" />
     <PackageReference Include="MongoDB.Driver" />
+    <PackageReference Include="Testcontainers.MongoDb" />
   </ItemGroup>
 
 </Project>

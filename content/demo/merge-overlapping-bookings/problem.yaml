@@ -1,0 +1,36 @@
+id: merge-overlapping-bookings
+title: Merge overlapping bookings
+family: classic
+tags: [sorting, off-by-one]
+difficulty: 1
+isBoss: false
+comparator: trimmed
+limits:
+  timeMs: 1000
+  memoryMb: 256
+target:
+  label: n log n
+  exponent: 1.1
+constraints:
+  - 0 ≤ n ≤ 10^5
+  - 0 ≤ start ≤ end ≤ 1440
+starters:
+  python: |
+    import sys
+
+
+    def main():
+        data = sys.stdin.read().split()
+        ...
+
+
+    main()
+  csharp: |
+    var data = Console.In.ReadToEnd().Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+  javascript: |
+    import { readFileSync } from 'node:fs'
+
+    const data = readFileSync(0, 'utf8').split(/\s+/).filter(Boolean)
+  pseudo: |
+    read the input
+    print the answer

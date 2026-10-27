@@ -1,0 +1,11 @@
+cases:
+  - id: sample-1
+    input: |
+      1
+      GET /a 200 30
+      GET /a 200 50
+      POST /b 201 45
+      broken line
+    expected: |
+      POST /b
+    note: "GET /a has median 40."

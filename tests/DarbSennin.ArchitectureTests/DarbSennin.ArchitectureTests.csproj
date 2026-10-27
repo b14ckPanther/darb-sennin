@@ -8,6 +8,7 @@
     <ProjectReference Include="..\..\src\DarbSennin.Domain\DarbSennin.Domain.csproj" />
     <ProjectReference Include="..\..\src\DarbSennin.Reviewer\DarbSennin.Reviewer.csproj" />
     <ProjectReference Include="..\..\src\DarbSennin.Infrastructure\DarbSennin.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\DarbSennin.Api\DarbSennin.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>

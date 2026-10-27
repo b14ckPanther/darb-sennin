@@ -1,0 +1,14 @@
+cases:
+  - id: sample-1
+    input: |
+      7 3
+      3 1 4 1 5 9 2
+    expected: |
+      4 4 5 9 9
+  - id: sample-2
+    input: |
+      0 2
+
+    expected: |
+
+    note: "No readings, no windows."

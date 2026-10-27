@@ -35,6 +35,8 @@ jobs:
       - run: dotnet restore
       - run: dotnet format --verify-no-changes --no-restore
       - run: dotnet build -warnaserror --no-restore
+      - name: Validate demo content
+        run: dotnet run --project src/DarbSennin.ContentCli --no-build -- validate content/demo --config config
       - name: Start local stack
         run: |
           cp .env.example .env

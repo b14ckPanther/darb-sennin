@@ -64,7 +64,11 @@ public sealed record PraiseGate
 
 public sealed record TagsConfig
 {
+    /// <summary>Mistake taxonomy: every finding carries one.</summary>
     public required IReadOnlyList<MistakeTag> Tags { get; init; }
+
+    /// <summary>Problem topics such as hashing or graphs.</summary>
+    public required IReadOnlyList<MistakeTag> Topics { get; init; }
 }
 
 public sealed record MistakeTag
@@ -138,6 +142,12 @@ public sealed record LimitsConfig
     public required RunSampleLimits RunSamples { get; init; }
     public required ReviewerLimits Reviewer { get; init; }
     public required JudgeLimits Judge { get; init; }
+    public required ContentLimits Content { get; init; }
+}
+
+public sealed record ContentLimits
+{
+    public required int GeneratorCheckTimeoutMs { get; init; }
 }
 
 public sealed record SubmissionLimits
