@@ -4,7 +4,7 @@ Solve problems in real code or rough pseudo code. A .NET backend runs your code 
 
 **Signature:** every grade shows its evidence. The failing test, the input that broke it, the measured complexity. Praise only appears when you have earned it.
 
-Status: Phases 0 to 2 done: .NET 10 solution skeleton, architecture and hygiene checks, local MongoDB + Service Bus emulator stack, React web scaffold and CI, product spec, and a design system on the Ensō brand (tokens with WCAG contrast tests, Solar icons, 14 tested components, Verdict Sheet and Today comps in `docs/screenshots/phase-02/`). Phase 3 (clickable prototype) is next. No backend features yet.
+Status: Phases 0 to 2 done: .NET 10 solution skeleton, architecture and hygiene checks, local MongoDB + Service Bus emulator stack, React web scaffold and CI, product spec, and a design system on the Ensō brand (tokens with WCAG contrast tests, Solar icons, 14 tested components, Verdict Sheet and Today comps in `docs/screenshots/phase-02/`). Phase 3 done: a clickable prototype of every screen on labelled demo data (workspace with CodeMirror and the live Verdict Sheet, Today, Library, Weakness, Boss, History, Ranks, Settings, the pseudo code verdict and every empty and error state), with Playwright and axe on each screen; screenshots in `docs/screenshots/phase-03/`. Phase 4 (content and config model) is next. No backend features yet.
 
 ## Stack
 
