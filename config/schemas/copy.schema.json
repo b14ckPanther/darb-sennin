@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sennin.zangeel.dev/schemas/copy.schema.json",
+  "description": "config/copy/<lang>/*.json: nested objects and lists whose leaves are non-empty strings; no exclamation marks.",
+  "$defs": {
+    "leaf": {
+      "type": "string",
+      "minLength": 1,
+      "not": {
+        "pattern": "!"
+      }
+    },
+    "node": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/leaf"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/node"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/node"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": {
+    "$ref": "#/$defs/node"
+  }
+}

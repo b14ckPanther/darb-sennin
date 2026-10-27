@@ -1,0 +1,16 @@
+cases:
+  - id: s1
+    input: |
+      3 15
+      1 5 12
+    expected: |
+      3
+    tags: [greedy trap]
+  - id: s2
+    input: |
+      1 6
+      4
+    expected: |
+      -1
+    weight: 2
+    revealOnFail: false

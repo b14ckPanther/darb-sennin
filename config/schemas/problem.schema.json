@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sennin.zangeel.dev/schemas/problem.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "family": {
+      "enum": [
+        "classic",
+        "practical",
+        "games"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "difficulty": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3
+    },
+    "isBoss": {
+      "type": "boolean"
+    },
+    "comparator": {
+      "enum": [
+        "exact",
+        "trimmed",
+        "float",
+        "unordered-lines"
+      ]
+    },
+    "floatTolerance": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "timeMs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "memoryMb": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "timeMs",
+        "memoryMb"
+      ],
+      "additionalProperties": false
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exponent": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "label",
+        "exponent"
+      ],
+      "additionalProperties": false
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "starters": {
+      "type": "object",
+      "properties": {
+        "python": {
+          "type": "string"
+        },
+        "csharp": {
+          "type": "string"
+        },
+        "javascript": {
+          "type": "string"
+        },
+        "pseudo": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "python",
+        "csharp",
+        "javascript",
+        "pseudo"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "family",
+    "tags",
+    "difficulty",
+    "comparator",
+    "limits",
+    "target",
+    "constraints",
+    "starters"
+  ],
+  "additionalProperties": false,
+  "description": "content/<set>/<slug>/problem.yaml. The statement lives beside it in statement.md.",
+  "if": {
+    "properties": {
+      "comparator": {
+        "const": "float"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "floatTolerance"
+    ]
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sennin.zangeel.dev/schemas/sandbox-profiles.schema.json",
+  "type": "object",
+  "properties": {
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*:[1-9][0-9]*$",
+          "description": "uid:gid, never root"
+        },
+        "seccompProfile": {
+          "type": "string",
+          "pattern": "\\.json$"
+        },
+        "tmpfs": {
+          "type": "object",
+          "properties": {
+            "workMb": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "tmpMb": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "workMb",
+            "tmpMb"
+          ],
+          "additionalProperties": false
+        },
+        "pidsLimit": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cpus": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "ulimits": {
+          "type": "object",
+          "properties": {
+            "nofile": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "fsizeBytes": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "nproc": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "nofile",
+            "fsizeBytes",
+            "nproc"
+          ],
+          "additionalProperties": false
+        },
+        "outputKb": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "envAllowList": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]*$"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "user",
+        "seccompProfile",
+        "tmpfs",
+        "pidsLimit",
+        "cpus",
+        "ulimits",
+        "outputKb",
+        "envAllowList"
+      ],
+      "additionalProperties": false
+    },
+    "profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "language": {
+            "enum": [
+              "python",
+              "csharp",
+              "javascript",
+              "any"
+            ]
+          },
+          "step": {
+            "enum": [
+              "compile",
+              "run",
+              "probe"
+            ]
+          },
+          "memoryMb": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "wallTimeMs": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "pidsLimit": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "cpus": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "id",
+          "language",
+          "step",
+          "memoryMb",
+          "wallTimeMs"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "defaults",
+    "profiles"
+  ],
+  "additionalProperties": false,
+  "description": "config/sandbox/profiles.yaml: sizes and limits only. Security switches are enforced in code (SECURITY.md section 4)."
+}

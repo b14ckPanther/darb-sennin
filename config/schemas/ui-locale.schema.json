@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sennin.zangeel.dev/schemas/ui-locale.schema.json",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "type": "string"
+    },
+    "timeZone": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "timeZone"
+  ],
+  "additionalProperties": false
+}

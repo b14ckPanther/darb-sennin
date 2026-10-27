@@ -1,0 +1,29 @@
+# Invalid: a share is between 0 and 1
+# Streaks, weakness decay, recommendations and the weekly boss (spec, Q13 and Q15).
+streak:
+  # One graded submission a day keeps the streak; the day ends at this local time.
+  dayEndsAt: "04:00"
+  timeZone: Asia/Jerusalem
+  freezesPerMonth: 2
+  # Missing a day never costs rank or points.
+  resetLosesPoints: false
+weakness:
+  halfLifeDays: 14
+  weeksShown: 8
+  scoreMax: 100
+  # A cited finding adds its severity weight; nits add this much so they still show.
+  nitWeight: 0.5
+recommendations:
+  count: 3
+  # Share of picks drawn from the weakest tags; the rest are new or due for review.
+  weakestShare: 1.5
+  reviewAfterDays: 12
+boss:
+  # The boss changes on this weekday, local time; an unbeaten boss stays until beaten.
+  weekStartsOn: monday
+  carryOverUnbeaten: true
+  revealInputs: false
+points:
+  perPassedCase: 2
+  cleanSolveBonus: 40
+  bossDefeatBonus: 120

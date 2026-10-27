@@ -1,0 +1,5 @@
+# Invalid: content versions look like demo-2026.10
+set: demo
+contentVersion: Version 3
+demo: true
+description: Demo.

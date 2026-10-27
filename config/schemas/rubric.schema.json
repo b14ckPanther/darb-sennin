@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sennin.zangeel.dev/schemas/rubric.schema.json",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "voice": {
+      "enum": [
+        "strict"
+      ]
+    },
+    "severities": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "critical",
+          "major",
+          "minor",
+          "nit"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "evidenceKinds": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "case",
+          "lines",
+          "probe",
+          "compile"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "requiredEvidence": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "case",
+                "lines",
+                "probe",
+                "compile"
+              ]
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "description",
+          "requiredEvidence"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "bannedPhrases": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "praiseGate": {
+      "type": "object",
+      "properties": {
+        "allTestsPass": {
+          "type": "boolean"
+        },
+        "complexityFull": {
+          "type": "boolean"
+        },
+        "maxSeverity": {
+          "enum": [
+            "critical",
+            "major",
+            "minor",
+            "nit"
+          ]
+        },
+        "maxPraiseWords": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "allTestsPass",
+        "complexityFull",
+        "maxSeverity",
+        "maxPraiseWords"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "version",
+    "voice",
+    "severities",
+    "evidenceKinds",
+    "criteria",
+    "bannedPhrases",
+    "praiseGate"
+  ],
+  "additionalProperties": false,
+  "description": "config/rubric/v<N>.yaml: reviewer rubric and the praise gate."
+}

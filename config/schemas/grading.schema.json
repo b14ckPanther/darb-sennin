@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sennin.zangeel.dev/schemas/grading.schema.json",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "components": {
+      "type": "object",
+      "properties": {
+        "tests": {
+          "type": "object",
+          "properties": {
+            "max": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "mode": {
+              "enum": [
+                "proportional"
+              ]
+            }
+          },
+          "required": [
+            "max",
+            "mode"
+          ],
+          "additionalProperties": false
+        },
+        "complexity": {
+          "type": "object",
+          "properties": {
+            "max": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "tolerance": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "requiresAllTestsPass": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "max",
+            "tolerance",
+            "requiresAllTestsPass"
+          ],
+          "additionalProperties": false
+        },
+        "review": {
+          "type": "object",
+          "properties": {
+            "max": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "max"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tests",
+        "complexity",
+        "review"
+      ],
+      "additionalProperties": false
+    },
+    "severityWeights": {
+      "type": "object",
+      "properties": {
+        "critical": {
+          "type": "number",
+          "minimum": 0
+        },
+        "major": {
+          "type": "number",
+          "minimum": 0
+        },
+        "minor": {
+          "type": "number",
+          "minimum": 0
+        },
+        "nit": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "critical",
+        "major",
+        "minor",
+        "nit"
+      ],
+      "additionalProperties": false
+    },
+    "translatedTier": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "version",
+    "components",
+    "severityWeights",
+    "translatedTier"
+  ],
+  "additionalProperties": false,
+  "description": "config/grading.yaml: deterministic score parameters."
+}

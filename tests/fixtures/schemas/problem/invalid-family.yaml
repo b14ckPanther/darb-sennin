@@ -1,0 +1,22 @@
+# Invalid: families are classic, practical and games
+id: fewest-tiles
+title: Fewest tiles for a row
+family: finance
+tags: [dynamic-programming]
+difficulty: 2
+isBoss: false
+comparator: trimmed
+limits:
+  timeMs: 2000
+  memoryMb: 256
+target:
+  label: n times length
+  exponent: 1.0
+constraints:
+  - 1 ≤ tile lengths ≤ 50
+starters:
+  python: |
+    import sys
+  csharp: ""
+  javascript: ""
+  pseudo: ""

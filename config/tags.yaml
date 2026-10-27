@@ -1,0 +1,32 @@
+# Mistake taxonomy. Findings carry one tag; the weakness profile is built from them.
+tags:
+  - id: off-by-one
+    description: Boundaries one step out, such as slices, < against <=, or the middle of an even count.
+  - id: empty-input
+    description: Nothing in, something wrong out, such as empty lists, zero values, or k larger than n.
+  - id: quadratic-scan
+    description: A scan inside a scan where an index, set or deque would do.
+  - id: missing-branch
+    description: A case the statement names that the code never handles.
+  - id: duplicates
+    description: Repeated items counted, matched or dropped the wrong number of times.
+  - id: rounding
+    description: Units lost or invented by rounding each part on its own.
+  - id: wrong-algorithm
+    description: An approach that is fast but not correct for every input.
+  - id: overflow
+    description: Values past the range or precision of the number type.
+  - id: integer-division
+    description: Division that truncates where the statement wants a fraction.
+  - id: mutation-order
+    description: State recorded before it is read, or changed while it is walked.
+  - id: complexity
+    description: Correct, but doing more work than the target needs.
+  - id: dead-code
+    description: Code that runs and changes nothing.
+  - id: naming
+    description: A name that says something other than what the value holds.
+  - id: clarity
+    description: Code that is correct but harder to follow than it needs to be.
+  - id: locale
+    description: Results that change with the machine's language or region settings.

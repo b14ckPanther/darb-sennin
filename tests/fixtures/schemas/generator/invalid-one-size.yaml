@@ -1,0 +1,5 @@
+# Invalid: a fit needs at least two sizes
+entry: generate.py
+seed: 7
+sizes: [1000]
+targetComplexity: n times length

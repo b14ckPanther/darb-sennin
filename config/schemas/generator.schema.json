@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sennin.zangeel.dev/schemas/generator.schema.json",
+  "type": "object",
+  "properties": {
+    "entry": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+\\.py$"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "sizes": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "minItems": 2,
+      "uniqueItems": true
+    },
+    "targetComplexity": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "entry",
+    "seed",
+    "sizes",
+    "targetComplexity"
+  ],
+  "additionalProperties": false,
+  "description": "content/<set>/<slug>/generators/generator.yaml: the probe generator and its sizes."
+}

@@ -1,0 +1,25 @@
+{
+ "$comment": "Invalid: copy has no exclamation marks",
+ "loading": "Loading {what}",
+ "offline": {
+  "title": "Cannot reach Sennin",
+  "body": "Could not reach the server. Your code is kept in this tab; try again when the connection is back.",
+  "retry": "Try again"
+ },
+ "notFound": {
+  "title": "Nothing here",
+  "body": "This page does not exist. It may have been renamed when the content changed.",
+  "action": "Go to Today"
+ },
+ "judgePaused": {
+  "title": "Runs are paused",
+  "body": "Runs are paused. Your submission is queued and will run when the judge is back.",
+  "notice": "Runs are paused. Submissions queue and run when the judge is back."
+ },
+ "reviewerDown": {
+  "title": "Review unavailable",
+  "body": "Review unavailable: grade based on tests and measurements only."
+ },
+ "demo": "Prototype on demo data. Nothing you type leaves this browser.",
+ "page": "Hello!"
+}

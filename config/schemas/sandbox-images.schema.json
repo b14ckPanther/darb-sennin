@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sennin.zangeel.dev/schemas/sandbox-images.schema.json",
+  "type": "object",
+  "properties": {
+    "images": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "enum": [
+              "python",
+              "csharp",
+              "javascript"
+            ]
+          },
+          "image": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._/-]*$"
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "compile": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "run": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "language",
+          "image",
+          "digest",
+          "run"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "images"
+  ],
+  "additionalProperties": false,
+  "description": "config/sandbox/images.yaml: images pinned by digest."
+}

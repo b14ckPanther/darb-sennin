@@ -1,0 +1,16 @@
+# Language images, pinned by digest after the Phase 5 build (`tools/build-sandbox-images.sh`).
+# Digests are placeholders until then and the judge refuses to start with one.
+images:
+  - language: python
+    image: sennin-sandbox-python
+    digest: "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+    run: [python3, -I, /work/main.py]
+  - language: csharp
+    image: sennin-sandbox-dotnet
+    digest: "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+    compile: [dotnet, build, /work/app.csproj, -c, Release, -o, /work/out, --nologo]
+    run: [dotnet, /work/out/app.dll]
+  - language: javascript
+    image: sennin-sandbox-node
+    digest: "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+    run: [node, /work/main.mjs]

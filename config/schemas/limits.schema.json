@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sennin.zangeel.dev/schemas/limits.schema.json",
+  "type": "object",
+  "properties": {
+    "submission": {
+      "type": "object",
+      "properties": {
+        "maxCodeBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "perUserPerHour": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "perProblemPerHour": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "maxCodeBytes",
+        "perUserPerHour",
+        "perProblemPerHour"
+      ],
+      "additionalProperties": false
+    },
+    "runSamples": {
+      "type": "object",
+      "properties": {
+        "perUserPerMinute": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "perUserPerMinute"
+      ],
+      "additionalProperties": false
+    },
+    "reviewer": {
+      "type": "object",
+      "properties": {
+        "maxInputTokensPerReview": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maxOutputTokensPerReview": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "reviewsPerDay": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "monthlySpendCapUsd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "fallbackBelowShare": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "maxInputTokensPerReview",
+        "maxOutputTokensPerReview",
+        "reviewsPerDay",
+        "monthlySpendCapUsd",
+        "fallbackBelowShare"
+      ],
+      "additionalProperties": false
+    },
+    "judge": {
+      "type": "object",
+      "properties": {
+        "maxParallelRuns": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "queueMaxDeliveries": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "maxParallelRuns",
+        "queueMaxDeliveries"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "submission",
+    "runSamples",
+    "reviewer",
+    "judge"
+  ],
+  "additionalProperties": false,
+  "description": "config/limits.yaml: request, rate and spend limits."
+}

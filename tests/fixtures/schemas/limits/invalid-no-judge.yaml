@@ -1,0 +1,15 @@
+# Invalid: the judge section is required
+# Request, rate and spend limits (SECURITY.md section 7). Checked before work starts.
+submission:
+  maxCodeBytes: 65536
+  perUserPerHour: 60
+  perProblemPerHour: 20
+runSamples:
+  perUserPerMinute: 12
+reviewer:
+  maxInputTokensPerReview: 12000
+  maxOutputTokensPerReview: 2000
+  reviewsPerDay: 40
+  monthlySpendCapUsd: 5
+  # Below this share of the cap left, the configured fallback model is used.
+  fallbackBelowShare: 0.2

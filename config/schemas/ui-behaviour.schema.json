@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sennin.zangeel.dev/schemas/ui-behaviour.schema.json",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "type": "string"
+    },
+    "sheet": {
+      "type": "object",
+      "properties": {
+        "detents": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "detents"
+      ],
+      "additionalProperties": false
+    },
+    "toast": {
+      "type": "object",
+      "properties": {
+        "durationMs": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "durationMs"
+      ],
+      "additionalProperties": false
+    },
+    "editor": {
+      "type": "object",
+      "properties": {
+        "fontSizes": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 1
+        },
+        "defaultFontSize": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "fontSizes",
+        "defaultFontSize"
+      ],
+      "additionalProperties": false
+    },
+    "shortcuts": {
+      "type": "object",
+      "properties": {
+        "chordWindowMs": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "chordWindowMs"
+      ],
+      "additionalProperties": false
+    },
+    "library": {
+      "type": "object",
+      "properties": {
+        "searchDebounceMs": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "searchDebounceMs"
+      ],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "flashMs": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "flashMs"
+      ],
+      "additionalProperties": false
+    },
+    "weakness": {
+      "type": "object",
+      "properties": {
+        "trendDelta": {
+          "type": "number",
+          "minimum": 0
+        },
+        "trendLookbackWeeks": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "trendDelta",
+        "trendLookbackWeeks"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "sheet",
+    "toast",
+    "editor",
+    "shortcuts",
+    "evidence",
+    "weakness"
+  ],
+  "additionalProperties": false,
+  "description": "config/ui/behaviour.json"
+}

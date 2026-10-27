@@ -1,0 +1,23 @@
+# Invalid: thresholds are not negative
+# Rank ladder (ADR-034): original names, point thresholds. No public leaderboard in v1.
+ranks:
+  - id: apprentice
+    name: Apprentice
+    threshold: -10
+    description: Submits, reads the sheet, fixes what it cites.
+  - id: journeyman
+    name: Journeyman
+    threshold: 800
+    description: Passes most hidden tests on the first attempt.
+  - id: adept
+    name: Adept
+    threshold: 1600
+    description: Meets the target complexity without being told.
+  - id: examiner
+    name: Examiner
+    threshold: 3200
+    description: Finds the breaking input before the judge does.
+  - id: master
+    name: Master
+    threshold: 6400
+    description: Clean sheets across every family of problem.

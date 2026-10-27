@@ -1,0 +1,45 @@
+# Invalid: the sandbox never runs as root
+# Container limits per step and language (SECURITY.md section 3, layer B). Security switches
+# (network none, read-only root, caps dropped, no-new-privileges) are not configurable here: the
+# validator enforces them in code. Only sizes and the env allow-list live in data.
+defaults:
+  user: "0:0"
+  seccompProfile: sandbox/seccomp/sennin-seccomp.json
+  tmpfs:
+    workMb: 64
+    tmpMb: 16
+  pidsLimit: 64
+  cpus: 1
+  ulimits:
+    nofile: 256
+    fsizeBytes: 16777216
+    nproc: 64
+  outputKb: 1024
+  envAllowList: [LANG, LC_ALL, PYTHONDONTWRITEBYTECODE, DOTNET_CLI_TELEMETRY_OPTOUT, NODE_OPTIONS]
+profiles:
+  - id: python-run
+    language: python
+    step: run
+    memoryMb: 256
+    wallTimeMs: 10000
+  - id: csharp-compile
+    language: csharp
+    step: compile
+    memoryMb: 1024
+    wallTimeMs: 60000
+    pidsLimit: 128
+  - id: csharp-run
+    language: csharp
+    step: run
+    memoryMb: 256
+    wallTimeMs: 10000
+  - id: javascript-run
+    language: javascript
+    step: run
+    memoryMb: 256
+    wallTimeMs: 10000
+  - id: probe
+    language: any
+    step: probe
+    memoryMb: 512
+    wallTimeMs: 20000

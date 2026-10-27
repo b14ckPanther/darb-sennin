@@ -1,0 +1,21 @@
+# Invalid: the review component is missing
+# Deterministic score (spec: the LLM cannot change it). Read by the Grader in Phase 6.
+version: 1
+components:
+  tests:
+    max: 70
+    # Points scale with the weighted share of hidden cases that pass.
+    mode: proportional
+  complexity:
+    max: 20
+    # Full points when the measured exponent is within tolerance of the target exponent.
+    tolerance: 0.15
+    # Skipped (0 points, explained) unless every hidden case passes.
+    requiresAllTestsPass: true
+severityWeights:
+  critical: 6
+  major: 3
+  minor: 1
+  nit: 0
+# The pseudo code path (ADR-030): graded the same, labelled "translated".
+translatedTier: translated

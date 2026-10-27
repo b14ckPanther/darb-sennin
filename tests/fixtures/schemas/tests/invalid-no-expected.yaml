@@ -1,0 +1,4 @@
+# Invalid: every case has an expected output
+cases:
+  - id: s1
+    input: "1 0\n4\n"

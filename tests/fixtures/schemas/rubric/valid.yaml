@@ -1,0 +1,32 @@
+# Reviewer rubric, version 1. Read by the Reviewer in Phase 7; validated now.
+version: 1
+voice: strict
+severities: [critical, major, minor, nit]
+evidenceKinds: [case, lines, probe, compile]
+criteria:
+  - id: correctness
+    description: The code returns the right answer for every input the statement allows.
+    requiredEvidence: [case]
+  - id: complexity
+    description: The running time grows no faster than the target.
+    requiredEvidence: [probe]
+  - id: edge-cases
+    description: Empty, single, duplicate, boundary and extreme inputs are handled.
+    requiredEvidence: [case, lines]
+  - id: clarity
+    description: Names, structure and control flow say what the code does.
+    requiredEvidence: [lines]
+bannedPhrases:
+  - great job
+  - well done
+  - nice work
+  - amazing
+  - awesome
+  - perfect
+  - impressive
+  - excellent
+praiseGate:
+  allTestsPass: true
+  complexityFull: true
+  maxSeverity: nit
+  maxPraiseWords: 14

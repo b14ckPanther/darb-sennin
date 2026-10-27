@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sennin.zangeel.dev/schemas/progression.schema.json",
+  "type": "object",
+  "properties": {
+    "streak": {
+      "type": "object",
+      "properties": {
+        "dayEndsAt": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+        },
+        "timeZone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "freezesPerMonth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resetLosesPoints": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "dayEndsAt",
+        "timeZone",
+        "freezesPerMonth",
+        "resetLosesPoints"
+      ],
+      "additionalProperties": false
+    },
+    "weakness": {
+      "type": "object",
+      "properties": {
+        "halfLifeDays": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "weeksShown": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "scoreMax": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "nitWeight": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "halfLifeDays",
+        "weeksShown",
+        "scoreMax",
+        "nitWeight"
+      ],
+      "additionalProperties": false
+    },
+    "recommendations": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "weakestShare": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "reviewAfterDays": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "count",
+        "weakestShare",
+        "reviewAfterDays"
+      ],
+      "additionalProperties": false
+    },
+    "boss": {
+      "type": "object",
+      "properties": {
+        "weekStartsOn": {
+          "enum": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ]
+        },
+        "carryOverUnbeaten": {
+          "type": "boolean"
+        },
+        "revealInputs": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "weekStartsOn",
+        "carryOverUnbeaten",
+        "revealInputs"
+      ],
+      "additionalProperties": false
+    },
+    "points": {
+      "type": "object",
+      "properties": {
+        "perPassedCase": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cleanSolveBonus": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bossDefeatBonus": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "perPassedCase",
+        "cleanSolveBonus",
+        "bossDefeatBonus"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "streak",
+    "weakness",
+    "recommendations",
+    "boss",
+    "points"
+  ],
+  "additionalProperties": false,
+  "description": "config/progression.yaml: streaks, weakness decay, recommendations, boss and points."
+}

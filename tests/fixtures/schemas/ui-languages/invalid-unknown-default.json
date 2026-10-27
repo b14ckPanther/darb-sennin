@@ -1,0 +1,30 @@
+{
+ "$comment": "Invalid: the default is a runnable language",
+ "languages": [
+  {
+   "id": "python",
+   "label": "Python 3.14",
+   "short": "Python",
+   "editor": "python"
+  },
+  {
+   "id": "csharp",
+   "label": "C# 14",
+   "short": "C#",
+   "editor": "csharp"
+  },
+  {
+   "id": "javascript",
+   "label": "JavaScript, Node 24",
+   "short": "JavaScript",
+   "editor": "javascript"
+  },
+  {
+   "id": "pseudo",
+   "label": "Pseudo code",
+   "short": "Pseudo",
+   "editor": "plain"
+  }
+ ],
+ "default": "pseudo"
+}

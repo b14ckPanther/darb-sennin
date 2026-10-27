@@ -1,0 +1,4 @@
+set: demo
+contentVersion: demo-2026.10
+demo: true
+description: Public demo problems with visible hidden tests.

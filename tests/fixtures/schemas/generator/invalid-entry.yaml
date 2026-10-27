@@ -1,0 +1,5 @@
+# Invalid: generators are Python files beside generator.yaml
+entry: ../../../etc/passwd
+seed: 7
+sizes: [1000, 10000, 100000]
+targetComplexity: n times length
