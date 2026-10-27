@@ -1,3 +1,4 @@
+import behaviour from '@config/ui/behaviour.json'
 import { useId } from 'react'
 import { useWeakness } from '../api/queries'
 import type { WeaknessProfile, WeaknessTag } from '../api/types'
@@ -62,11 +63,13 @@ function Sparkline({ values, max, label }: { values: number[]; max: number; labe
   )
 }
 
+/** Rising or fading against a few weeks back; the window and the dead band are config. */
 function direction(trend: number[]): 'rising' | 'falling' | 'steady' {
+  const { trendDelta, trendLookbackWeeks } = behaviour.weakness
   const recent = trend[trend.length - 1] ?? 0
-  const before = trend[trend.length - 3] ?? recent
-  if (recent - before > 5) return 'rising'
-  if (before - recent > 5) return 'falling'
+  const before = trend[trend.length - 1 - trendLookbackWeeks] ?? recent
+  if (recent - before > trendDelta) return 'rising'
+  if (before - recent > trendDelta) return 'falling'
   return 'steady'
 }
 

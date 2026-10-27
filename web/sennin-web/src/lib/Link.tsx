@@ -6,12 +6,22 @@ interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   children: ReactNode
   /** Treat any path under href as current, for section links like Library. */
   section?: boolean
+  /** Overrides the path match, for links whose section spans other paths. */
+  current?: boolean
 }
 
-export function Link({ href, children, section = false, onClick, ...rest }: LinkProps) {
+export function Link({
+  href,
+  children,
+  section = false,
+  current: forced,
+  onClick,
+  ...rest
+}: LinkProps) {
   const { path } = useLocation()
   const base = href.split('?')[0] ?? href
-  const current = path === base || (section && base !== '/' && path.startsWith(base))
+  const current =
+    (forced ?? path === base) || (section && base !== '/' && path.startsWith(`${base}/`))
   const handle = (event: MouseEvent<HTMLAnchorElement>) => {
     onClick?.(event)
     if (

@@ -15,15 +15,67 @@
     "title": "Keyboard shortcuts",
     "open": "Keyboard shortcuts",
     "items": [
-      { "keys": ["Ctrl or Cmd", "Enter"], "does": "Submit" },
-      { "keys": ["Ctrl or Cmd", "'"], "does": "Run samples" },
-      { "keys": ["J"], "does": "Next finding" },
-      { "keys": ["K"], "does": "Previous finding" },
-      { "keys": ["E"], "does": "Jump to the evidence of the current finding" },
-      { "keys": ["G", "L"], "does": "Go to the library" },
-      { "keys": ["G", "T"], "does": "Go to Today" },
-      { "keys": ["Esc", "Tab"], "does": "Leave the editor" },
-      { "keys": ["?"], "does": "Show this sheet" }
+      {
+        "keys": [
+          "Ctrl or Cmd",
+          "Enter"
+        ],
+        "does": "Submit"
+      },
+      {
+        "keys": [
+          "Ctrl or Cmd",
+          "'"
+        ],
+        "does": "Run samples"
+      },
+      {
+        "keys": [
+          "J"
+        ],
+        "does": "Next finding"
+      },
+      {
+        "keys": [
+          "K"
+        ],
+        "does": "Previous finding"
+      },
+      {
+        "keys": [
+          "E"
+        ],
+        "does": "Jump to the evidence of the current finding"
+      },
+      {
+        "keys": [
+          "G",
+          "L"
+        ],
+        "does": "Go to the library",
+        "to": "/library"
+      },
+      {
+        "keys": [
+          "G",
+          "T"
+        ],
+        "does": "Go to Today",
+        "to": "/"
+      },
+      {
+        "keys": [
+          "Esc",
+          "Tab"
+        ],
+        "does": "Leave the editor"
+      },
+      {
+        "keys": [
+          "?"
+        ],
+        "does": "Show this sheet"
+      }
     ]
   }
 }

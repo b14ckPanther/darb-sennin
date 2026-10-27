@@ -1,6 +1,7 @@
 import languageConfig from '@config/ui/languages.json'
 import locale from '@config/ui/locale.json'
 import type { LanguageId } from '../api/types'
+import { defaultCopy, fill } from '../copy/copy'
 
 // The user's day is reckoned in their time zone (spec: the day ends at 04:00 Asia/Jerusalem).
 const timeZone = locale.timeZone
@@ -41,7 +42,10 @@ export function dayKey(iso: string): string {
 
 export function formatMs(ms: number | null): string {
   if (ms === null) return ''
-  return ms >= 1000 ? `${(ms / 1000).toFixed(2)} s` : `${String(Math.round(ms))} ms`
+  const units = defaultCopy.units
+  return ms >= 1000
+    ? fill(units.s, { n: (ms / 1000).toFixed(2) })
+    : fill(units.ms, { n: Math.round(ms) })
 }
 
 const byId = new Map(languageConfig.languages.map((l) => [l.id as LanguageId, l]))
@@ -49,4 +53,5 @@ const byId = new Map(languageConfig.languages.map((l) => [l.id as LanguageId, l]
 export const languageName = (id: LanguageId) => byId.get(id)?.label ?? id
 export const languageShort = (id: LanguageId) => byId.get(id)?.short ?? id
 export const languages = languageConfig.languages.map((l) => l.id as LanguageId)
+export const defaultLanguage = languageConfig.default as LanguageId
 export const editorMode = (id: LanguageId) => byId.get(id)?.editor ?? 'plain'

@@ -44,11 +44,12 @@ describe('useLiveVerdict', () => {
     await act(async () => {
       await vi.runAllTimersAsync()
     })
-    expect(result.current.phase).toBe('reviewed')
-    // The sheet fetches grade and findings only after the server announces them.
+    // Grade and findings are fetched only after the server announces them, and the sheet
+    // reports the graded phase only once they have arrived.
     await act(async () => {
       await vi.runAllTimersAsync()
     })
+    expect(result.current.phase).toBe('reviewed')
     expect(result.current.submission?.id).toBe(submissionId)
   })
 })

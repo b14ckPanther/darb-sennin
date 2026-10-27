@@ -36,6 +36,12 @@ export function navigate(to: string, options: { replace?: boolean } = {}) {
   listeners.forEach((notify) => {
     notify()
   })
+  if (!options.replace) {
+    // A new page: put focus at its start, as a full page load would, so readers hear it.
+    requestAnimationFrame(() => {
+      document.getElementById('content')?.focus({ preventScroll: true })
+    })
+  }
 }
 
 export function useLocation(): Location {
@@ -58,7 +64,11 @@ export function matchRoute(pattern: string, path: string): Record<string, string
   for (const [i, part] of want.entries()) {
     const actual = have[i] ?? ''
     if (part.startsWith(':')) {
-      params[part.slice(1)] = decodeURIComponent(actual)
+      try {
+        params[part.slice(1)] = decodeURIComponent(actual)
+      } catch {
+        return null
+      }
     } else if (part !== actual) {
       return null
     }

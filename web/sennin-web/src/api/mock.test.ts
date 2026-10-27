@@ -166,8 +166,30 @@ describe('fake SignalR stream', () => {
     expect(result.queued).toBe(true)
     const events = vi.fn()
     stream.subscribe(result.submissionId, { caseResolved: events, graded: events })
-    await vi.runAllTimersAsync()
+    await vi.advanceTimersByTimeAsync(10_000)
     expect(events).not.toHaveBeenCalled()
+  })
+
+  it('a queued run starts once the judge is back', async () => {
+    const live = { ...calm, judgePaused: true }
+    const api = createMockApi(() => live)
+    const stream = createMockStream(api, () => live)
+    const result = await settle(api.submit('fewest-coins', 'python', 'x'))
+    const graded = vi.fn()
+    stream.subscribe(result.submissionId, { graded })
+    await vi.advanceTimersByTimeAsync(5_000)
+    expect(graded).not.toHaveBeenCalled()
+    live.judgePaused = false
+    await vi.advanceTimersByTimeAsync(20_000)
+    expect(graded).toHaveBeenCalledOnce()
+  })
+
+  it('unknown ids are a not-found error, not an outage', async () => {
+    const api = createMockApi(() => calm)
+    const call = api.problem('no-such-problem')
+    const assertion = expect(call).rejects.toMatchObject({ status: 404 })
+    await vi.runAllTimersAsync()
+    await assertion
   })
 
   it('a reviewer outage grades without findings', async () => {
@@ -179,7 +201,7 @@ describe('fake SignalR stream', () => {
     await vi.runAllTimersAsync()
     const sub = await settle(api.submission(submissionId))
     expect(sub.findings).toBeNull()
-    expect(sub.scoreParts.map((p) => p.label)).not.toContain('Review')
+    expect(sub.scoreParts.map((p) => p.kind)).not.toContain('review')
   })
 
   it('unsubscribing stops further events', async () => {

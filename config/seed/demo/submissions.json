@@ -246,17 +246,20 @@
     {
      "label": "Tests",
      "value": 47,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 0,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -379,17 +382,20 @@
     {
      "label": "Tests",
      "value": 70,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 20,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 10,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -559,17 +565,20 @@
     {
      "label": "Tests",
      "value": 70,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 20,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 10,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": "Linear after the sort, and every edge case handled.",
@@ -719,17 +728,20 @@
     {
      "label": "Tests",
      "value": 58,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 7,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -843,17 +855,20 @@
     {
      "label": "Tests",
      "value": 70,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 20,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 10,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": "Exact on every coin system, and the sentinel is chosen with care.",
@@ -985,17 +1000,20 @@
     {
      "label": "Tests",
      "value": 41,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 4,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -1232,17 +1250,20 @@
     {
      "label": "Tests",
      "value": 26,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 0,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -1400,17 +1421,20 @@
     {
      "label": "Tests",
      "value": 70,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 20,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 9,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -1535,17 +1559,20 @@
     {
      "label": "Tests",
      "value": 70,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 20,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 9,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -1692,17 +1719,20 @@
     {
      "label": "Tests",
      "value": 35,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 1,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -1886,17 +1916,20 @@
     {
      "label": "Tests",
      "value": 55,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 1,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -2062,17 +2095,20 @@
     {
      "label": "Tests",
      "value": 55,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 4,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -2218,17 +2254,20 @@
     {
      "label": "Tests",
      "value": 56,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 6,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -2365,17 +2404,20 @@
     {
      "label": "Tests",
      "value": 64,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 6,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -2546,17 +2588,20 @@
     {
      "label": "Tests",
      "value": 53,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 3,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -2672,12 +2717,14 @@
     {
      "label": "Tests",
      "value": 55,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     }
    ],
    "praise": null,
@@ -2929,17 +2976,20 @@
     {
      "label": "Tests",
      "value": 47,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 0,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -3089,17 +3139,20 @@
     {
      "label": "Tests",
      "value": 58,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 7,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -3221,17 +3274,20 @@
     {
      "label": "Tests",
      "value": 63,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 7,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -3402,17 +3458,20 @@
     {
      "label": "Tests",
      "value": 53,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 3,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -3596,17 +3655,20 @@
     {
      "label": "Tests",
      "value": 55,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 1,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -3753,17 +3815,20 @@
     {
      "label": "Tests",
      "value": 35,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 1,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -3895,17 +3960,20 @@
     {
      "label": "Tests",
      "value": 41,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 4,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -4051,17 +4119,20 @@
     {
      "label": "Tests",
      "value": 56,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 6,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -4227,17 +4298,20 @@
     {
      "label": "Tests",
      "value": 55,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 4,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -4421,17 +4495,20 @@
     {
      "label": "Tests",
      "value": 55,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 1,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -4568,17 +4645,20 @@
     {
      "label": "Tests",
      "value": 64,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 6,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -4736,17 +4816,20 @@
     {
      "label": "Tests",
      "value": 70,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 20,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 9,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -4998,17 +5081,20 @@
     {
      "label": "Tests",
      "value": 47,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 0,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -5130,17 +5216,20 @@
     {
      "label": "Tests",
      "value": 63,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 7,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -5290,17 +5379,20 @@
     {
      "label": "Tests",
      "value": 58,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 7,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -5471,17 +5563,20 @@
     {
      "label": "Tests",
      "value": 53,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 3,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -5605,17 +5700,20 @@
     {
      "label": "Tests",
      "value": 70,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 20,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 10,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": "Linear, and the empty case falls out of the loop on its own.",
@@ -5799,17 +5897,20 @@
     {
      "label": "Tests",
      "value": 55,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 1,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -5941,17 +6042,20 @@
     {
      "label": "Tests",
      "value": 41,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 4,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -6098,17 +6202,20 @@
     {
      "label": "Tests",
      "value": 35,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 1,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -6254,17 +6361,20 @@
     {
      "label": "Tests",
      "value": 56,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 6,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -6430,17 +6540,20 @@
     {
      "label": "Tests",
      "value": 55,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 4,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -6692,17 +6805,20 @@
     {
      "label": "Tests",
      "value": 47,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 0,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,
@@ -6852,17 +6968,20 @@
     {
      "label": "Tests",
      "value": 58,
-     "max": 70
+     "max": 70,
+     "kind": "tests"
     },
     {
      "label": "Complexity",
      "value": 0,
-     "max": 20
+     "max": 20,
+     "kind": "complexity"
     },
     {
      "label": "Review",
      "value": 7,
-     "max": 10
+     "max": 10,
+     "kind": "review"
     }
    ],
    "praise": null,

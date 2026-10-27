@@ -19,6 +19,8 @@ describe('router', () => {
     expect(matchRoute('/problems/:id', '/problems/fewest-coins')).toEqual({ id: 'fewest-coins' })
     expect(matchRoute('/problems/:id', '/problems')).toBeNull()
     expect(matchRoute('/history', '/history/')).toEqual({})
+    // A malformed escape is a path that matches nothing, never a crash.
+    expect(matchRoute('/problems/:id', '/problems/%E0')).toBeNull()
   })
 
   it('navigate updates subscribers', () => {
@@ -38,6 +40,25 @@ describe('router', () => {
     )
     await userEvent.click(screen.getByRole('link', { name: 'Boss' }))
     expect(screen.getByText('/boss')).toBeInTheDocument()
+  })
+
+  it('moves focus to the new page after a push', async () => {
+    render(<main id="content" tabIndex={-1} />)
+    act(() => {
+      navigate('/weakness')
+    })
+    await new Promise((r) => requestAnimationFrame(r))
+    expect(document.getElementById('content')).toHaveFocus()
+  })
+
+  it('a section link is not current on a sibling path', () => {
+    window.history.replaceState(null, '', '/library-x')
+    render(
+      <Link href="/library" section>
+        Library
+      </Link>,
+    )
+    expect(screen.getByRole('link', { name: 'Library' })).not.toHaveAttribute('aria-current')
   })
 
   it('marks the current link', () => {

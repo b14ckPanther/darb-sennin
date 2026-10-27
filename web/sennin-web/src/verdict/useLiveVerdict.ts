@@ -42,5 +42,7 @@ export function useLiveVerdict(submissionId: string | null, total: number) {
 
   const graded = phase === 'graded' || phase === 'reviewed'
   const submission = useSubmission(graded ? submissionId : null)
-  return { cases, phase, submission: submission.data }
+  // The sheet shows the grade only once the graded submission has arrived, never a placeholder.
+  const shown: Phase = graded && !submission.data ? 'running' : phase
+  return { cases, phase: shown, submission: submission.data }
 }

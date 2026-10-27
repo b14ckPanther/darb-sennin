@@ -1,6 +1,8 @@
 import type { UseQueryResult } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
+import { isNotFound } from '../api/errors'
 import { fill, useCopy } from '../copy/copy'
+import { navigate } from '../lib/router'
 import { cx } from '../lib/cx'
 import { Button } from './Button'
 import { EmptyState } from './EmptyState'
@@ -57,6 +59,30 @@ export function LoadError({ onRetry }: { onRetry: () => void }) {
   )
 }
 
+function Missing() {
+  const copy = useCopy().states.notFound
+  return (
+    <div className="px-4 md:px-0">
+      <EmptyState
+        icon="empty"
+        title={copy.title}
+        action={
+          <Button
+            variant="secondary"
+            onClick={() => {
+              navigate('/')
+            }}
+          >
+            {copy.action}
+          </Button>
+        }
+      >
+        {copy.body}
+      </EmptyState>
+    </div>
+  )
+}
+
 /** Renders a query: skeleton while loading, a plain error with retry, then the content. */
 export function Loadable<T>({
   query,
@@ -71,6 +97,9 @@ export function Loadable<T>({
   rows?: number
   children: (data: T) => ReactNode
 }) {
+  if (isNotFound(query.error)) {
+    return <Missing />
+  }
   if (query.isError) {
     return (
       <LoadError

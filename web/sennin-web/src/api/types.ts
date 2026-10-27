@@ -97,6 +97,7 @@ export interface Finding {
 }
 
 export interface ScorePart {
+  kind: 'tests' | 'complexity' | 'review'
   label: string
   value: number
   max?: number

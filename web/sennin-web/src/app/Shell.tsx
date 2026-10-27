@@ -1,5 +1,5 @@
 import behaviour from '@config/ui/behaviour.json'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useStatus } from '../api/queries'
 import { Icon } from '../components/Icon'
 import { LargeTitle } from '../components/LargeTitle'
@@ -22,12 +22,14 @@ function typing(target: EventTarget | null): boolean {
   )
 }
 
-/** `?` opens the shortcut sheet; `G` then a letter moves between sections. */
-function useGlobalShortcuts(openSheet: () => void) {
+/** `?` opens the shortcut sheet; `G` then a letter moves between sections (keys from copy). */
+function useGlobalShortcuts(openSheet: () => void, chords: Record<string, string>) {
   const chord = useRef<number | null>(null)
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey || event.altKey || typing(event.target)) return
+      // A modal sheet owns the keyboard; nothing navigates underneath it.
+      if (document.querySelector('[aria-modal="true"]')) return
       if (event.key === '?') {
         event.preventDefault()
         openSheet()
@@ -39,7 +41,7 @@ function useGlobalShortcuts(openSheet: () => void) {
         Date.now() - chord.current < behaviour.shortcuts.chordWindowMs
       ) {
         chord.current = null
-        const to = { l: '/library', t: '/', b: '/boss', h: '/history', w: '/weakness' }[key]
+        const to = chords[key]
         if (to) {
           event.preventDefault()
           navigate(to)
@@ -52,7 +54,7 @@ function useGlobalShortcuts(openSheet: () => void) {
     return () => {
       window.removeEventListener('keydown', onKey)
     }
-  }, [openSheet])
+  }, [openSheet, chords])
 }
 
 function ShortcutSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -127,6 +129,8 @@ interface ShellProps {
   variant?: 'page' | 'workspace' | 'full'
   /** Hide the visible title (it stays for screen readers), for pages whose content is the title. */
   quietTitle?: boolean
+  /** Browser tab title when it should differ from the page title. */
+  documentTitle?: string
 }
 
 /** Page frame: desktop top bar, phone large title and tab bar, skip link, shortcut sheet. */
@@ -138,19 +142,29 @@ export function Shell({
   back,
   variant = 'page',
   quietTitle,
+  documentTitle,
 }: ShellProps) {
   const copy = useCopy()
   const nav = copy.nav
   const { path } = useLocation()
   const [sheet, setSheet] = useState(false)
-  const openSheet = () => {
+  const openSheet = useCallback(() => {
     setSheet(true)
-  }
-  useGlobalShortcuts(openSheet)
+  }, [])
+  const [chords] = useState(() =>
+    Object.fromEntries(
+      nav.shortcuts.items.flatMap((item) =>
+        'to' in item && typeof item.to === 'string' && item.keys[0] === 'G' && item.keys[1]
+          ? [[item.keys[1].toLowerCase(), item.to]]
+          : [],
+      ),
+    ),
+  )
+  useGlobalShortcuts(openSheet, chords)
 
   useEffect(() => {
-    document.title = `${title} · ${copy.screens.index.title}`
-  }, [title, copy.screens.index.title])
+    document.title = `${documentTitle ?? title} · ${copy.screens.index.title}`
+  }, [documentTitle, title, copy.screens.index.title])
 
   const tabs: TabItem[] = [
     { id: 'today', label: nav.today, icon: 'today' },
@@ -217,6 +231,10 @@ export function Shell({
                   <Link
                     href={link.href}
                     section
+                    // The library section includes the problems opened from it.
+                    current={
+                      link.href === tabHome.library && tabFor(path) === 'library' ? true : undefined
+                    }
                     className="inline-flex min-h-9 items-center rounded-control px-3 text-callout font-medium text-ink-muted no-underline hover:text-ink aria-[current=page]:bg-surface-sunk aria-[current=page]:text-ink"
                   >
                     {link.label}

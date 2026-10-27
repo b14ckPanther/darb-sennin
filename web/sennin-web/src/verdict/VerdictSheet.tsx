@@ -1,3 +1,4 @@
+import behaviour from '@config/ui/behaviour.json'
 import { AnimatePresence, m } from 'motion/react'
 import { useEffect, useId, useRef, type KeyboardEvent, type ReactNode } from 'react'
 import type { CaseEvidence, CaseResult, Finding, Submission } from '../api/types'
@@ -33,6 +34,8 @@ interface VerdictSheetProps {
   /** Drawn above the sheet header, for the translation banner. */
   banner?: ReactNode
   compact?: boolean
+  /** 1 when the sheet is the page's main heading, 2 when the page already has one. */
+  headingLevel?: 1 | 2
 }
 
 /** Splits on commas, brackets and whitespace so the first differing token can be marked. */
@@ -201,20 +204,24 @@ function Appear({ show, children }: { show: boolean; children: ReactNode }) {
   )
 }
 
-function liveSummary(
-  cases: (CaseResult | null)[],
-  last: number,
-  copy: ReturnType<typeof useCopy>,
-): string {
+/**
+ * What the polite live region says. It changes at most twice per run (the first failure, then the
+ * final count), so a screen reader is not flooded by a case every 100 ms.
+ */
+function liveSummary(cases: (CaseResult | null)[], copy: ReturnType<typeof useCopy>): string {
   const c = copy.screens.verdict
   const done = cases.filter((x) => x !== null)
-  const passed = done.filter((x) => x.status === 'pass').length
-  const latest = cases[last]
-  const n = String(last + 1).padStart(2, '0')
-  if (done.length === cases.length) return fill(c.liveDone, { total: cases.length, passed })
-  if (latest?.status === 'fail') return fill(c.liveFail, { n, passed })
-  if (latest?.status === 'limit') return fill(c.liveLimit, { n, passed })
-  return fill(copy.verdict.ledgerProgress, { done: done.length, total: cases.length })
+  if (done.length === cases.length) {
+    return fill(c.liveDone, {
+      total: cases.length,
+      passed: done.filter((x) => x.status === 'pass').length,
+    })
+  }
+  const bad = cases.findIndex((x) => x !== null && x.status !== 'pass')
+  if (bad < 0) return ''
+  const passed = cases.slice(0, bad).filter((x) => x?.status === 'pass').length
+  const n = String(bad + 1).padStart(2, '0')
+  return fill(cases[bad]?.status === 'limit' ? c.liveLimit : c.liveFail, { n, passed })
 }
 
 /**
@@ -230,6 +237,7 @@ export function VerdictSheet({
   onTryAgain,
   banner,
   compact = false,
+  headingLevel = 1,
 }: VerdictSheetProps) {
   const copy = useCopy()
   const c = copy.screens.verdict
@@ -237,10 +245,10 @@ export function VerdictSheet({
   const cases: (CaseResult | null)[] = liveCases ?? s.cases
   const done = cases.filter((x) => x !== null).length
   const firstFail = cases.findIndex((x) => x?.status === 'fail')
-  const lastResolved = cases.reduce((last, x, i) => (x ? i : last), -1)
   const graded = phase === 'graded' || phase === 'reviewed'
   const reviewed = phase === 'reviewed' || (graded && s.findings === null)
   const findingsRef = useRef<HTMLDivElement>(null)
+  const Title = headingLevel === 1 ? 'h1' : 'h2'
 
   // J/K walk the findings, E jumps to the current finding's first evidence (UI_DESIGN.md 3).
   const onFindingsKey = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -268,7 +276,7 @@ export function VerdictSheet({
     // Move focus with the eye, so Enter on a chip lands keyboard users at the evidence too.
     el?.focus({ preventScroll: true })
     el?.setAttribute('data-flash', 'true')
-    window.setTimeout(() => el?.removeAttribute('data-flash'), 1200)
+    window.setTimeout(() => el?.removeAttribute('data-flash'), behaviour.evidence.flashMs)
   }
 
   const chip = (f: Finding) =>
@@ -309,7 +317,7 @@ export function VerdictSheet({
     >
       {banner}
       <header className="pb-5">
-        <h1
+        <Title
           id="sheet-title"
           className={cx(
             'font-display tracking-display text-ink',
@@ -317,7 +325,7 @@ export function VerdictSheet({
           )}
         >
           {s.problemTitle}
-        </h1>
+        </Title>
         <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-footnote text-ink-muted">
           <span>{languageName(s.language)}</span>
           <span>{fill(c.submitted, { when: formatWhen(s.createdAt) })}</span>
@@ -335,11 +343,7 @@ export function VerdictSheet({
           }
         >
           <p role="status" aria-live="polite" className="sr-only">
-            {liveCases
-              ? phase === 'queued'
-                ? c.queued
-                : liveSummary(cases, lastResolved, copy)
-              : ''}
+            {liveCases ? (phase === 'queued' ? c.queued : liveSummary(cases, copy)) : ''}
           </p>
           {s.isBoss ? (
             <div className="mb-4">

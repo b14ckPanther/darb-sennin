@@ -28,5 +28,6 @@
   "queuedToast": "Submission queued. It runs when the judge is back.",
   "openVerdict": "Open verdict",
   "closeVerdict": "Back to code",
-  "boss": "Weekly boss"
+  "boss": "Weekly boss",
+  "editorHintVim": "Vim mode. Press Escape twice, then Tab, to leave the editor."
 }

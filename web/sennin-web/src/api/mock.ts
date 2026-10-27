@@ -6,6 +6,7 @@ import profileSeed from '@config/seed/demo/profile.json'
 import replaySeed from '@config/seed/demo/replay.json'
 import submissionSeed from '@config/seed/demo/submissions.json'
 import { defaultCopy } from '../copy/copy'
+import { ApiError } from './errors'
 import type {
   AdminView,
   BossWeek,
@@ -60,7 +61,7 @@ function summarise(s: Submission): SubmissionSummary {
 
 /** Removes the review from a recorded attempt, as the API does when the reviewer is down. */
 function withoutReview(s: Submission): Submission {
-  const parts = s.scoreParts.filter((p) => p.label !== 'Review')
+  const parts = s.scoreParts.filter((p) => p.kind !== 'review')
   const score = parts.reduce((sum, p) => sum + p.value, 0)
   const maxScore = parts.reduce((sum, p) => sum + (p.max ?? 0), 0)
   return {
@@ -99,7 +100,7 @@ export function createMockApi(state: () => DemoState): MockApi {
     new Promise((resolve, reject) => {
       setTimeout(() => {
         if (state().offline) {
-          reject(new Error(defaultCopy.states.offline.body))
+          reject(new ApiError(503, defaultCopy.states.offline.body))
           return
         }
         try {
@@ -132,7 +133,7 @@ export function createMockApi(state: () => DemoState): MockApi {
   const find = (id: string): Submission => {
     const found = live.get(id) ?? submissions.find((s) => s.id === id)
     if (!found) {
-      throw new Error(`Unknown submission ${id}`)
+      throw new ApiError(404, `Unknown submission ${id}`)
     }
     return found
   }
@@ -166,7 +167,7 @@ export function createMockApi(state: () => DemoState): MockApi {
       respond(() => {
         const p = problems.get(id)
         if (!p) {
-          throw new Error(`Unknown problem ${id}`)
+          throw new ApiError(404, `Unknown problem ${id}`)
         }
         return { ...clone(p), ...summary(p), draft: state().newAccount ? null : p.draft }
       }),
@@ -174,7 +175,7 @@ export function createMockApi(state: () => DemoState): MockApi {
       respond(() => {
         const p = problems.get(id)
         if (!p) {
-          throw new Error(`Unknown problem ${id}`)
+          throw new ApiError(404, `Unknown problem ${id}`)
         }
         Object.assign(p, flags)
         return summary(p)
@@ -259,34 +260,45 @@ export function createMockStream(api: MockApi, state: () => DemoState): Submissi
     subscribe(submissionId: string, handlers: StreamHandlers) {
       const timers: ReturnType<typeof setTimeout>[] = []
       const target = api.pending(submissionId)
-      if (!target || state().judgePaused) {
+      if (!target) {
         return () => undefined
       }
-      let at = mockConfig.stream.queuedMs
-      target.cases.forEach((result, index) => {
-        // Slow cases take longer to come back; a time limit waits the longest.
-        const spread =
-          (fastest ?? 0) + (((slowest ?? 0) - (fastest ?? 0)) * ((index * 7) % 10)) / 10
-        at += result.status === 'limit' ? (slowest ?? 0) * 2 : spread
+      const replay = () => {
+        let at = mockConfig.stream.queuedMs
+        target.cases.forEach((result, index) => {
+          // Slow cases take longer to come back; a time limit waits the longest.
+          const spread =
+            (fastest ?? 0) + (((slowest ?? 0) - (fastest ?? 0)) * ((index * 7) % 10)) / 10
+          at += result.status === 'limit' ? (slowest ?? 0) * 2 : spread
+          timers.push(
+            setTimeout(() => {
+              handlers.caseResolved?.({ submissionId, index, result })
+            }, at),
+          )
+        })
+        at += mockConfig.stream.gradedMs
         timers.push(
           setTimeout(() => {
-            handlers.caseResolved?.({ submissionId, index, result })
+            api.complete(submissionId)
+            handlers.graded?.({ submissionId })
           }, at),
         )
-      })
-      at += mockConfig.stream.gradedMs
-      timers.push(
-        setTimeout(() => {
-          api.complete(submissionId)
-          handlers.graded?.({ submissionId })
-        }, at),
-      )
-      at += mockConfig.stream.reviewedMs
-      timers.push(
-        setTimeout(() => {
-          handlers.reviewed?.({ submissionId })
-        }, at),
-      )
+        at += mockConfig.stream.reviewedMs
+        timers.push(
+          setTimeout(() => {
+            handlers.reviewed?.({ submissionId })
+          }, at),
+        )
+      }
+      // A paused judge leaves the run queued; it starts when the judge is back.
+      const waitForJudge = () => {
+        if (state().judgePaused) {
+          timers.push(setTimeout(waitForJudge, mockConfig.stream.queuedMs))
+        } else {
+          replay()
+        }
+      }
+      waitForJudge()
       return () => {
         timers.forEach(clearTimeout)
       }

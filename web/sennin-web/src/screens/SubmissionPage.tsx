@@ -147,6 +147,7 @@ function SubmissionBody({ sub }: { sub: Submission }) {
       <div className={cx('min-w-0', sub.translation ? 'order-2 max-w-4xl' : 'order-1 lg:order-2')}>
         <VerdictSheet
           submission={sub}
+          headingLevel={2}
           onHighlightLines={highlight}
           onShowLines={showLines}
           onTryAgain={() => {
@@ -186,7 +187,8 @@ export default function SubmissionPage({ submissionId }: { submissionId: string 
   const sub = useSubmission(submissionId)
   return (
     <Shell
-      title={sub.data?.problemTitle ?? copy.screens.verdict.title}
+      title={copy.screens.verdict.title}
+      documentTitle={sub.data?.problemTitle}
       back={{ href: '/history', label: copy.screens.verdict.back }}
       quietTitle
     >

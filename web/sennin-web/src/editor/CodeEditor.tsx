@@ -12,6 +12,7 @@ import {
   RangeSetBuilder,
   StateEffect,
   StateField,
+  Transaction,
   type Extension,
 } from '@codemirror/state'
 import {
@@ -152,6 +153,7 @@ export const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(function
     size: new Compartment(),
     vim: new Compartment(),
     wrap: new Compartment(),
+    label: new Compartment(),
   })
 
   useEffect(() => {
@@ -191,7 +193,7 @@ export const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(function
           theme,
           litField,
           bracketField,
-          EditorView.contentAttributes.of({ 'aria-label': label }),
+          c.label.of(EditorView.contentAttributes.of({ 'aria-label': label })),
           EditorView.updateListener.of((u) => {
             if (u.docChanged) handlers.current.onChange(u.state.doc.toString())
           }),
@@ -210,9 +212,21 @@ export const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(function
   useEffect(() => {
     const v = view.current
     if (v && v.state.doc.toString() !== value) {
-      v.dispatch({ changes: { from: 0, to: v.state.doc.length, insert: value } })
+      // A new document (another language, or Try again) is not an edit: undo must not cross it.
+      v.dispatch({
+        changes: { from: 0, to: v.state.doc.length, insert: value },
+        annotations: Transaction.addToHistory.of(false),
+      })
     }
   }, [value])
+
+  useEffect(() => {
+    view.current?.dispatch({
+      effects: compartments.current.label.reconfigure(
+        EditorView.contentAttributes.of({ 'aria-label': label }),
+      ),
+    })
+  }, [label])
 
   useEffect(() => {
     let live = true

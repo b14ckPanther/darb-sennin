@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import { fill, useCopy } from '../copy/copy'
+import { defaultCopy, fill, useCopy } from '../copy/copy'
 
 export interface ProbePoint {
   n: number
@@ -24,7 +24,9 @@ function round(value: number): string {
 }
 
 function formatMs(ms: number): string {
-  return ms >= 1000 ? `${round(ms / 1000)} s` : `${round(ms)} ms`
+  return ms >= 1000
+    ? fill(defaultCopy.units.s, { n: round(ms / 1000) })
+    : fill(defaultCopy.units.ms, { n: round(ms) })
 }
 
 function Power({ value }: { value: number }) {

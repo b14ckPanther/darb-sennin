@@ -16,11 +16,12 @@ import { spring } from '../design/motion'
 import { LazyCodeEditor as CodeEditor } from '../editor/LazyCodeEditor'
 import type { CodeEditorHandle, EditorMode } from '../editor/types'
 import { cx } from '../lib/cx'
-import { editorMode, languageName, languages } from '../lib/format'
+import { defaultLanguage, editorMode, formatMs, languageName, languages } from '../lib/format'
 import { Markdown } from '../lib/markdown'
 import { useMediaQuery } from '../lib/useMediaQuery'
 import { useReduceMotion } from '../lib/motion'
 import { Link } from '../lib/Link'
+import { DemoBanner } from './chrome'
 import { useSearchParam } from '../lib/router'
 import { useSettings } from '../lib/settings'
 import { useLiveVerdict } from '../verdict/useLiveVerdict'
@@ -107,10 +108,7 @@ function Statement({ problem, level = 1 }: { problem: ProblemDetail; level?: 1 |
         </ul>
         <p className="num mt-3 text-footnote text-ink-muted">
           {fill(c.limits, {
-            time:
-              problem.limits.timeMs >= 1000
-                ? `${String(problem.limits.timeMs / 1000)} s`
-                : `${String(problem.limits.timeMs)} ms`,
+            time: formatMs(problem.limits.timeMs),
             memory: problem.limits.memoryMb,
           })}
           {'. '}
@@ -148,7 +146,7 @@ function SampleResults({ runs, problem }: { runs: SampleRun[]; problem: ProblemD
                 >
                   {copy.verdict[r.status]}
                 </span>
-                <span className="num ml-auto text-ink-muted">{r.timeMs} ms</span>
+                <span className="num ml-auto text-ink-muted">{formatMs(r.timeMs)}</span>
               </span>
               {r.status === 'fail' && sample ? (
                 <dl className="mt-1 ml-6 grid grid-cols-[6rem_minmax(0,1fr)] gap-x-2 font-mono">
@@ -176,7 +174,7 @@ function LanguagePicker({
   const c = useCopy().workspace
   const id = useId()
   const pseudo = value === 'pseudo'
-  const [lastReal, setLastReal] = useState<LanguageId>(pseudo ? 'python' : value)
+  const [lastReal, setLastReal] = useState<LanguageId>(pseudo ? defaultLanguage : value)
   return (
     <div className="flex items-center gap-3">
       <label htmlFor={id} className="sr-only">
@@ -267,19 +265,25 @@ function WorkspaceBody({
   const wide = useMediaQuery('(min-width: 64rem)')
   const editor = useRef<CodeEditorHandle>(null)
 
-  const initialLanguage: LanguageId = seedCode?.language ?? problem.draft?.language ?? 'python'
+  const initialLanguage: LanguageId =
+    seedCode?.language ?? problem.draft?.language ?? defaultLanguage
   const [language, setLanguage] = useState<LanguageId>(initialLanguage)
   const codeFor = useCallback(
     (lang: LanguageId) =>
-      (seedCode?.language === lang ? seedCode.code : null) ??
       readDraft(problem.id, lang) ??
       (problem.draft?.language === lang ? problem.draft.code : null) ??
       problem.starters[lang],
-    [problem, seedCode],
+    [problem],
   )
-  const [code, setCode] = useState(() => codeFor(initialLanguage))
+  // "Try again" opens the old code once, as the draft; from then on the draft is what you typed.
+  const [code, setCode] = useState(() => {
+    if (seedCode) writeDraft(problem.id, seedCode.language, seedCode.code)
+    return codeFor(initialLanguage)
+  })
   const [pane, setPane] = useState<'statement' | 'code'>('code')
   const [submissionId, setSubmissionId] = useState<string | null>(null)
+  // What was sent, so the sheet header does not follow edits made while the run resolves.
+  const [sent, setSent] = useState<{ language: LanguageId; code: string } | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
   const [verdictOpen, setVerdictOpen] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
@@ -301,11 +305,17 @@ function WorkspaceBody({
   }
   const doSubmit = () => {
     if (submit.isPending) return
+    const payload = { language, code }
     submit.mutate(
-      { problemId: problem.id, language, code },
+      { problemId: problem.id, ...payload },
       {
         onSuccess: ({ submissionId: id, queued }) => {
+          setSent(payload)
           setSubmissionId(id)
+          // Desktop: move focus to the sheet so the result is where the reader is.
+          requestAnimationFrame(() => {
+            document.getElementById('verdict-pane')?.focus({ preventScroll: true })
+          })
           setVerdictOpen(true)
           setSheetOpen(true)
           if (queued) setToast(c.queuedToast)
@@ -317,7 +327,8 @@ function WorkspaceBody({
   const firstFail = live.cases.find((x) => x?.status === 'fail')
   const bracket = submissionId && firstFail?.lines ? firstFail.lines : null
   const shown =
-    live.submission ?? (submissionId ? placeholder(problem, language, code, submissionId) : null)
+    live.submission ??
+    (submissionId && sent ? placeholder(problem, sent.language, sent.code, submissionId) : null)
 
   const highlight = useCallback((range: [number, number] | null) => {
     editor.current?.highlight(range)
@@ -354,7 +365,9 @@ function WorkspaceBody({
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex min-h-12 flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-1.5">
         <LanguagePicker value={language} onChange={changeLanguage} />
-        <p className="text-caption text-ink-muted max-xl:hidden">{c.editorHint}</p>
+        <p className="text-caption text-ink-muted max-xl:hidden">
+          {settings.keymap === 'vim' ? c.editorHintVim : c.editorHint}
+        </p>
       </div>
       {language === 'pseudo' ? (
         <p className="flex items-start gap-2 border-b border-line bg-surface-sunk px-4 py-2 text-footnote text-ink">
@@ -482,6 +495,7 @@ function WorkspaceBody({
               {split ? (
                 <m.section
                   key="verdict"
+                  id="verdict-pane"
                   aria-label={c.verdict}
                   tabIndex={-1}
                   layout
@@ -518,7 +532,7 @@ function WorkspaceBody({
           <h1 className="min-w-0 flex-1 truncate text-center text-callout font-semibold text-ink">
             {problem.title}
           </h1>
-          <span className="w-16" />
+          <DemoBanner />
         </div>
         <div className="px-4 pb-2">
           <Segmented
@@ -571,7 +585,9 @@ export default function Workspace({ problemId }: { problemId: string }) {
   return (
     <Shell title={problem.data?.title ?? copy.workspace.statement} variant="workspace">
       <Loadable query={problem} what={copy.workspace.loading} shape="split">
-        {(data) => (ready ? <WorkspaceBody problem={data} seedCode={seed.data} /> : null)}
+        {(data) =>
+          ready ? <WorkspaceBody key={from ?? ''} problem={data} seedCode={seed.data} /> : null
+        }
       </Loadable>
     </Shell>
   )

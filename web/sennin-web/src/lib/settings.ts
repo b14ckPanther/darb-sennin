@@ -14,6 +14,8 @@ export interface Settings {
   demo: DemoState
 }
 
+export const editorFontSizes: readonly number[] = behaviour.editor.fontSizes
+
 const key = 'sennin.settings'
 // The theme keeps its own key: index.html reads it before first paint.
 const themeKey = 'sennin.theme'
@@ -38,11 +40,22 @@ export function readSettings(fresh: boolean): Settings {
   try {
     const stored = JSON.parse(localStorage.getItem(key) ?? '{}') as Partial<Settings>
     const theme = localStorage.getItem(themeKey)
+    // Stored values are user data: keep only the ones that are still valid choices.
+    const pick = <T>(value: unknown, allowed: readonly T[], fallback: T): T =>
+      allowed.includes(value as T) ? (value as T) : fallback
+    const flag = (k: keyof DemoState) => stored.demo?.[k] === true
     return {
-      ...structuredClone(defaults),
-      ...stored,
-      demo: { ...defaults.demo, ...stored.demo },
       theme: theme === 'light' || theme === 'dark' ? theme : 'system',
+      editorFontSize: pick(stored.editorFontSize, editorFontSizes, defaults.editorFontSize),
+      keymap: pick(stored.keymap, ['default', 'vim'] as const, defaults.keymap),
+      sound: stored.sound === true,
+      motion: pick(stored.motion, ['system', 'reduce', 'allow'] as const, defaults.motion),
+      demo: {
+        judgePaused: flag('judgePaused'),
+        reviewerDown: flag('reviewerDown'),
+        newAccount: flag('newAccount'),
+        offline: flag('offline'),
+      },
     }
   } catch {
     return structuredClone(defaults)
@@ -87,17 +100,13 @@ export function applyDocument(s: Settings = get()) {
   }
 }
 
-export function useSettings(): Settings {
-  return useSyncExternalStore(
-    (notify) => {
-      listeners.add(notify)
-      return () => {
-        listeners.delete(notify)
-      }
-    },
-    get,
-    get,
-  )
+function subscribe(notify: () => void) {
+  listeners.add(notify)
+  return () => {
+    listeners.delete(notify)
+  }
 }
 
-export const editorFontSizes: readonly number[] = behaviour.editor.fontSizes
+export function useSettings(): Settings {
+  return useSyncExternalStore(subscribe, get, get)
+}
