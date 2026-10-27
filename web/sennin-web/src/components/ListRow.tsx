@@ -71,7 +71,7 @@ export function ListRow({ title, subtitle, trailing, actions = [], onSelect }: L
           <span className="min-w-0 flex-1">
             <span className="block truncate text-body text-ink">{title}</span>
             {subtitle ? (
-              <span className="block truncate text-footnote text-ink-muted">{subtitle}</span>
+              <span className="line-clamp-2 block text-footnote text-ink-muted">{subtitle}</span>
             ) : null}
           </span>
           {trailing ? <span className="num text-callout text-ink-muted">{trailing}</span> : null}

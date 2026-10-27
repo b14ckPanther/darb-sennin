@@ -31,6 +31,7 @@
   --color-pending-mark: #8c8270;
   --color-praise-ink: #6d4c17;
   --color-stamp: #c8432f;
+  --color-stamp-ink: #ae3826;
   --color-focus: #1e6a4f;
   --color-tab-active: #0e3527;
   --color-plot-measured: #0e3527;
@@ -61,6 +62,7 @@
   --color-pending-mark: #5e7a6e;
   --color-praise-ink: #e3b865;
   --color-stamp: #e5664f;
+  --color-stamp-ink: #ec7a63;
   --color-focus: #9db8ae;
   --color-tab-active: #fbf7ec;
   --color-plot-measured: #fbf7ec;
@@ -93,6 +95,7 @@
     --color-pending-mark: #5e7a6e;
     --color-praise-ink: #e3b865;
     --color-stamp: #e5664f;
+    --color-stamp-ink: #ec7a63;
     --color-focus: #9db8ae;
     --color-tab-active: #fbf7ec;
     --color-plot-measured: #fbf7ec;

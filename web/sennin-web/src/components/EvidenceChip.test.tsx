@@ -33,8 +33,10 @@ describe('EvidenceChip', () => {
     expect(onHighlight.mock.calls).toEqual([['probe-5'], [null], ['probe-5'], [null]])
   })
 
-  it('points assistive tech at the element it controls', () => {
+  it('records its target without claiming to control it', () => {
     render(<EvidenceChip kind="case" label="case 07" target="case-07" />)
-    expect(screen.getByRole('button')).toHaveAttribute('aria-controls', 'case-07')
+    const chip = screen.getByRole('button')
+    expect(chip).toHaveAttribute('data-target', 'case-07')
+    expect(chip).not.toHaveAttribute('aria-controls')
   })
 })

@@ -32,7 +32,8 @@
     "pointsCaption": "Measured points"
   },
   "praise": {
-    "stamp": "Earned"
+    "stamp": "Earned",
+    "label": "Praise, earned by the gate"
   },
   "sheet": {
     "close": "Close",
@@ -46,5 +47,75 @@
   },
   "demo": {
     "banner": "Demo data"
+  },
+  "screens": {
+    "index": {
+      "title": "Darb Sennin",
+      "lead": "Design system, Phase 2. Every grade shows its evidence; praise only when it is earned.",
+      "catalogue": "Component catalogue",
+      "verdict": "Verdict Sheet",
+      "verdictEarned": "Verdict Sheet, praise earned",
+      "today": "Today"
+    },
+    "verdict": {
+      "ledger": "Hidden tests",
+      "complexity": "Complexity",
+      "findings": "Findings",
+      "score": "Score",
+      "code": "Your code",
+      "input": "Input that broke it",
+      "expected": "Expected",
+      "actual": "Your output",
+      "showInCode": "Show in code",
+      "tryAgain": "Try again",
+      "submitted": "Submitted {when}",
+      "version": "Content {version}"
+    },
+    "today": {
+      "title": "Today",
+      "continue": "Continue",
+      "start": "Start",
+      "recommended": "Recommended for you",
+      "streak": "Streak",
+      "streakDays": "{days} days",
+      "rank": "Rank",
+      "toNext": "{left} points to {next}",
+      "boss": "Weekly boss",
+      "bossHp": "{remaining} of {total} cases left",
+      "bossDays": "{days} days left",
+      "difficulty": "Difficulty {n} of 3",
+      "week": {
+        "done": "Graded",
+        "frozen": "Freeze used",
+        "today": "Today",
+        "ahead": "Not yet",
+        "missed": "Missed"
+      },
+      "pin": "Pin",
+      "hide": "Hide"
+    },
+    "tabs": {
+      "label": "Main",
+      "today": "Today",
+      "library": "Library",
+      "boss": "Boss",
+      "profile": "Profile"
+    },
+    "catalogue": {
+      "title": "Components",
+      "lead": "Every component in both themes. Switch the theme to check contrast; reduce motion in your system settings to see the still versions.",
+      "theme": "Theme",
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark",
+      "openSheet": "Open sheet",
+      "showToast": "Show toast",
+      "sheetTitle": "Filter problems",
+      "sheetBody": "Detents: drag the handle, press it, or use Escape to close.",
+      "toastBody": "Submission queued. Case results arrive as they finish.",
+      "emptyTitle": "No submissions yet",
+      "emptyBody": "Your graded submissions appear here, newest first.",
+      "skippedReason": "Skipped because 3 hidden tests failed."
+    }
   }
 }

@@ -49,3 +49,24 @@ describe('ComplexityPlot', () => {
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
   })
 })
+
+describe('ComplexityPlot labels', () => {
+  it('keeps the measured and target labels apart when the lines end together', () => {
+    const { container } = render(
+      <ComplexityPlot
+        points={[
+          { n: 1_000, ms: 0.9 },
+          { n: 10_000, ms: 11 },
+          { n: 100_000, ms: 128 },
+        ]}
+        fit={{ exponent: 1.07, r2: 0.99 }}
+        target={{ label: 'n log n', exponent: 1.1 }}
+      />,
+    )
+    const ys = [...container.querySelectorAll('text')]
+      .filter((t) => t.textContent === 'Measured' || t.textContent === 'Target')
+      .map((t) => Number(t.getAttribute('y')))
+    expect(ys).toHaveLength(2)
+    expect(Math.abs((ys[0] ?? 0) - (ys[1] ?? 0))).toBeGreaterThanOrEqual(12)
+  })
+})

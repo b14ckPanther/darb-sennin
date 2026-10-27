@@ -25,7 +25,7 @@ export function EvidenceChip({ kind, label, target, onJump, onHighlight }: Evide
     <button
       type="button"
       aria-label={fill(copy.evidence.jump, { label })}
-      aria-controls={target}
+      data-target={target}
       onClick={() => onJump?.(target)}
       onFocus={() => onHighlight?.(target)}
       onBlur={() => onHighlight?.(null)}

@@ -19,8 +19,12 @@ type Props =
 // Drawing geometry in SVG user units; the SVG scales to its container.
 const box = { width: 360, height: 200, left: 44, right: 72, top: 12, bottom: 32 }
 
+function round(value: number): string {
+  return value >= 10 ? Math.round(value).toLocaleString('en') : String(Number(value.toPrecision(2)))
+}
+
 function formatMs(ms: number): string {
-  return ms >= 1000 ? `${(ms / 1000).toPrecision(2)} s` : `${ms.toPrecision(2)} ms`
+  return ms >= 1000 ? `${round(ms / 1000)} s` : `${round(ms)} ms`
 }
 
 function Power({ value }: { value: number }) {
@@ -78,6 +82,15 @@ export function ComplexityPlot(props: Props) {
   const fitEnd = lineEnd(fit.exponent, intercept)
   const targetB = firstY - target.exponent * firstX
   const targetEnd = lineEnd(target.exponent, targetB)
+
+  // Keep the two end labels apart when the lines finish close together (a solution on target).
+  const labelGap = 12
+  const fitLabelY = sy(fitEnd.y)
+  const rawTargetY = sy(targetEnd.y)
+  const targetLabelY =
+    Math.abs(rawTargetY - fitLabelY) < labelGap
+      ? fitLabelY + (rawTargetY >= fitLabelY ? labelGap : -labelGap)
+      : rawTargetY
 
   const summary = fill(copy.plot.summary, {
     exponent: fit.exponent.toFixed(2),
@@ -137,7 +150,7 @@ export function ComplexityPlot(props: Props) {
         />
         <text
           x={sx(targetEnd.x) + 6}
-          y={sy(targetEnd.y)}
+          y={targetLabelY}
           dy="0.32em"
           className="fill-ink-muted text-[11px]"
         >
@@ -151,7 +164,7 @@ export function ComplexityPlot(props: Props) {
           className="stroke-plot-measured"
           strokeWidth={1.5}
         />
-        <text x={sx(fitEnd.x) + 6} y={sy(fitEnd.y)} dy="0.32em" className="fill-ink text-[11px]">
+        <text x={sx(fitEnd.x) + 6} y={fitLabelY} dy="0.32em" className="fill-ink text-[11px]">
           {copy.plot.measured}
         </text>
         {points.map((p, i) => (
