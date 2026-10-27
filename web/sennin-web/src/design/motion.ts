@@ -13,3 +13,9 @@ export const pressScale = 0.97
 
 /** Seconds, for Motion's non-spring fades. Matches --duration-* in tokens.css. */
 export const duration = { micro: 0.12, state: 0.2, layout: 0.32 } as const
+
+/** Drag gestures: fraction of the travel, or speed in px/s, past which a drag commits. */
+export const gesture = {
+  commitFraction: 0.5,
+  flickVelocity: 500,
+} as const
