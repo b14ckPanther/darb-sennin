@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
 import { useCopy } from '../copy/copy'
-import { cx } from '../lib/cx'
+import { Segmented } from '../components/Segmented'
+import { Link } from '../lib/Link'
+import { updateSettings, useSettings, type Theme } from '../lib/settings'
 
 /** The ensō mark from brand/exports, on its forest tile. */
 export function Mark({ size = 28 }: { size?: number }) {
@@ -21,68 +22,28 @@ export function DemoBanner() {
 export function Brand() {
   const copy = useCopy()
   return (
-    <a href="?" className="flex min-h-touch items-center gap-2.5 rounded-control no-underline">
+    <Link href="/" className="flex min-h-touch items-center gap-2.5 rounded-control no-underline">
       <Mark />
       <span className="font-display text-title-3 text-ink">{copy.brand.name}</span>
-    </a>
+    </Link>
   )
 }
 
-type Theme = 'system' | 'light' | 'dark'
-const storageKey = 'sennin.theme'
-
-function readTheme(): Theme {
-  try {
-    const value = localStorage.getItem(storageKey)
-    return value === 'light' || value === 'dark' ? value : 'system'
-  } catch {
-    return 'system'
-  }
-}
-
-/** Segmented control for the theme. Stored per viewer; the page renders fine without storage. */
+/** Theme picker. Stored per viewer; the page renders fine without storage. */
 export function ThemeSwitch() {
   const copy = useCopy()
-  const [theme, setTheme] = useState<Theme>(readTheme)
-  useEffect(() => {
-    const root = document.documentElement
-    if (theme === 'system') {
-      root.removeAttribute('data-theme')
-    } else {
-      root.setAttribute('data-theme', theme)
-    }
-    try {
-      localStorage.setItem(storageKey, theme)
-    } catch {
-      // Storage can be blocked; the choice still applies for this visit.
-    }
-  }, [theme])
-  const options: Theme[] = ['system', 'light', 'dark']
+  const { theme } = useSettings()
   return (
-    <div
-      role="radiogroup"
-      aria-label={copy.screens.catalogue.theme}
-      className="inline-flex rounded-control bg-surface-sunk p-0.5"
-    >
-      {options.map((option) => (
-        <button
-          key={option}
-          type="button"
-          role="radio"
-          aria-checked={theme === option}
-          onClick={() => {
-            setTheme(option)
-          }}
-          className={cx(
-            'min-h-9 rounded-[8px] px-3 text-footnote font-medium transition-colors duration-(--duration-micro)',
-            theme === option
-              ? 'bg-surface text-ink shadow-raised'
-              : 'text-ink-muted hover:text-ink',
-          )}
-        >
-          {copy.screens.catalogue[option]}
-        </button>
-      ))}
-    </div>
+    <Segmented<Theme>
+      label={copy.screens.catalogue.theme}
+      value={theme}
+      onChange={(next) => {
+        updateSettings({ theme: next })
+      }}
+      options={(['system', 'light', 'dark'] as const).map((option) => ({
+        value: option,
+        label: copy.screens.catalogue[option],
+      }))}
+    />
   )
 }

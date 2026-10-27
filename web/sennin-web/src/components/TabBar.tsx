@@ -1,7 +1,8 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
 import { pressScale, spring } from '../design/motion'
 import { cx } from '../lib/cx'
 import { Icon, type IconName } from './Icon'
+import { useReduceMotion } from '../lib/motion'
 
 export interface TabItem {
   id: string
@@ -18,7 +19,7 @@ interface TabBarProps {
 
 /** Phone tab bar: translucent material, safe-area aware, filled glyph on the current tab. */
 export function TabBar({ label, items, activeId, onSelect }: TabBarProps) {
-  const reduce = useReducedMotion()
+  const reduce = useReduceMotion()
   return (
     <nav
       aria-label={label}

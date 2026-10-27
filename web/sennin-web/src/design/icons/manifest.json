@@ -29,6 +29,26 @@
     "history": "history",
     "empty": "inbox-line",
     "settings": "settings",
-    "link": "link-minimalistic-2"
+    "link": "link-minimalistic-2",
+    "weakness": "chart-2",
+    "filter": "tuning-2",
+    "close": "close-circle",
+    "keyboard": "keyboard",
+    "flag": "flag",
+    "sound": "volume-loud",
+    "motion": "running-round",
+    "theme": "sun-2",
+    "font": "text",
+    "server": "server-square",
+    "translate": "translation",
+    "queue": "hourglass",
+    "offline": "cloud-cross",
+    "plus": "add-circle",
+    "check": "check-circle",
+    "arrow-up-right": "arrow-right-up",
+    "sort": "sort-vertical",
+    "calendar": "calendar-mark",
+    "stamp": "medal-star",
+    "pseudo": "notes"
   }
 }

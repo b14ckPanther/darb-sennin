@@ -1,6 +1,7 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
 import { useCopy } from '../copy/copy'
 import { spring } from '../design/motion'
+import { useReduceMotion } from '../lib/motion'
 
 interface PraiseLineProps {
   /** Result of the deterministic praise gate. False renders nothing: the absence is the message. */
@@ -14,7 +15,7 @@ interface PraiseLineProps {
  */
 export function PraiseLine({ earned, text }: PraiseLineProps) {
   const copy = useCopy()
-  const reduce = useReducedMotion()
+  const reduce = useReduceMotion()
   if (!earned) {
     return null
   }

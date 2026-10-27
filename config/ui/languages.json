@@ -1,0 +1,9 @@
+{
+  "$comment": "Languages the editor offers, in picker order (spec: Python 3.14, C# 14 on .NET 10, JavaScript on Node 24, pseudo code). Phase 4 ties each id to a sandbox image in config/sandbox/images.yaml.",
+  "languages": [
+    { "id": "python", "label": "Python 3.14", "short": "Python", "editor": "python" },
+    { "id": "csharp", "label": "C# 14", "short": "C#", "editor": "csharp" },
+    { "id": "javascript", "label": "JavaScript, Node 24", "short": "JavaScript", "editor": "javascript" },
+    { "id": "pseudo", "label": "Pseudo code", "short": "Pseudo", "editor": "plain" }
+  ]
+}

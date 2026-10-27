@@ -1,5 +1,1 @@
-{
-  "$comment": "Interface behaviour values that are rules, not code (CLAUDE.md 1.2). Phase 4 adds the schema.",
-  "sheet": { "detents": [0.35, 0.6, 0.92] },
-  "toast": { "durationMs": 4000 }
-}
+{"$comment": "Interface behaviour values that are rules, not code (CLAUDE.md 1.2). Phase 4 adds the schema.", "sheet": {"detents": [0.35, 0.6, 0.92]}, "toast": {"durationMs": 4000}, "editor": {"fontSizes": [13, 14, 15, 16, 18], "defaultFontSize": 15}, "shortcuts": {"chordWindowMs": 900}, "library": {"searchDebounceMs": 120}}

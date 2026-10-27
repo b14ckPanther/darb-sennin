@@ -1,10 +1,4 @@
-import {
-  AnimatePresence,
-  motion,
-  useDragControls,
-  useReducedMotion,
-  type PanInfo,
-} from 'motion/react'
+import { AnimatePresence, motion, useDragControls, type PanInfo } from 'motion/react'
 import {
   useEffect,
   useId,
@@ -17,6 +11,7 @@ import {
 import { useCopy } from '../copy/copy'
 import { gesture, spring } from '../design/motion'
 import { Icon } from './Icon'
+import { useReduceMotion } from '../lib/motion'
 
 interface SheetProps {
   open: boolean
@@ -34,7 +29,7 @@ const focusable =
 /** Bottom sheet with detents, drag to resize or dismiss, focus kept inside while open. */
 export function Sheet({ open, title, detents, initialDetent, onClose, children }: SheetProps) {
   const copy = useCopy()
-  const reduce = useReducedMotion()
+  const reduce = useReduceMotion()
   const titleId = useId()
   const panel = useRef<HTMLDivElement>(null)
   const lastDetent = detents.length - 1
