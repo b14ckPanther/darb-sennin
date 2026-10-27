@@ -18,7 +18,7 @@ Python 3.14, C# 14 on .NET 10, JavaScript on Node 24 LTS, plus pseudo code (Q14)
 
 ## Problems
 
-Original statements and tests only. Three families: classic interview topics (arrays, hashing, graphs, DP), practical tasks (parse a log, rate limiter, queries over in-memory data), and a fintech set (money rounding, idempotent payments, ledgers) (Q11). Hidden tests live in a private content repo `b14ckPanther/darb-sennin-content` (created only with Nour's "yes"); the public repo holds `content/demo/` only (Q5).
+Original statements and tests only. Three families: classic interview topics (arrays, hashing, graphs, DP), practical tasks (parse a log, rate limiter, queries over in-memory data), and a games and sport set (fair time splits, idempotent score submissions, scorebooks; revised by ADR-051) (Q11). Hidden tests live in a private content repo `b14ckPanther/darb-sennin-content` (created only with Nour's "yes"); the public repo holds `content/demo/` only (Q5).
 
 ## Grading model
 
@@ -36,7 +36,7 @@ Ranks Apprentice, Journeyman, Adept, Examiner, Master, names and thresholds in `
 
 ## Review provider
 
-Anthropic Claude API. Reviewer model `claude-sonnet-5-5` and pseudo-code translator `claude-sonnet-5-5`, both set in config, not code; `claude-haiku-5-5` is the configured cheaper fallback when the monthly budget runs low. Hard cap 5 USD per month in `config/limits.yaml`, checked before every call. CI never calls a live model; recorded fixtures only (Q6).
+Anthropic Claude API. Reviewer model `claude-sonnet-5-5` and pseudo-code translator `claude-sonnet-5-5`, both set in config, not code; `claude-haiku-5-5` is the configured cheaper fallback when monthly spend nears the cap. Hard cap 5 USD per month in `config/limits.yaml`, checked before every call. CI never calls a live model; recorded fixtures only (Q6).
 
 ## Hosting (all of it waits for Nour's "yes" before anything is created)
 

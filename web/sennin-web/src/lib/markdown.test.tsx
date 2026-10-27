@@ -6,12 +6,12 @@ describe('Markdown', () => {
   it('renders paragraphs, bold, inline code and ordered lists as elements', () => {
     const { container } = render(
       <Markdown
-        source={'A **confirmed** entry has `cents`.\n\n1. Drop duplicates.\n2. Report the rest.'}
+        source={'A **confirmed** track has `seconds`.\n\n1. Drop duplicates.\n2. Report the rest.'}
       />,
     )
     expect(container.querySelectorAll('p')).toHaveLength(1)
     expect(screen.getByText('confirmed').tagName).toBe('STRONG')
-    expect(screen.getByText('cents').tagName).toBe('CODE')
+    expect(screen.getByText('seconds').tagName).toBe('CODE')
     expect(screen.getAllByRole('listitem')).toHaveLength(2)
   })
 

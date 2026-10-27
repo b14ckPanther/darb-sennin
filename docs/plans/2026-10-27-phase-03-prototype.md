@@ -1,6 +1,6 @@
 # Phase 3 plan: clickable prototype
 
-Starting from `docs/PLAN.md` Phase 3. Each step: test first, run, commit, ledger row.
+Starting from `docs/PLAN.md` Phase 3. Each step: test first, run, commit, log row.
 
 1. Seed under `config/seed/demo` and `api/types.ts`; MockApi and fake stream with tests (forty submissions, filters, evidence references valid, boss inputs hidden, paused judge, reviewer outage, offline, unsubscribe).
 2. Router, settings store, motion override, copy per screen, Loadable states; tests for each.

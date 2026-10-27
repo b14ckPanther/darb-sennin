@@ -35,16 +35,16 @@
    "nextAt": 1600
   },
   "boss": {
-   "problemId": "double-entry-ledger",
-   "title": "The double-entry ledger",
-   "line": "Every debit has a twin. Find the ones that do not.",
+   "problemId": "mirrored-scorebook",
+   "title": "The mirrored scorebook",
+   "line": "Every point is written twice. Find the ones that are not.",
    "total": 24,
    "remaining": 15,
    "daysLeft": 4
   },
   "continue": {
-   "problemId": "ledger-reconciliation",
-   "title": "Ledger reconciliation",
+   "problemId": "broadcast-log-check",
+   "title": "Missing tracks in a broadcast log",
    "detail": "Last attempt 47, 3 major findings open"
   },
   "recommended": [
@@ -59,11 +59,11 @@
     "reason": "You missed empty-input cases 4 times in the last four weeks."
    },
    {
-    "problemId": "idempotent-payment-capture",
-    "title": "Idempotent payment capture",
+    "problemId": "idempotent-score-submit",
+    "title": "Idempotent score submission",
     "tags": [
      "missing-branch",
-     "fintech"
+     "games"
     ],
     "difficulty": 2,
     "reason": "Unsolved after three attempts. The conflict branch is still missing."
@@ -107,7 +107,7 @@
     "lastHits": [
      {
       "submissionId": "sub-034",
-      "problemTitle": "The double-entry ledger",
+      "problemTitle": "The mirrored scorebook",
       "createdAt": "2026-10-24T19:20:00.000Z"
      },
      {
@@ -121,7 +121,7 @@
       "createdAt": "2026-10-20T18:47:00.000Z"
      }
     ],
-    "practiseProblemId": "idempotent-payment-capture"
+    "practiseProblemId": "idempotent-score-submit"
    },
    {
     "tag": "off-by-one",
@@ -140,7 +140,7 @@
     "lastHits": [
      {
       "submissionId": "sub-040",
-      "problemTitle": "Ledger reconciliation",
+      "problemTitle": "Missing tracks in a broadcast log",
       "createdAt": "2026-10-27T19:42:00.000Z"
      },
      {
@@ -173,7 +173,7 @@
     "lastHits": [
      {
       "submissionId": "sub-040",
-      "problemTitle": "Ledger reconciliation",
+      "problemTitle": "Missing tracks in a broadcast log",
       "createdAt": "2026-10-27T19:42:00.000Z"
      },
      {
@@ -187,7 +187,7 @@
       "createdAt": "2026-10-19T17:53:00.000Z"
      }
     ],
-    "practiseProblemId": "ledger-reconciliation"
+    "practiseProblemId": "broadcast-log-check"
    },
    {
     "tag": "duplicates",
@@ -206,21 +206,21 @@
     "lastHits": [
      {
       "submissionId": "sub-040",
-      "problemTitle": "Ledger reconciliation",
+      "problemTitle": "Missing tracks in a broadcast log",
       "createdAt": "2026-10-27T19:42:00.000Z"
      },
      {
       "submissionId": "sub-034",
-      "problemTitle": "The double-entry ledger",
+      "problemTitle": "The mirrored scorebook",
       "createdAt": "2026-10-24T19:20:00.000Z"
      },
      {
       "submissionId": "sub-024",
-      "problemTitle": "Ledger reconciliation",
+      "problemTitle": "Missing tracks in a broadcast log",
       "createdAt": "2026-10-16T19:12:00.000Z"
      }
     ],
-    "practiseProblemId": "ledger-reconciliation"
+    "practiseProblemId": "broadcast-log-check"
    },
    {
     "tag": "empty-input",
@@ -272,25 +272,25 @@
     "lastHits": [
      {
       "submissionId": "sub-035",
-      "problemTitle": "Fewest coins for change",
+      "problemTitle": "Fewest tiles for a row",
       "createdAt": "2026-10-25T18:44:00.000Z"
      },
      {
       "submissionId": "sub-018",
-      "problemTitle": "Fewest coins for change",
+      "problemTitle": "Fewest tiles for a row",
       "createdAt": "2026-10-10T18:55:00.000Z"
      },
      {
       "submissionId": "sub-006",
-      "problemTitle": "Fewest coins for change",
+      "problemTitle": "Fewest tiles for a row",
       "createdAt": "2026-09-28T18:37:00.000Z"
      }
     ],
-    "practiseProblemId": "fewest-coins"
+    "practiseProblemId": "fewest-tiles"
    },
    {
     "tag": "rounding",
-    "description": "Cents lost or invented by rounding each part on its own.",
+    "description": "Units lost or invented by rounding each part on its own.",
     "score": 40,
     "trend": [
      0,
@@ -305,21 +305,21 @@
     "lastHits": [
      {
       "submissionId": "sub-031",
-      "problemTitle": "Split a bill to the cent",
+      "problemTitle": "Split match time to the millisecond",
       "createdAt": "2026-10-22T18:24:00.000Z"
      },
      {
       "submissionId": "sub-019",
-      "problemTitle": "Split a bill to the cent",
+      "problemTitle": "Split match time to the millisecond",
       "createdAt": "2026-10-11T17:40:00.000Z"
      },
      {
       "submissionId": "sub-005",
-      "problemTitle": "Split a bill to the cent",
+      "problemTitle": "Split match time to the millisecond",
       "createdAt": "2026-09-27T18:02:00.000Z"
      }
     ],
-    "practiseProblemId": "split-bill-to-the-cent"
+    "practiseProblemId": "split-match-time"
    },
    {
     "tag": "overflow",
@@ -338,21 +338,21 @@
     "lastHits": [
      {
       "submissionId": "sub-031",
-      "problemTitle": "Split a bill to the cent",
+      "problemTitle": "Split match time to the millisecond",
       "createdAt": "2026-10-22T18:24:00.000Z"
      },
      {
       "submissionId": "sub-019",
-      "problemTitle": "Split a bill to the cent",
+      "problemTitle": "Split match time to the millisecond",
       "createdAt": "2026-10-11T17:40:00.000Z"
      },
      {
       "submissionId": "sub-005",
-      "problemTitle": "Split a bill to the cent",
+      "problemTitle": "Split match time to the millisecond",
       "createdAt": "2026-09-27T18:02:00.000Z"
      }
     ],
-    "practiseProblemId": "split-bill-to-the-cent"
+    "practiseProblemId": "split-match-time"
    },
    {
     "tag": "integer-division",
@@ -404,16 +404,16 @@
     "lastHits": [
      {
       "submissionId": "sub-022",
-      "problemTitle": "Two transfers that net to zero",
+      "problemTitle": "Two moves that cancel out",
       "createdAt": "2026-10-14T18:27:00.000Z"
      },
      {
       "submissionId": "sub-011",
-      "problemTitle": "Two transfers that net to zero",
+      "problemTitle": "Two moves that cancel out",
       "createdAt": "2026-10-03T19:03:00.000Z"
      }
     ],
-    "practiseProblemId": "transfers-that-net-to-zero"
+    "practiseProblemId": "moves-that-cancel"
    },
    {
     "tag": "dead-code",
@@ -432,21 +432,21 @@
     "lastHits": [
      {
       "submissionId": "sub-040",
-      "problemTitle": "Ledger reconciliation",
+      "problemTitle": "Missing tracks in a broadcast log",
       "createdAt": "2026-10-27T19:42:00.000Z"
      },
      {
       "submissionId": "sub-024",
-      "problemTitle": "Ledger reconciliation",
+      "problemTitle": "Missing tracks in a broadcast log",
       "createdAt": "2026-10-16T19:12:00.000Z"
      },
      {
       "submissionId": "sub-012",
-      "problemTitle": "Ledger reconciliation",
+      "problemTitle": "Missing tracks in a broadcast log",
       "createdAt": "2026-10-04T18:26:00.000Z"
      }
     ],
-    "practiseProblemId": "ledger-reconciliation"
+    "practiseProblemId": "broadcast-log-check"
    },
    {
     "tag": "complexity",
@@ -465,23 +465,23 @@
     "lastHits": [
      {
       "submissionId": "sub-033",
-      "problemTitle": "Top merchants by volume",
+      "problemTitle": "Top players by net points",
       "createdAt": "2026-10-24T18:16:00.000Z"
      },
      {
       "submissionId": "sub-013",
-      "problemTitle": "Top merchants by volume",
+      "problemTitle": "Top players by net points",
       "createdAt": "2026-10-05T17:57:00.000Z"
      }
     ],
-    "practiseProblemId": "top-merchants"
+    "practiseProblemId": "top-players"
    }
   ]
  },
  "boss": {
-  "problemId": "double-entry-ledger",
-  "title": "The double-entry ledger",
-  "line": "Every debit has a twin. Find the ones that do not.",
+  "problemId": "mirrored-scorebook",
+  "title": "The mirrored scorebook",
+  "line": "Every point is written twice. Find the ones that are not.",
   "total": 24,
   "fallen": 9,
   "daysLeft": 4,
@@ -490,22 +490,22 @@
   "record": [
    {
     "weekOf": "2026-10-19",
-    "text": "The reconciling clerk. Defeated Thu 22 Oct, 20 of 20 cases.",
+    "text": "The night timetable. Defeated Thu 22 Oct, 20 of 20 cases.",
     "defeated": true
    },
    {
     "weekOf": "2026-10-12",
-    "text": "The overdraft gate. Unbeaten. 17 of 20 cases passed.",
+    "text": "The sliding tile puzzle. Unbeaten. 17 of 20 cases passed.",
     "defeated": false
    },
    {
     "weekOf": "2026-10-05",
-    "text": "The settlement queue. Defeated Sat 10 Oct, 18 of 18 cases.",
+    "text": "The concert queue. Defeated Sat 10 Oct, 18 of 18 cases.",
     "defeated": true
    },
    {
     "weekOf": "2026-09-28",
-    "text": "The currency table. Defeated Sun 4 Oct, 22 of 22 cases.",
+    "text": "The relay handoffs. Defeated Sun 4 Oct, 22 of 22 cases.",
     "defeated": true
    }
   ]

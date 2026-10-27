@@ -16,7 +16,7 @@ describe('router', () => {
 
   it('matches static and parameter routes', () => {
     expect(matchRoute('/', '/')).toEqual({})
-    expect(matchRoute('/problems/:id', '/problems/fewest-coins')).toEqual({ id: 'fewest-coins' })
+    expect(matchRoute('/problems/:id', '/problems/fewest-tiles')).toEqual({ id: 'fewest-tiles' })
     expect(matchRoute('/problems/:id', '/problems')).toBeNull()
     expect(matchRoute('/history', '/history/')).toEqual({})
     // A malformed escape is a path that matches nothing, never a crash.

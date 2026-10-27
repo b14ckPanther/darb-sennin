@@ -3,8 +3,8 @@
  "submissions": [
   {
    "id": "sub-040",
-   "problemId": "ledger-reconciliation",
-   "problemTitle": "Ledger reconciliation",
+   "problemId": "broadcast-log-check",
+   "problemTitle": "Missing tracks in a broadcast log",
    "language": "python",
    "createdAt": "2026-10-27T19:42:00.000Z",
    "verdict": "failed",
@@ -21,7 +21,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "def reconcile(entries, statement):\n    \"\"\"Return ids in the ledger that the bank statement does not confirm.\"\"\"\n    seen = []\n    for entry in entries:\n        seen.append((entry.id, entry.cents))\n\n    missing = []\n    for line in statement:\n        pass\n\n    for entry_id, cents in seen:\n        matched = False\n        for line in statement:\n            if line.ref == entry_id and line.cents == cents:\n                matched = True\n        if not matched:\n            missing.append(entry_id)\n    return missing[:-1]",
+   "code": "def missing_tracks(planned, aired):\n    \"\"\"Return planned tracks that the play log does not confirm.\"\"\"\n    seen = []\n    for track in planned:\n        seen.append((track.id, track.seconds))\n\n    missing = []\n    for line in aired:\n        pass\n\n    for track_id, seconds in seen:\n        matched = False\n        for line in aired:\n            if line.track == track_id and line.seconds == seconds:\n                matched = True\n        if not matched:\n            missing.append(track_id)\n    return missing[:-1]",
    "cases": [
     {
      "caseId": "case-01",
@@ -43,12 +43,12 @@
      "status": "fail",
      "timeMs": 7,
      "evidence": {
-      "input": "entries: [(a1, 1250), (a2, 900), (a3, 4000)]\nstatement: [(a1, 1250), (a3, 4000)]",
-      "expected": "[\"a2\"]",
+      "input": "planned: [(t1, 215), (t2, 190), (t3, 242)]\naired: [(t1, 215), (t3, 242)]",
+      "expected": "[\"t2\"]",
       "actual": "[]",
       "diffAt": 1,
       "tags": [
-       "single missing entry",
+       "single missing track",
        "last element"
       ]
      },
@@ -67,8 +67,8 @@
      "status": "fail",
      "timeMs": 6,
      "evidence": {
-      "input": "entries: [(b1, 300), (b1, 300)]\nstatement: [(b1, 300)]",
-      "expected": "[\"b1\"]",
+      "input": "planned: [(t4, 300), (t4, 300)]\naired: [(t4, 300)]",
+      "expected": "[\"t4\"]",
       "actual": "[]",
       "diffAt": 1,
       "tags": [
@@ -139,8 +139,8 @@
     {
      "id": "sub-040-f1",
      "severity": "major",
-     "title": "The last missing entry is dropped",
-     "body": "Line 18 slices off the final element, so a statement that misses only the last ledger entry reports nothing.",
+     "title": "The last missing track is dropped",
+     "body": "Line 18 slices off the final element, so a log that misses only the last planned track reports nothing.",
      "tag": "off-by-one",
      "evidence": [
       {
@@ -163,7 +163,7 @@
      "id": "sub-040-f2",
      "severity": "major",
      "title": "Matching is quadratic",
-     "body": "Every ledger entry scans the whole statement. Index the statement by reference once, then each lookup is constant time.",
+     "body": "Every planned track scans the whole play log. Count the log by (track, length) once, then each lookup is constant time.",
      "tag": "quadratic-scan",
      "evidence": [
       {
@@ -185,8 +185,8 @@
     {
      "id": "sub-040-f3",
      "severity": "major",
-     "title": "One statement line confirms many entries",
-     "body": "A matched line is never consumed, so two identical ledger entries are both confirmed by one line.",
+     "title": "One log line confirms many tracks",
+     "body": "A matched line is never used up, so two identical planned tracks are both confirmed by one line.",
      "tag": "duplicates",
      "evidence": [
       {
@@ -209,7 +209,7 @@
      "id": "sub-040-f4",
      "severity": "minor",
      "title": "A loop does nothing",
-     "body": "Lines 8 and 9 iterate the statement without using it.",
+     "body": "Lines 8 and 9 iterate the play log without using it.",
      "tag": "dead-code",
      "evidence": [
       {
@@ -244,22 +244,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 47,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 0,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -268,8 +268,8 @@
   },
   {
    "id": "sub-039",
-   "problemId": "transfers-that-net-to-zero",
-   "problemTitle": "Two transfers that net to zero",
+   "problemId": "moves-that-cancel",
+   "problemTitle": "Two moves that cancel out",
    "language": "pseudo",
    "createdAt": "2026-10-27T18:58:00.000Z",
    "verdict": "accepted",
@@ -281,7 +281,7 @@
    "translated": true,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "function netZeroPair(cents)\n  seen <- empty map from amount to index\n  for j from 0 to length(cents) - 1\n    if seen has -cents[j]\n      return [seen[-cents[j]], j]\n    if seen does not have cents[j]\n      seen[cents[j]] <- j\n  return []\nend",
+   "code": "function cancellingPair(steps)\n  seen <- empty map from move to index\n  for j from 0 to length(steps) - 1\n    if seen has -steps[j]\n      return [seen[-steps[j]], j]\n    if seen does not have steps[j]\n      seen[steps[j]] <- j\n  return []\nend",
    "cases": [
     {
      "caseId": "case-01",
@@ -363,7 +363,7 @@
      "id": "sub-039-f1",
      "severity": "nit",
      "title": "The loop bound is spelled out by hand",
-     "body": "Line 3 counts to length minus one; \"for each amount at index j\" says the same with less to check.",
+     "body": "Line 3 counts to length minus one; \"for each move at index j\" says the same with less to check.",
      "tag": "clarity",
      "evidence": [
       {
@@ -380,27 +380,27 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 70,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 20,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 10,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
    "translation": {
-    "python": "def net_zero_pair(cents):\n    seen = {}\n    for j in range(len(cents)):\n        if -cents[j] in seen:\n            return [seen[-cents[j]], j]\n        if cents[j] not in seen:\n            seen[cents[j]] = j\n    return []",
+    "python": "def cancelling_pair(steps):\n    seen = {}\n    for j in range(len(steps)):\n        if -steps[j] in seen:\n            return [seen[-steps[j]], j]\n        if steps[j] not in seen:\n            seen[steps[j]] = j\n    return []",
     "mapping": [
      [
       1,
@@ -563,22 +563,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 70,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 20,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 10,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": "Linear after the sort, and every edge case handled.",
@@ -726,22 +726,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 58,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 7,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -750,8 +750,8 @@
   },
   {
    "id": "sub-036",
-   "problemId": "fewest-coins",
-   "problemTitle": "Fewest coins for change",
+   "problemId": "fewest-tiles",
+   "problemTitle": "Fewest tiles for a row",
    "language": "python",
    "createdAt": "2026-10-25T19:12:00.000Z",
    "verdict": "accepted",
@@ -763,7 +763,7 @@
    "translated": false,
    "praised": true,
    "contentVersion": "demo-2026.10",
-   "code": "def fewest_coins(coins, amount):\n    best = [0] + [amount + 1] * amount\n    for value in range(1, amount + 1):\n        for c in coins:\n            if c <= value and best[value - c] + 1 < best[value]:\n                best[value] = best[value - c] + 1\n    return best[amount] if best[amount] <= amount else -1",
+   "code": "def fewest_tiles(tiles, length):\n    best = [0] + [length + 1] * length\n    for size in range(1, length + 1):\n        for t in tiles:\n            if t <= size and best[size - t] + 1 < best[size]:\n                best[size] = best[size - t] + 1\n    return best[length] if best[length] <= length else -1",
    "cases": [
     {
      "caseId": "case-01",
@@ -846,39 +846,39 @@
      "r2": 0.99
     },
     "target": {
-     "label": "n · amount",
+     "label": "n · length",
      "exponent": 1
     }
    },
    "findings": [],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 70,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 20,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 10,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
-   "praise": "Exact on every coin system, and the sentinel is chosen with care.",
+   "praise": "Exact on every tile set, and the sentinel is chosen with care.",
    "translation": null,
    "isBoss": false
   },
   {
    "id": "sub-035",
-   "problemId": "fewest-coins",
-   "problemTitle": "Fewest coins for change",
+   "problemId": "fewest-tiles",
+   "problemTitle": "Fewest tiles for a row",
    "language": "javascript",
    "createdAt": "2026-10-25T18:44:00.000Z",
    "verdict": "failed",
@@ -892,7 +892,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "export function fewestCoins(coins, amount) {\n  const sorted = [...coins].sort((a, b) => b - a)\n  let left = amount\n  let count = 0\n  for (const c of sorted) {\n    count += Math.floor(left / c)\n    left %= c\n  }\n  return left === 0 ? count : -1\n}",
+   "code": "export function fewestTiles(tiles, length) {\n  const sorted = [...tiles].sort((a, b) => b - a)\n  let left = length\n  let count = 0\n  for (const t of sorted) {\n    count += Math.floor(left / t)\n    left %= t\n  }\n  return left === 0 ? count : -1\n}",
    "cases": [
     {
      "caseId": "case-01",
@@ -904,7 +904,7 @@
      "status": "fail",
      "timeMs": 21,
      "evidence": {
-      "input": "coins: [1, 5, 12]\namount: 15",
+      "input": "tiles: [1, 5, 12]\nlength: 15",
       "expected": "3",
       "actual": "4",
       "diffAt": 0,
@@ -975,8 +975,8 @@
     {
      "id": "sub-035-f1",
      "severity": "critical",
-     "title": "Greedy is not optimal for these coins",
-     "body": "Taking the largest coin first works for some coin systems, not all. With 1, 5 and 12, fifteen takes four coins greedily and three optimally. This needs dynamic programming over amounts.",
+     "title": "Greedy is not optimal for these tiles",
+     "body": "Taking the longest tile first works for some tile sets, not all. With 1, 5 and 12, a row of fifteen takes four tiles greedily and three optimally. This needs dynamic programming over lengths.",
      "tag": "wrong-algorithm",
      "evidence": [
       {
@@ -998,22 +998,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 41,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 4,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -1022,8 +1022,8 @@
   },
   {
    "id": "sub-034",
-   "problemId": "double-entry-ledger",
-   "problemTitle": "The double-entry ledger",
+   "problemId": "mirrored-scorebook",
+   "problemTitle": "The mirrored scorebook",
    "language": "python",
    "createdAt": "2026-10-24T19:20:00.000Z",
    "verdict": "failed",
@@ -1038,7 +1038,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "def close_books(postings):\n    seen = set()\n    journals = {}\n    balances = {}\n    for p in postings:\n        key = (p.journal, p.debit, p.credit, p.cents)\n        if key in seen:\n            continue\n        seen.add(key)\n        j = journals.setdefault(p.journal, 0)\n        journals[p.journal] = j + p.cents - p.cents\n        balances[p.debit] = balances.get(p.debit, 0) + p.cents\n        balances[p.credit] = balances.get(p.credit, 0) - p.cents\n    unbalanced = [j for j, off in journals.items() if off != 0]\n    return unbalanced, balances",
+   "code": "def close_scorebook(entries):\n    seen = set()\n    matches = {}\n    tallies = {}\n    for e in entries:\n        key = (e.match, e.scorer, e.conceder, e.points)\n        if key in seen:\n            continue\n        seen.add(key)\n        m = matches.setdefault(e.match, 0)\n        matches[e.match] = m + e.points - e.points\n        tallies[e.scorer] = tallies.get(e.scorer, 0) + e.points\n        tallies[e.conceder] = tallies.get(e.conceder, 0) - e.points\n    inconsistent = [m for m, off in matches.items() if off != 0]\n    return inconsistent, tallies",
    "cases": [
     {
      "caseId": "case-01",
@@ -1055,10 +1055,10 @@
       "actual": null,
       "diffAt": 0,
       "tags": [
-       "repeated postings",
-       "same accounts and amount"
+       "repeated entries",
+       "same teams and points"
       ],
-      "inputSize": "48,000 postings"
+      "inputSize": "48,000 scorebook entries"
      }
     },
     {
@@ -1180,7 +1180,7 @@
      "id": "sub-034-f1",
      "severity": "critical",
      "title": "The duplicate key ignores the sequence number",
-     "body": "Line 6 leaves out the sequence number, so two genuine postings with the same accounts and amount collapse into one.",
+     "body": "Line 6 leaves out the sequence number, so two genuine entries with the same teams and points collapse into one.",
      "tag": "duplicates",
      "evidence": [
       {
@@ -1202,8 +1202,8 @@
     {
      "id": "sub-034-f2",
      "severity": "critical",
-     "title": "No journal can ever be unbalanced",
-     "body": "Line 11 adds and subtracts the same amount, so every journal sums to zero. Track debits and credits separately per journal.",
+     "title": "No match can ever be inconsistent",
+     "body": "Line 11 adds and subtracts the same points, so every match sums to zero. Track scored and conceded points separately per match.",
      "tag": "missing-branch",
      "evidence": [
       {
@@ -1225,8 +1225,8 @@
     {
      "id": "sub-034-f3",
      "severity": "major",
-     "title": "Unbalanced journals still move balances",
-     "body": "Lines 12 and 13 post every line before knowing whether its journal balances. The statement closes only balanced journals.",
+     "title": "Inconsistent matches still move tallies",
+     "body": "Lines 12 and 13 post every entry before knowing whether its match is consistent. The statement closes only consistent matches.",
      "tag": "missing-branch",
      "evidence": [
       {
@@ -1248,22 +1248,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 26,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 0,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -1272,8 +1272,8 @@
   },
   {
    "id": "sub-033",
-   "problemId": "top-merchants",
-   "problemTitle": "Top merchants by volume",
+   "problemId": "top-players",
+   "problemTitle": "Top players by net points",
    "language": "javascript",
    "createdAt": "2026-10-24T18:16:00.000Z",
    "verdict": "accepted",
@@ -1287,7 +1287,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "export function topMerchants(transactions, k) {\n  const volume = new Map()\n  for (const [m, cents] of transactions) {\n    volume.set(m, (volume.get(m) ?? 0) + cents)\n  }\n  return [...volume.entries()]\n    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))\n    .slice(0, k)\n    .map(([m]) => m)\n}",
+   "code": "export function topPlayers(events, k) {\n  const net = new Map()\n  for (const [player, points] of events) {\n    net.set(player, (net.get(player) ?? 0) + points)\n  }\n  return [...net.entries()]\n    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))\n    .slice(0, k)\n    .map(([player]) => player)\n}",
    "cases": [
     {
      "caseId": "case-01",
@@ -1378,8 +1378,8 @@
     {
      "id": "sub-033-f1",
      "severity": "minor",
-     "title": "Sorting every merchant to keep k",
-     "body": "Line 7 sorts all merchants. With a million merchants and k of ten, a bounded heap does less work; the measured growth is still inside the target here.",
+     "title": "Sorting every player to keep k",
+     "body": "Line 7 sorts all players. With a million players and k of ten, a bounded heap does less work; the measured growth is still inside the target here.",
      "tag": "complexity",
      "evidence": [
       {
@@ -1419,22 +1419,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 70,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 20,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 9,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -1443,8 +1443,8 @@
   },
   {
    "id": "sub-032",
-   "problemId": "split-bill-to-the-cent",
-   "problemTitle": "Split a bill to the cent",
+   "problemId": "split-match-time",
+   "problemTitle": "Split match time to the millisecond",
    "language": "python",
    "createdAt": "2026-10-22T18:52:00.000Z",
    "verdict": "accepted",
@@ -1557,22 +1557,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 70,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 20,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 9,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -1581,8 +1581,8 @@
   },
   {
    "id": "sub-031",
-   "problemId": "split-bill-to-the-cent",
-   "problemTitle": "Split a bill to the cent",
+   "problemId": "split-match-time",
+   "problemTitle": "Split match time to the millisecond",
    "language": "javascript",
    "createdAt": "2026-10-22T18:24:00.000Z",
    "verdict": "failed",
@@ -1672,7 +1672,7 @@
      "id": "sub-031-f1",
      "severity": "critical",
      "title": "Shares do not add up to the total",
-     "body": "Rounding each share on its own loses or invents cents. Three equal shares of 1000 come to 999. Round down, then hand out the remainder by largest fraction.",
+     "body": "Rounding each share on its own loses or invents milliseconds. Three equal shares of 1000 come to 999. Round down, then hand out the remainder by largest fraction.",
      "tag": "rounding",
      "evidence": [
       {
@@ -1717,22 +1717,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 35,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 1,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -1914,22 +1914,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 55,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 1,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -2071,7 +2071,7 @@
      "id": "sub-029-f2",
      "severity": "major",
      "title": "The bucket can overfill",
-     "body": "Nothing caps `t` at capacity after a refill, so a quiet client banks unlimited tokens.",
+     "body": "Nothing caps `t` at capacity after a refill, so a quiet client piles up unlimited tokens.",
      "tag": "missing-branch",
      "evidence": [
       {
@@ -2093,22 +2093,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 55,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 4,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -2252,22 +2252,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 56,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 6,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -2402,22 +2402,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 64,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 6,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -2426,8 +2426,8 @@
   },
   {
    "id": "sub-026",
-   "problemId": "idempotent-payment-capture",
-   "problemTitle": "Idempotent payment capture",
+   "problemId": "idempotent-score-submit",
+   "problemTitle": "Idempotent score submission",
    "language": "python",
    "createdAt": "2026-10-19T17:21:00.000Z",
    "verdict": "failed",
@@ -2442,7 +2442,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "def capture(requests):\n    seen = {}\n    balances = {}\n    rejected = []\n    for i, (key, account, cents) in enumerate(requests):\n        if key in seen:\n            continue\n        seen[key] = (account, cents)\n        balances[account] = balances.get(account, 0) + cents\n    return balances, rejected",
+   "code": "def submit_scores(requests):\n    seen = {}\n    totals = {}\n    rejected = []\n    for i, (key, player, points) in enumerate(requests):\n        if key in seen:\n            continue\n        seen[key] = (player, points)\n        totals[player] = totals.get(player, 0) + points\n    return totals, rejected",
    "cases": [
     {
      "caseId": "case-01",
@@ -2464,7 +2464,7 @@
      "status": "fail",
      "timeMs": 28,
      "evidence": {
-      "input": "[(k1, acc7, 1200), (k1, acc7, 1300)]",
+      "input": "[(k1, ana, 1200), (k1, ana, 1300)]",
       "expected": "rejected: [1]",
       "actual": "rejected: []",
       "diffAt": 1,
@@ -2546,7 +2546,7 @@
      "id": "sub-026-f1",
      "severity": "critical",
      "title": "Conflicts are treated as retries",
-     "body": "Lines 6 and 7 skip any repeated key without comparing account and amount, so a request that reuses a key for a different payment is silently dropped instead of rejected.",
+     "body": "Lines 6 and 7 skip any repeated key without comparing player and points, so a request that reuses a key for a different score is silently dropped instead of rejected.",
      "tag": "missing-branch",
      "evidence": [
       {
@@ -2586,22 +2586,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 53,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 3,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -2715,16 +2715,16 @@
    "findings": null,
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 55,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     }
    ],
    "praise": null,
@@ -2733,8 +2733,8 @@
   },
   {
    "id": "sub-024",
-   "problemId": "ledger-reconciliation",
-   "problemTitle": "Ledger reconciliation",
+   "problemId": "broadcast-log-check",
+   "problemTitle": "Missing tracks in a broadcast log",
    "language": "python",
    "createdAt": "2026-10-16T19:12:00.000Z",
    "verdict": "failed",
@@ -2751,7 +2751,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "def reconcile(entries, statement):\n    \"\"\"Return ids in the ledger that the bank statement does not confirm.\"\"\"\n    seen = []\n    for entry in entries:\n        seen.append((entry.id, entry.cents))\n\n    missing = []\n    for line in statement:\n        pass\n\n    for entry_id, cents in seen:\n        matched = False\n        for line in statement:\n            if line.ref == entry_id and line.cents == cents:\n                matched = True\n        if not matched:\n            missing.append(entry_id)\n    return missing[:-1]",
+   "code": "def missing_tracks(planned, aired):\n    \"\"\"Return planned tracks that the play log does not confirm.\"\"\"\n    seen = []\n    for track in planned:\n        seen.append((track.id, track.seconds))\n\n    missing = []\n    for line in aired:\n        pass\n\n    for track_id, seconds in seen:\n        matched = False\n        for line in aired:\n            if line.track == track_id and line.seconds == seconds:\n                matched = True\n        if not matched:\n            missing.append(track_id)\n    return missing[:-1]",
    "cases": [
     {
      "caseId": "case-01",
@@ -2773,12 +2773,12 @@
      "status": "fail",
      "timeMs": 41,
      "evidence": {
-      "input": "entries: [(a1, 1250), (a2, 900), (a3, 4000)]\nstatement: [(a1, 1250), (a3, 4000)]",
-      "expected": "[\"a2\"]",
+      "input": "planned: [(t1, 215), (t2, 190), (t3, 242)]\naired: [(t1, 215), (t3, 242)]",
+      "expected": "[\"t2\"]",
       "actual": "[]",
       "diffAt": 1,
       "tags": [
-       "single missing entry",
+       "single missing track",
        "last element"
       ]
      },
@@ -2797,8 +2797,8 @@
      "status": "fail",
      "timeMs": 37,
      "evidence": {
-      "input": "entries: [(b1, 300), (b1, 300)]\nstatement: [(b1, 300)]",
-      "expected": "[\"b1\"]",
+      "input": "planned: [(t4, 300), (t4, 300)]\naired: [(t4, 300)]",
+      "expected": "[\"t4\"]",
       "actual": "[]",
       "diffAt": 1,
       "tags": [
@@ -2869,8 +2869,8 @@
     {
      "id": "sub-024-f1",
      "severity": "major",
-     "title": "The last missing entry is dropped",
-     "body": "Line 18 slices off the final element, so a statement that misses only the last ledger entry reports nothing.",
+     "title": "The last missing track is dropped",
+     "body": "Line 18 slices off the final element, so a log that misses only the last planned track reports nothing.",
      "tag": "off-by-one",
      "evidence": [
       {
@@ -2893,7 +2893,7 @@
      "id": "sub-024-f2",
      "severity": "major",
      "title": "Matching is quadratic",
-     "body": "Every ledger entry scans the whole statement. Index the statement by reference once, then each lookup is constant time.",
+     "body": "Every planned track scans the whole play log. Count the log by (track, length) once, then each lookup is constant time.",
      "tag": "quadratic-scan",
      "evidence": [
       {
@@ -2915,8 +2915,8 @@
     {
      "id": "sub-024-f3",
      "severity": "major",
-     "title": "One statement line confirms many entries",
-     "body": "A matched line is never consumed, so two identical ledger entries are both confirmed by one line.",
+     "title": "One log line confirms many tracks",
+     "body": "A matched line is never used up, so two identical planned tracks are both confirmed by one line.",
      "tag": "duplicates",
      "evidence": [
       {
@@ -2939,7 +2939,7 @@
      "id": "sub-024-f4",
      "severity": "minor",
      "title": "A loop does nothing",
-     "body": "Lines 8 and 9 iterate the statement without using it.",
+     "body": "Lines 8 and 9 iterate the play log without using it.",
      "tag": "dead-code",
      "evidence": [
       {
@@ -2974,22 +2974,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 47,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 0,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -3137,22 +3137,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 58,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 7,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -3161,8 +3161,8 @@
   },
   {
    "id": "sub-022",
-   "problemId": "transfers-that-net-to-zero",
-   "problemTitle": "Two transfers that net to zero",
+   "problemId": "moves-that-cancel",
+   "problemTitle": "Two moves that cancel out",
    "language": "csharp",
    "createdAt": "2026-10-14T18:27:00.000Z",
    "verdict": "failed",
@@ -3176,7 +3176,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "public static int[] NetZeroPair(long[] cents)\n{\n    var firstAt = new Dictionary<long, int>();\n    for (var j = 0; j < cents.Length; j++)\n    {\n        firstAt.TryAdd(cents[j], j);\n        if (firstAt.TryGetValue(-cents[j], out var i) && i != j) return [i, j];\n    }\n    return [];\n}",
+   "code": "public static int[] CancellingPair(long[] steps)\n{\n    var firstAt = new Dictionary<long, int>();\n    for (var j = 0; j < steps.Length; j++)\n    {\n        firstAt.TryAdd(steps[j], j);\n        if (firstAt.TryGetValue(-steps[j], out var i) && i != j) return [i, j];\n    }\n    return [];\n}",
    "cases": [
     {
      "caseId": "case-01",
@@ -3203,7 +3203,7 @@
       "actual": "[]",
       "diffAt": 0,
       "tags": [
-       "zero amounts"
+       "zero moves"
       ]
      },
      "lines": [
@@ -3249,7 +3249,7 @@
     {
      "id": "sub-022-f1",
      "severity": "major",
-     "title": "The current transfer is recorded before it is matched",
+     "title": "The current move is recorded before it is matched",
      "body": "Line 6 stores index j before line 7 looks up its negation, so for two zeros the lookup finds j itself and the guard rejects it. Look up first, then record.",
      "tag": "mutation-order",
      "evidence": [
@@ -3272,22 +3272,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 63,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 7,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -3296,8 +3296,8 @@
   },
   {
    "id": "sub-021",
-   "problemId": "idempotent-payment-capture",
-   "problemTitle": "Idempotent payment capture",
+   "problemId": "idempotent-score-submit",
+   "problemTitle": "Idempotent score submission",
    "language": "python",
    "createdAt": "2026-10-13T19:30:00.000Z",
    "verdict": "failed",
@@ -3312,7 +3312,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "def capture(requests):\n    seen = {}\n    balances = {}\n    rejected = []\n    for i, (key, account, cents) in enumerate(requests):\n        if key in seen:\n            continue\n        seen[key] = (account, cents)\n        balances[account] = balances.get(account, 0) + cents\n    return balances, rejected",
+   "code": "def submit_scores(requests):\n    seen = {}\n    totals = {}\n    rejected = []\n    for i, (key, player, points) in enumerate(requests):\n        if key in seen:\n            continue\n        seen[key] = (player, points)\n        totals[player] = totals.get(player, 0) + points\n    return totals, rejected",
    "cases": [
     {
      "caseId": "case-01",
@@ -3334,7 +3334,7 @@
      "status": "fail",
      "timeMs": 23,
      "evidence": {
-      "input": "[(k1, acc7, 1200), (k1, acc7, 1300)]",
+      "input": "[(k1, ana, 1200), (k1, ana, 1300)]",
       "expected": "rejected: [1]",
       "actual": "rejected: []",
       "diffAt": 1,
@@ -3416,7 +3416,7 @@
      "id": "sub-021-f1",
      "severity": "critical",
      "title": "Conflicts are treated as retries",
-     "body": "Lines 6 and 7 skip any repeated key without comparing account and amount, so a request that reuses a key for a different payment is silently dropped instead of rejected.",
+     "body": "Lines 6 and 7 skip any repeated key without comparing player and points, so a request that reuses a key for a different score is silently dropped instead of rejected.",
      "tag": "missing-branch",
      "evidence": [
       {
@@ -3456,22 +3456,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 53,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 3,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -3653,22 +3653,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 55,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 1,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -3677,8 +3677,8 @@
   },
   {
    "id": "sub-019",
-   "problemId": "split-bill-to-the-cent",
-   "problemTitle": "Split a bill to the cent",
+   "problemId": "split-match-time",
+   "problemTitle": "Split match time to the millisecond",
    "language": "javascript",
    "createdAt": "2026-10-11T17:40:00.000Z",
    "verdict": "failed",
@@ -3768,7 +3768,7 @@
      "id": "sub-019-f1",
      "severity": "critical",
      "title": "Shares do not add up to the total",
-     "body": "Rounding each share on its own loses or invents cents. Three equal shares of 1000 come to 999. Round down, then hand out the remainder by largest fraction.",
+     "body": "Rounding each share on its own loses or invents milliseconds. Three equal shares of 1000 come to 999. Round down, then hand out the remainder by largest fraction.",
      "tag": "rounding",
      "evidence": [
       {
@@ -3813,22 +3813,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 35,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 1,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -3837,8 +3837,8 @@
   },
   {
    "id": "sub-018",
-   "problemId": "fewest-coins",
-   "problemTitle": "Fewest coins for change",
+   "problemId": "fewest-tiles",
+   "problemTitle": "Fewest tiles for a row",
    "language": "javascript",
    "createdAt": "2026-10-10T18:55:00.000Z",
    "verdict": "failed",
@@ -3852,7 +3852,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "export function fewestCoins(coins, amount) {\n  const sorted = [...coins].sort((a, b) => b - a)\n  let left = amount\n  let count = 0\n  for (const c of sorted) {\n    count += Math.floor(left / c)\n    left %= c\n  }\n  return left === 0 ? count : -1\n}",
+   "code": "export function fewestTiles(tiles, length) {\n  const sorted = [...tiles].sort((a, b) => b - a)\n  let left = length\n  let count = 0\n  for (const t of sorted) {\n    count += Math.floor(left / t)\n    left %= t\n  }\n  return left === 0 ? count : -1\n}",
    "cases": [
     {
      "caseId": "case-01",
@@ -3864,7 +3864,7 @@
      "status": "fail",
      "timeMs": 28,
      "evidence": {
-      "input": "coins: [1, 5, 12]\namount: 15",
+      "input": "tiles: [1, 5, 12]\nlength: 15",
       "expected": "3",
       "actual": "4",
       "diffAt": 0,
@@ -3935,8 +3935,8 @@
     {
      "id": "sub-018-f1",
      "severity": "critical",
-     "title": "Greedy is not optimal for these coins",
-     "body": "Taking the largest coin first works for some coin systems, not all. With 1, 5 and 12, fifteen takes four coins greedily and three optimally. This needs dynamic programming over amounts.",
+     "title": "Greedy is not optimal for these tiles",
+     "body": "Taking the longest tile first works for some tile sets, not all. With 1, 5 and 12, a row of fifteen takes four tiles greedily and three optimally. This needs dynamic programming over lengths.",
      "tag": "wrong-algorithm",
      "evidence": [
       {
@@ -3958,22 +3958,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 41,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 4,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -4117,22 +4117,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 56,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 6,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -4274,7 +4274,7 @@
      "id": "sub-016-f2",
      "severity": "major",
      "title": "The bucket can overfill",
-     "body": "Nothing caps `t` at capacity after a refill, so a quiet client banks unlimited tokens.",
+     "body": "Nothing caps `t` at capacity after a refill, so a quiet client piles up unlimited tokens.",
      "tag": "missing-branch",
      "evidence": [
       {
@@ -4296,22 +4296,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 55,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 4,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -4493,22 +4493,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 55,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 1,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -4643,22 +4643,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 64,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 6,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -4667,8 +4667,8 @@
   },
   {
    "id": "sub-013",
-   "problemId": "top-merchants",
-   "problemTitle": "Top merchants by volume",
+   "problemId": "top-players",
+   "problemTitle": "Top players by net points",
    "language": "javascript",
    "createdAt": "2026-10-05T17:57:00.000Z",
    "verdict": "accepted",
@@ -4682,7 +4682,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "export function topMerchants(transactions, k) {\n  const volume = new Map()\n  for (const [m, cents] of transactions) {\n    volume.set(m, (volume.get(m) ?? 0) + cents)\n  }\n  return [...volume.entries()]\n    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))\n    .slice(0, k)\n    .map(([m]) => m)\n}",
+   "code": "export function topPlayers(events, k) {\n  const net = new Map()\n  for (const [player, points] of events) {\n    net.set(player, (net.get(player) ?? 0) + points)\n  }\n  return [...net.entries()]\n    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))\n    .slice(0, k)\n    .map(([player]) => player)\n}",
    "cases": [
     {
      "caseId": "case-01",
@@ -4773,8 +4773,8 @@
     {
      "id": "sub-013-f1",
      "severity": "minor",
-     "title": "Sorting every merchant to keep k",
-     "body": "Line 7 sorts all merchants. With a million merchants and k of ten, a bounded heap does less work; the measured growth is still inside the target here.",
+     "title": "Sorting every player to keep k",
+     "body": "Line 7 sorts all players. With a million players and k of ten, a bounded heap does less work; the measured growth is still inside the target here.",
      "tag": "complexity",
      "evidence": [
       {
@@ -4814,22 +4814,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 70,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 20,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 9,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -4838,8 +4838,8 @@
   },
   {
    "id": "sub-012",
-   "problemId": "ledger-reconciliation",
-   "problemTitle": "Ledger reconciliation",
+   "problemId": "broadcast-log-check",
+   "problemTitle": "Missing tracks in a broadcast log",
    "language": "python",
    "createdAt": "2026-10-04T18:26:00.000Z",
    "verdict": "failed",
@@ -4856,7 +4856,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "def reconcile(entries, statement):\n    \"\"\"Return ids in the ledger that the bank statement does not confirm.\"\"\"\n    seen = []\n    for entry in entries:\n        seen.append((entry.id, entry.cents))\n\n    missing = []\n    for line in statement:\n        pass\n\n    for entry_id, cents in seen:\n        matched = False\n        for line in statement:\n            if line.ref == entry_id and line.cents == cents:\n                matched = True\n        if not matched:\n            missing.append(entry_id)\n    return missing[:-1]",
+   "code": "def missing_tracks(planned, aired):\n    \"\"\"Return planned tracks that the play log does not confirm.\"\"\"\n    seen = []\n    for track in planned:\n        seen.append((track.id, track.seconds))\n\n    missing = []\n    for line in aired:\n        pass\n\n    for track_id, seconds in seen:\n        matched = False\n        for line in aired:\n            if line.track == track_id and line.seconds == seconds:\n                matched = True\n        if not matched:\n            missing.append(track_id)\n    return missing[:-1]",
    "cases": [
     {
      "caseId": "case-01",
@@ -4878,12 +4878,12 @@
      "status": "fail",
      "timeMs": 38,
      "evidence": {
-      "input": "entries: [(a1, 1250), (a2, 900), (a3, 4000)]\nstatement: [(a1, 1250), (a3, 4000)]",
-      "expected": "[\"a2\"]",
+      "input": "planned: [(t1, 215), (t2, 190), (t3, 242)]\naired: [(t1, 215), (t3, 242)]",
+      "expected": "[\"t2\"]",
       "actual": "[]",
       "diffAt": 1,
       "tags": [
-       "single missing entry",
+       "single missing track",
        "last element"
       ]
      },
@@ -4902,8 +4902,8 @@
      "status": "fail",
      "timeMs": 23,
      "evidence": {
-      "input": "entries: [(b1, 300), (b1, 300)]\nstatement: [(b1, 300)]",
-      "expected": "[\"b1\"]",
+      "input": "planned: [(t4, 300), (t4, 300)]\naired: [(t4, 300)]",
+      "expected": "[\"t4\"]",
       "actual": "[]",
       "diffAt": 1,
       "tags": [
@@ -4974,8 +4974,8 @@
     {
      "id": "sub-012-f1",
      "severity": "major",
-     "title": "The last missing entry is dropped",
-     "body": "Line 18 slices off the final element, so a statement that misses only the last ledger entry reports nothing.",
+     "title": "The last missing track is dropped",
+     "body": "Line 18 slices off the final element, so a log that misses only the last planned track reports nothing.",
      "tag": "off-by-one",
      "evidence": [
       {
@@ -4998,7 +4998,7 @@
      "id": "sub-012-f2",
      "severity": "major",
      "title": "Matching is quadratic",
-     "body": "Every ledger entry scans the whole statement. Index the statement by reference once, then each lookup is constant time.",
+     "body": "Every planned track scans the whole play log. Count the log by (track, length) once, then each lookup is constant time.",
      "tag": "quadratic-scan",
      "evidence": [
       {
@@ -5020,8 +5020,8 @@
     {
      "id": "sub-012-f3",
      "severity": "major",
-     "title": "One statement line confirms many entries",
-     "body": "A matched line is never consumed, so two identical ledger entries are both confirmed by one line.",
+     "title": "One log line confirms many tracks",
+     "body": "A matched line is never used up, so two identical planned tracks are both confirmed by one line.",
      "tag": "duplicates",
      "evidence": [
       {
@@ -5044,7 +5044,7 @@
      "id": "sub-012-f4",
      "severity": "minor",
      "title": "A loop does nothing",
-     "body": "Lines 8 and 9 iterate the statement without using it.",
+     "body": "Lines 8 and 9 iterate the play log without using it.",
      "tag": "dead-code",
      "evidence": [
       {
@@ -5079,22 +5079,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 47,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 0,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -5103,8 +5103,8 @@
   },
   {
    "id": "sub-011",
-   "problemId": "transfers-that-net-to-zero",
-   "problemTitle": "Two transfers that net to zero",
+   "problemId": "moves-that-cancel",
+   "problemTitle": "Two moves that cancel out",
    "language": "csharp",
    "createdAt": "2026-10-03T19:03:00.000Z",
    "verdict": "failed",
@@ -5118,7 +5118,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "public static int[] NetZeroPair(long[] cents)\n{\n    var firstAt = new Dictionary<long, int>();\n    for (var j = 0; j < cents.Length; j++)\n    {\n        firstAt.TryAdd(cents[j], j);\n        if (firstAt.TryGetValue(-cents[j], out var i) && i != j) return [i, j];\n    }\n    return [];\n}",
+   "code": "public static int[] CancellingPair(long[] steps)\n{\n    var firstAt = new Dictionary<long, int>();\n    for (var j = 0; j < steps.Length; j++)\n    {\n        firstAt.TryAdd(steps[j], j);\n        if (firstAt.TryGetValue(-steps[j], out var i) && i != j) return [i, j];\n    }\n    return [];\n}",
    "cases": [
     {
      "caseId": "case-01",
@@ -5145,7 +5145,7 @@
       "actual": "[]",
       "diffAt": 0,
       "tags": [
-       "zero amounts"
+       "zero moves"
       ]
      },
      "lines": [
@@ -5191,7 +5191,7 @@
     {
      "id": "sub-011-f1",
      "severity": "major",
-     "title": "The current transfer is recorded before it is matched",
+     "title": "The current move is recorded before it is matched",
      "body": "Line 6 stores index j before line 7 looks up its negation, so for two zeros the lookup finds j itself and the guard rejects it. Look up first, then record.",
      "tag": "mutation-order",
      "evidence": [
@@ -5214,22 +5214,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 63,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 7,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -5377,22 +5377,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 58,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 7,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -5401,8 +5401,8 @@
   },
   {
    "id": "sub-009",
-   "problemId": "idempotent-payment-capture",
-   "problemTitle": "Idempotent payment capture",
+   "problemId": "idempotent-score-submit",
+   "problemTitle": "Idempotent score submission",
    "language": "python",
    "createdAt": "2026-10-01T18:11:00.000Z",
    "verdict": "failed",
@@ -5417,7 +5417,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "def capture(requests):\n    seen = {}\n    balances = {}\n    rejected = []\n    for i, (key, account, cents) in enumerate(requests):\n        if key in seen:\n            continue\n        seen[key] = (account, cents)\n        balances[account] = balances.get(account, 0) + cents\n    return balances, rejected",
+   "code": "def submit_scores(requests):\n    seen = {}\n    totals = {}\n    rejected = []\n    for i, (key, player, points) in enumerate(requests):\n        if key in seen:\n            continue\n        seen[key] = (player, points)\n        totals[player] = totals.get(player, 0) + points\n    return totals, rejected",
    "cases": [
     {
      "caseId": "case-01",
@@ -5439,7 +5439,7 @@
      "status": "fail",
      "timeMs": 30,
      "evidence": {
-      "input": "[(k1, acc7, 1200), (k1, acc7, 1300)]",
+      "input": "[(k1, ana, 1200), (k1, ana, 1300)]",
       "expected": "rejected: [1]",
       "actual": "rejected: []",
       "diffAt": 1,
@@ -5521,7 +5521,7 @@
      "id": "sub-009-f1",
      "severity": "critical",
      "title": "Conflicts are treated as retries",
-     "body": "Lines 6 and 7 skip any repeated key without comparing account and amount, so a request that reuses a key for a different payment is silently dropped instead of rejected.",
+     "body": "Lines 6 and 7 skip any repeated key without comparing player and points, so a request that reuses a key for a different score is silently dropped instead of rejected.",
      "tag": "missing-branch",
      "evidence": [
       {
@@ -5561,22 +5561,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 53,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 3,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -5698,22 +5698,22 @@
    "findings": [],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 70,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 20,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 10,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": "Linear, and the empty case falls out of the loop on its own.",
@@ -5895,22 +5895,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 55,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 1,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -5919,8 +5919,8 @@
   },
   {
    "id": "sub-006",
-   "problemId": "fewest-coins",
-   "problemTitle": "Fewest coins for change",
+   "problemId": "fewest-tiles",
+   "problemTitle": "Fewest tiles for a row",
    "language": "javascript",
    "createdAt": "2026-09-28T18:37:00.000Z",
    "verdict": "failed",
@@ -5934,7 +5934,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "export function fewestCoins(coins, amount) {\n  const sorted = [...coins].sort((a, b) => b - a)\n  let left = amount\n  let count = 0\n  for (const c of sorted) {\n    count += Math.floor(left / c)\n    left %= c\n  }\n  return left === 0 ? count : -1\n}",
+   "code": "export function fewestTiles(tiles, length) {\n  const sorted = [...tiles].sort((a, b) => b - a)\n  let left = length\n  let count = 0\n  for (const t of sorted) {\n    count += Math.floor(left / t)\n    left %= t\n  }\n  return left === 0 ? count : -1\n}",
    "cases": [
     {
      "caseId": "case-01",
@@ -5946,7 +5946,7 @@
      "status": "fail",
      "timeMs": 35,
      "evidence": {
-      "input": "coins: [1, 5, 12]\namount: 15",
+      "input": "tiles: [1, 5, 12]\nlength: 15",
       "expected": "3",
       "actual": "4",
       "diffAt": 0,
@@ -6017,8 +6017,8 @@
     {
      "id": "sub-006-f1",
      "severity": "critical",
-     "title": "Greedy is not optimal for these coins",
-     "body": "Taking the largest coin first works for some coin systems, not all. With 1, 5 and 12, fifteen takes four coins greedily and three optimally. This needs dynamic programming over amounts.",
+     "title": "Greedy is not optimal for these tiles",
+     "body": "Taking the longest tile first works for some tile sets, not all. With 1, 5 and 12, a row of fifteen takes four tiles greedily and three optimally. This needs dynamic programming over lengths.",
      "tag": "wrong-algorithm",
      "evidence": [
       {
@@ -6040,22 +6040,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 41,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 4,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -6064,8 +6064,8 @@
   },
   {
    "id": "sub-005",
-   "problemId": "split-bill-to-the-cent",
-   "problemTitle": "Split a bill to the cent",
+   "problemId": "split-match-time",
+   "problemTitle": "Split match time to the millisecond",
    "language": "javascript",
    "createdAt": "2026-09-27T18:02:00.000Z",
    "verdict": "failed",
@@ -6155,7 +6155,7 @@
      "id": "sub-005-f1",
      "severity": "critical",
      "title": "Shares do not add up to the total",
-     "body": "Rounding each share on its own loses or invents cents. Three equal shares of 1000 come to 999. Round down, then hand out the remainder by largest fraction.",
+     "body": "Rounding each share on its own loses or invents milliseconds. Three equal shares of 1000 come to 999. Round down, then hand out the remainder by largest fraction.",
      "tag": "rounding",
      "evidence": [
       {
@@ -6200,22 +6200,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 35,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 1,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -6359,22 +6359,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 56,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 6,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -6516,7 +6516,7 @@
      "id": "sub-003-f2",
      "severity": "major",
      "title": "The bucket can overfill",
-     "body": "Nothing caps `t` at capacity after a refill, so a quiet client banks unlimited tokens.",
+     "body": "Nothing caps `t` at capacity after a refill, so a quiet client piles up unlimited tokens.",
      "tag": "missing-branch",
      "evidence": [
       {
@@ -6538,22 +6538,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 55,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 4,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -6562,8 +6562,8 @@
   },
   {
    "id": "sub-002",
-   "problemId": "ledger-reconciliation",
-   "problemTitle": "Ledger reconciliation",
+   "problemId": "broadcast-log-check",
+   "problemTitle": "Missing tracks in a broadcast log",
    "language": "python",
    "createdAt": "2026-09-24T18:21:00.000Z",
    "verdict": "failed",
@@ -6580,7 +6580,7 @@
    "translated": false,
    "praised": false,
    "contentVersion": "demo-2026.10",
-   "code": "def reconcile(entries, statement):\n    \"\"\"Return ids in the ledger that the bank statement does not confirm.\"\"\"\n    seen = []\n    for entry in entries:\n        seen.append((entry.id, entry.cents))\n\n    missing = []\n    for line in statement:\n        pass\n\n    for entry_id, cents in seen:\n        matched = False\n        for line in statement:\n            if line.ref == entry_id and line.cents == cents:\n                matched = True\n        if not matched:\n            missing.append(entry_id)\n    return missing[:-1]",
+   "code": "def missing_tracks(planned, aired):\n    \"\"\"Return planned tracks that the play log does not confirm.\"\"\"\n    seen = []\n    for track in planned:\n        seen.append((track.id, track.seconds))\n\n    missing = []\n    for line in aired:\n        pass\n\n    for track_id, seconds in seen:\n        matched = False\n        for line in aired:\n            if line.track == track_id and line.seconds == seconds:\n                matched = True\n        if not matched:\n            missing.append(track_id)\n    return missing[:-1]",
    "cases": [
     {
      "caseId": "case-01",
@@ -6602,12 +6602,12 @@
      "status": "fail",
      "timeMs": 22,
      "evidence": {
-      "input": "entries: [(a1, 1250), (a2, 900), (a3, 4000)]\nstatement: [(a1, 1250), (a3, 4000)]",
-      "expected": "[\"a2\"]",
+      "input": "planned: [(t1, 215), (t2, 190), (t3, 242)]\naired: [(t1, 215), (t3, 242)]",
+      "expected": "[\"t2\"]",
       "actual": "[]",
       "diffAt": 1,
       "tags": [
-       "single missing entry",
+       "single missing track",
        "last element"
       ]
      },
@@ -6626,8 +6626,8 @@
      "status": "fail",
      "timeMs": 30,
      "evidence": {
-      "input": "entries: [(b1, 300), (b1, 300)]\nstatement: [(b1, 300)]",
-      "expected": "[\"b1\"]",
+      "input": "planned: [(t4, 300), (t4, 300)]\naired: [(t4, 300)]",
+      "expected": "[\"t4\"]",
       "actual": "[]",
       "diffAt": 1,
       "tags": [
@@ -6698,8 +6698,8 @@
     {
      "id": "sub-002-f1",
      "severity": "major",
-     "title": "The last missing entry is dropped",
-     "body": "Line 18 slices off the final element, so a statement that misses only the last ledger entry reports nothing.",
+     "title": "The last missing track is dropped",
+     "body": "Line 18 slices off the final element, so a log that misses only the last planned track reports nothing.",
      "tag": "off-by-one",
      "evidence": [
       {
@@ -6722,7 +6722,7 @@
      "id": "sub-002-f2",
      "severity": "major",
      "title": "Matching is quadratic",
-     "body": "Every ledger entry scans the whole statement. Index the statement by reference once, then each lookup is constant time.",
+     "body": "Every planned track scans the whole play log. Count the log by (track, length) once, then each lookup is constant time.",
      "tag": "quadratic-scan",
      "evidence": [
       {
@@ -6744,8 +6744,8 @@
     {
      "id": "sub-002-f3",
      "severity": "major",
-     "title": "One statement line confirms many entries",
-     "body": "A matched line is never consumed, so two identical ledger entries are both confirmed by one line.",
+     "title": "One log line confirms many tracks",
+     "body": "A matched line is never used up, so two identical planned tracks are both confirmed by one line.",
      "tag": "duplicates",
      "evidence": [
       {
@@ -6768,7 +6768,7 @@
      "id": "sub-002-f4",
      "severity": "minor",
      "title": "A loop does nothing",
-     "body": "Lines 8 and 9 iterate the statement without using it.",
+     "body": "Lines 8 and 9 iterate the play log without using it.",
      "tag": "dead-code",
      "evidence": [
       {
@@ -6803,22 +6803,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 47,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 0,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,
@@ -6966,22 +6966,22 @@
    ],
    "scoreParts": [
     {
+     "kind": "tests",
      "label": "Tests",
      "value": 58,
-     "max": 70,
-     "kind": "tests"
+     "max": 70
     },
     {
+     "kind": "complexity",
      "label": "Complexity",
      "value": 0,
-     "max": 20,
-     "kind": "complexity"
+     "max": 20
     },
     {
+     "kind": "review",
      "label": "Review",
      "value": 7,
-     "max": 10,
-     "kind": "review"
+     "max": 10
     }
    ],
    "praise": null,

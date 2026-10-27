@@ -21,7 +21,7 @@ Status: Phases 0 to 2 done: .NET 10 solution skeleton, architecture and hygiene 
 | Web client | React 19 + Vite + TypeScript + CodeMirror 6 + Tailwind CSS 4 | ADR-014 |
 | Tests | xUnit v3, Testcontainers for .NET, WireMock.Net, Vitest, Playwright + axe | ADR-008, ADR-021 |
 
-The stack is what Israeli fintech and enterprise .NET roles ask for: C#, .NET, MongoDB and Azure.
+The stack is what Israeli enterprise and product .NET roles ask for: C#, .NET, MongoDB and Azure.
 
 ## Run it locally
 
@@ -85,7 +85,7 @@ The agent reads `CLAUDE.md`, then `docs/PLAN.md` and `docs/PROGRESS.md`, and wor
 | `docs/UI_DESIGN.md` | Signature moment, screens, motion, art directions, accessibility |
 | `docs/INTEGRATION.md` | Events Darb Sennin emits to Darb Budokai (optional, later) |
 | `docs/PLAN.md` | Phases 0 to 13 with weights, tasks, tests and skills |
-| `docs/PROGRESS.md` | Ledger and rulings |
+| `docs/PROGRESS.md` | Task log and rulings |
 | `docs/DECISIONS.md` | ADR log |
 | `docs/OPEN_QUESTIONS.md` | What only Nour can decide |
 | `docs/CONVENTIONS.md` | Code style, layout, tests, commits, branches, PR template |

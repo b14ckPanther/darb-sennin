@@ -13,8 +13,8 @@ mkdirSync(out, { recursive: true })
 // [file name, path, optional action that brings the screen to the state worth showing]
 const only = process.argv[3]
 const all = [
-  ['01-workspace', '/problems/ledger-reconciliation'],
-  ['02-verdict-live', '/problems/ledger-reconciliation', 'submit'],
+  ['01-workspace', '/problems/broadcast-log-check'],
+  ['02-verdict-live', '/problems/broadcast-log-check', 'submit'],
   ['03-verdict-stored', '/submissions/sub-040'],
   ['04-verdict-earned', '/submissions/sub-038'],
   ['05-today', '/'],
@@ -29,8 +29,8 @@ const all = [
   ['14-pseudo-verdict', '/submissions/sub-039'],
   ['15-state-offline', '/library', { offline: true }],
   ['16-state-new-account', '/history', { newAccount: true }],
-  ['17-state-reviewer-unavailable', '/problems/fewest-coins', { reviewerDown: true }, 'submit'],
-  ['18-state-judge-paused', '/problems/fewest-coins', { judgePaused: true }, 'submit'],
+  ['17-state-reviewer-unavailable', '/problems/fewest-tiles', { reviewerDown: true }, 'submit'],
+  ['18-state-judge-paused', '/problems/fewest-tiles', { judgePaused: true }, 'submit'],
 ]
 const screens = only ? all.filter(([n]) => n.startsWith(only)) : all
 

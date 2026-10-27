@@ -39,8 +39,8 @@ describe('MockApi on demo seed', () => {
 
   it('filters history by problem, verdict and tag', async () => {
     const api = createMockApi(() => calm)
-    const ledger = await settle(api.history({ problemId: 'ledger-reconciliation' }))
-    expect(ledger.every((s) => s.problemId === 'ledger-reconciliation')).toBe(true)
+    const tracks = await settle(api.history({ problemId: 'broadcast-log-check' }))
+    expect(tracks.every((s) => s.problemId === 'broadcast-log-check')).toBe(true)
     const accepted = await settle(api.history({ verdict: 'accepted' }))
     expect(accepted.every((s) => s.verdict === 'accepted')).toBe(true)
     const tagged = await settle(api.history({ tag: 'off-by-one' }))
@@ -79,9 +79,9 @@ describe('MockApi on demo seed', () => {
 
   it('pins and hides problems', async () => {
     const api = createMockApi(() => calm)
-    const row = await settle(api.setProblemFlags('fewest-coins', { pinned: true, hidden: true }))
+    const row = await settle(api.setProblemFlags('fewest-tiles', { pinned: true, hidden: true }))
     expect(row.pinned && row.hidden).toBe(true)
-    const again = (await settle(api.problems())).find((p) => p.id === 'fewest-coins')
+    const again = (await settle(api.problems())).find((p) => p.id === 'fewest-tiles')
     expect(again?.hidden).toBe(true)
   })
 
@@ -99,10 +99,10 @@ describe('MockApi on demo seed', () => {
     await assertion
   })
 
-  it('runs samples: the flawed ledger attempt fails the first sample', async () => {
+  it('runs samples: the flawed broadcast-log attempt fails the first sample', async () => {
     const api = createMockApi(() => calm)
     const runs = await settle(
-      api.runSamples('ledger-reconciliation', 'python', 'return missing[:-1]'),
+      api.runSamples('broadcast-log-check', 'python', 'return missing[:-1]'),
     )
     expect(runs[0]?.status).toBe('fail')
     expect(runs[1]?.status).toBe('pass')
@@ -129,7 +129,7 @@ describe('fake SignalR stream', () => {
     const api = createMockApi(() => calm)
     const stream = createMockStream(api, () => calm)
     const { submissionId } = await settle(
-      api.submit('ledger-reconciliation', 'python', 'for line in statement:\n    pass'),
+      api.submit('broadcast-log-check', 'python', 'for line in aired:\n    pass'),
     )
     const seen: number[] = []
     const order: string[] = []
@@ -142,7 +142,7 @@ describe('fake SignalR stream', () => {
     expect(seen).toEqual(Array.from({ length: 12 }, (_, i) => i))
     expect(order).toEqual(['graded', 'reviewed'])
     const sub = await settle(api.submission(submissionId))
-    expect(sub.problemId).toBe('ledger-reconciliation')
+    expect(sub.problemId).toBe('broadcast-log-check')
     expect((await settle(api.history()))[0]?.id).toBe(submissionId)
   })
 
@@ -150,7 +150,7 @@ describe('fake SignalR stream', () => {
     const api = createMockApi(() => calm)
     const stream = createMockStream(api, () => calm)
     const code = 'from collections import Counter\ncleared = Counter()'
-    const { submissionId } = await settle(api.submit('ledger-reconciliation', 'python', code))
+    const { submissionId } = await settle(api.submit('broadcast-log-check', 'python', code))
     const results: CaseResult[] = []
     stream.subscribe(submissionId, { caseResolved: ({ result }) => results.push(result) })
     await vi.runAllTimersAsync()
@@ -162,7 +162,7 @@ describe('fake SignalR stream', () => {
     const paused = { ...calm, judgePaused: true }
     const api = createMockApi(() => paused)
     const stream = createMockStream(api, () => paused)
-    const result = await settle(api.submit('fewest-coins', 'python', 'x'))
+    const result = await settle(api.submit('fewest-tiles', 'python', 'x'))
     expect(result.queued).toBe(true)
     const events = vi.fn()
     stream.subscribe(result.submissionId, { caseResolved: events, graded: events })
@@ -174,7 +174,7 @@ describe('fake SignalR stream', () => {
     const live = { ...calm, judgePaused: true }
     const api = createMockApi(() => live)
     const stream = createMockStream(api, () => live)
-    const result = await settle(api.submit('fewest-coins', 'python', 'x'))
+    const result = await settle(api.submit('fewest-tiles', 'python', 'x'))
     const graded = vi.fn()
     stream.subscribe(result.submissionId, { graded })
     await vi.advanceTimersByTimeAsync(5_000)
@@ -196,7 +196,7 @@ describe('fake SignalR stream', () => {
     const down = { ...calm, reviewerDown: true }
     const api = createMockApi(() => down)
     const stream = createMockStream(api, () => down)
-    const { submissionId } = await settle(api.submit('fewest-coins', 'python', 'greedy'))
+    const { submissionId } = await settle(api.submit('fewest-tiles', 'python', 'greedy'))
     stream.subscribe(submissionId, {})
     await vi.runAllTimersAsync()
     const sub = await settle(api.submission(submissionId))
@@ -207,7 +207,7 @@ describe('fake SignalR stream', () => {
   it('unsubscribing stops further events', async () => {
     const api = createMockApi(() => calm)
     const stream = createMockStream(api, () => calm)
-    const { submissionId } = await settle(api.submit('fewest-coins', 'python', 'x'))
+    const { submissionId } = await settle(api.submit('fewest-tiles', 'python', 'x'))
     const seen = vi.fn()
     const stop = stream.subscribe(submissionId, { caseResolved: seen })
     await vi.advanceTimersByTimeAsync(700)

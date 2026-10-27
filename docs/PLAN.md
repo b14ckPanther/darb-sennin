@@ -42,7 +42,7 @@ Tasks:
 
 **Tests that prove it:** hook rejects attribution; arch test catches a planted constant; emoji check catches the fixture; compose smoke test connects to Mongo and the Service Bus emulator; `dotnet test` and `npm test` green.
 
-**Done when:** clean clone + `docker compose up -d` + `dotnet test` + `npm test` all green; ledger row written.
+**Done when:** clean clone + `docker compose up -d` + `dotnet test` + `npm test` all green; log row written.
 
 ---
 
@@ -57,7 +57,7 @@ Tasks:
 2. Record each answer as an ADR in `docs/DECISIONS.md`; update `ARCHITECTURE.md`, `SECURITY.md`, `UI_DESIGN.md`, `INTEGRATION.md` and this plan where answers change them.
 3. Write `docs/specs/YYYY-MM-DD-phase-01-product-spec.md` (one page: users, languages, problem sources, grading model, review provider, hosting) and get Nour's approval.
 
-**Done when:** no unanswered question that blocks Phases 2-5; spec approved and recorded in the ledger.
+**Done when:** no unanswered question that blocks Phases 2-5; spec approved and recorded in the log.
 
 ---
 
@@ -96,7 +96,7 @@ Tasks:
 
 **Tests that prove it:** Playwright flows per screen; axe zero serious/critical; keyboard-only walkthrough test; Lighthouse performance ≥ 90 on the workspace (local).
 
-**Done when:** each screen approved by Nour (ledger row per screen).
+**Done when:** each screen approved by Nour (log row per screen).
 
 ---
 
@@ -169,7 +169,7 @@ Tasks:
 4. `EvidenceValidator`: drops findings with unknown ids or out-of-range lines; tests with crafted bad findings.
 5. `PraiseGate` and banned-phrase and emoji stripping; tests prove praise disappears when the gate fails.
 6. Injection suite: three injection styles must not change score or praise.
-7. Spend guard: per-review token budget and monthly cap from `limits.yaml`; hard stop test.
+7. Spend guard: per-review token limit and monthly cap from `limits.yaml`; hard stop test.
 8. Record fixtures once with a live key **only after Nour's "yes"** (`SENNIN_LLM_RECORD=1`).
 
 **Tests that prove it:** validator, gate, injection and spend-cap tests; prompt snapshots; no live call in CI (a test fails if the live client is constructed without `SENNIN_LLM_MODE=live`).
@@ -212,13 +212,13 @@ Tasks:
 
 ## Phase 10: Azure deployment (6%) — ask Nour before any resource is created
 
-**Goal:** Darb Sennin runs on Azure at `sennin.zangeel.dev` (proposed) within a budget Nour sets.
+**Goal:** Darb Sennin runs on Azure at `sennin.zangeel.dev` (proposed) within a spend limit Nour sets.
 
 **Skills:** `security-review`, `superpowers:verification-before-completion`, `run`, plus process skills.
 
 Tasks:
 1. Bicep for Container Apps environment + API app, Service Bus (Basic, two queues), Key Vault, managed identities, Static Web Apps, judge VM with cloud-init (rootless Docker, gVisor, NSG egress allow-list), Log Analytics; `azd` config. `az bicep build` + `what-if` in CI (no deploy).
-2. Budget alert and LLM spend cap set **before** first deploy.
+2. Spend alert and LLM spend cap set **before** first deploy.
 3. GitHub Actions deploy workflow with OIDC federated credentials, manual approval environment.
 4. First deploy only after Nour's "yes"; smoke test script; record cost after one week.
 

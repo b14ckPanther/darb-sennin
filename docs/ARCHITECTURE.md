@@ -105,7 +105,7 @@ EF Core: not used. All data access goes through `MongoDB.Driver` 3.x, so the Pha
 | `config/progression.yaml` | Weakness decay half-life, recommendation mix, streak rules, freezes, boss schedule |
 | `config/sandbox/profiles.yaml` | CPU, memory, pids, wall time, output caps, tmpfs sizes per step and language |
 | `config/sandbox/images.yaml` | Language → image digest, compile and run commands |
-| `config/limits.yaml` | Submission size, rate limits, LLM token budget per review, daily spend cap |
+| `config/limits.yaml` | Submission size, rate limits, LLM token limit per review, daily spend cap |
 | `config/copy/en/*.yaml` | Changeable UI copy, verdict labels, empty states |
 | `config/schemas/*.json` | JSON Schemas that validate all of the above at startup |
 
@@ -140,7 +140,7 @@ npm --prefix web/sennin-web run dev          # :5173
 | Secrets | Azure Key Vault + managed identities | No connection strings in env on Azure |
 | IaC | Bicep in `deploy/azure/`, deployed by `azd` | Reviewable infrastructure |
 | CI/CD | GitHub Actions with OIDC federated credentials (no stored Azure secrets) | |
-| Cost guard | Azure budget alert at a value Nour sets; Azure for Students credit if eligible | |
+| Cost guard | Azure spend alert at a value Nour sets; Azure for Students credit if eligible | |
 
 ## 9. Testing strategy
 

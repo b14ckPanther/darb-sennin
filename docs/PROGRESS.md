@@ -1,4 +1,4 @@
-# Progress ledger
+# Progress log
 
 Read this first after every context reset (then `git log --oneline -20`). If this file and `git log` disagree, `git log` wins; fix this file first.
 
@@ -28,7 +28,7 @@ Read this first after every context reset (then `git log --oneline -20`). If thi
 | 12 | Hardening | 5 | not started | | |
 | 13 | Launch | 3 | not started | | |
 
-## Task ledger
+## Task log
 
 One row per completed task. "Skills" lists every skill invoked for the task.
 
@@ -52,7 +52,7 @@ One row per completed task. "Skills" lists every skill invoked for the task.
 | 2026-10-27 | 2 | 4. ComplexityPlot, Sheet (detents, focus trap), TabBar, LargeTitle, ListRow (swipe + keyboard) | 945c310 | 17 tests red first; ListRow keyboard test caught tray before row in tab order | dataviz, animation-systems (via motion tokens), superpowers:test-driven-development | |
 | 2026-10-27 | 2 | 1, 4. Verdict Sheet, earned variant, Today and catalogue comps; PraiseLine; reduced-motion snapshots; e2e axe | 7a0eadb | reduced-motion tests fail with motion on; axe found aria-controls to missing ids, unfocusable scroll regions and vermilion text at 3.9:1, all fixed; 34 Playwright | impeccable:impeccable (detector clean), web-design-guidelines, dataviz | |
 | 2026-10-27 | 2 | 5-6. Originality audit, ASSETS.md, direction recorded | see git log | marks byte-identical to `brand/exports`; no third-party names in shipped copy | audit-reference-originality, writing-guidelines | Clear in checked scope |
-| 2026-10-27 | 2 | Whole-branch review (fresh-context reviewer) and fixes | see git log | 157 Vitest, 38 Playwright (run twice), lint and build clean; new tests red first for each fix | superpowers:requesting-code-review, superpowers:receiving-code-review, superpowers:test-driven-development | Fixed: the word the agent manual forbids removed from docs; swipe no longer opens a row, tap closes open actions, reduced motion keeps the gesture; sheet drags only from handle and header, 44 pt handle, focus on Close, scroll lock, still under reduced motion; LargeTitle safe-area; score breakdown is a disclosure (WCAG 1.4.13); toasts render into persistent live regions; critical severity; case times, line ranges and difficulty scale moved to data; ledger announces its progress line; theme applied before first paint |
+| 2026-10-27 | 2 | Whole-branch review (fresh-context reviewer) and fixes | see git log | 157 Vitest, 38 Playwright (run twice), lint and build clean; new tests red first for each fix | superpowers:requesting-code-review, superpowers:receiving-code-review, superpowers:test-driven-development | Fixed: the word the agent manual forbids removed from docs; swipe no longer opens a row, tap closes open actions, reduced motion keeps the gesture; sheet drags only from handle and header, 44 pt handle, focus on Close, scroll lock, still under reduced motion; LargeTitle safe-area; score breakdown is a disclosure (WCAG 1.4.13); toasts render into persistent live regions; critical severity; case times, line ranges and difficulty scale moved to data; log announces its progress line; theme applied before first paint |
 | 2026-10-27 | 3 | 1-2. Demo seed (12 problems, 40 submissions, weakness, boss), API contract types, MockApi and fake hub stream | d296e46 | 15 mock tests red first (missing module) | superpowers:test-driven-development, frontend-design | ADR-045, ADR-049 |
 | 2026-10-27 | 3 | 3-4. Router, settings, motion override, Shell, Today, Library, CodeMirror workspace, live Verdict Sheet | cee3c03 | router, settings, motion, Segmented (arrow keys, Phase 2 deferral), Loadable, markdown, format, useLiveVerdict tests red first | frontend-design, react-best-practices, composition-patterns, tailwindcss, animation-systems, superpowers:test-driven-development | ADR-046, ADR-047 |
 | 2026-10-27 | 3 | 3. Weakness, Boss, History, Ranks, Settings, Profile, pseudo code verdict, empty and error states | 4ec64b1 | BossHp test; screenshots reviewed at 1440 and 390 px | dataviz, create-game-vfx, design:ux-copy, playwright-cli | ADR-050 |
@@ -81,3 +81,4 @@ Decisions the agent made without Nour, cheapest reversible option. Each must say
 | 2026-10-26 | Compose via `--env-file .env` + `tools/compose-up.sh`; perl emoji check; ESLint strict; Node 24 in CI; MIT; repo path (ADR-024) | plan defaults or cheapest reversible option | low | accepted in Phase 1 (decided by the agent under Nour's delegation, 2026-10-26) |
 | 2026-10-27 | Lighthouse mobile performance 87 on the workspace against the plan's 90 (desktop 99); accepted for the prototype, revisit in Phase 12 with the real API (ADR-048) | the demo seed and React runtime dominate the throttled-CPU run | low | ruling, decided by the agent under Nour's delegation (2026-10-26) |
 | 2026-10-27 | Real-phone check via the Vite LAN URL not done by the agent (no device); covered by the 390 px touch project, safe-area insets and the 44 pt target test | environment | low | ruling; Nour can open `npm run dev -- --host` on a phone |
+| 2026-10-27 | Nour's rule applied: no money or finance themes in demo content. Seven problems re-themed with the same teaching point, tags, difficulty and results; "fintech" family became "games and sport"; Phase 2 comp seed removed; Phase 2 and 3 screenshots re-captured (ADR-051) | Nour's standing rule | low | decided by Nour |
