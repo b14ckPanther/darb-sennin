@@ -1,6 +1,6 @@
 # Open questions
 
-**All Phase 1 questions are closed** (2026-10-26). Decided by Claude under Nour's delegation (2026-10-26). The answers are in `docs/specs/2026-10-26-phase-01-product-spec.md` and ADR-025 to ADR-040 in `DECISIONS.md`. Numbers are kept because other docs refer to them.
+**All Phase 1 questions are closed** (2026-10-26). Decided by the agent under Nour's delegation (2026-10-26). The answers are in `docs/specs/2026-10-26-phase-01-product-spec.md` and ADR-025 to ADR-040 in `DECISIONS.md`. Numbers are kept because other docs refer to them.
 
 | # | Question | Answer | ADR |
 |---|---|---|---|

@@ -1,6 +1,6 @@
 # For Nour
 
-Phases 0, 1 and 2 are done and merged into local `main`. Phase 1 questions and Phase 2 design choices were decided by Claude under your delegation of 2026-10-26; each is recorded in `docs/DECISIONS.md` and `docs/PROGRESS.md`.
+Phases 0, 1 and 2 are done and merged into local `main`. Phase 1 questions and Phase 2 design choices were decided by the agent under your delegation of 2026-10-26; each is recorded in `docs/DECISIONS.md` and `docs/PROGRESS.md`.
 
 ## What changed from the earlier recommendations
 
@@ -13,6 +13,10 @@ Phases 0, 1 and 2 are done and merged into local `main`. Phase 1 questions and P
 | Q14 | Python 3.13, Node 22 | Python 3.14, Node 24 LTS | Current releases; Node 22 is already in maintenance. |
 
 Everything else is as recommended. Full list: `docs/OPEN_QUESTIONS.md`.
+
+## Design system (Phase 2)
+
+Direction A, "Examiner's Report", carried on your Ensō brand: ivory paper and forest ink in light, Darb night in dark, Zen Antique, Geist and Geist Mono, Solar icons. Gold only in the mark and earned praise; the vermilion "Earned" stamp appears only when the praise gate passes. Screenshots at 1440 px and 390 px, light and dark: `docs/screenshots/phase-02/`. Run it with `npm --prefix web/sennin-web run dev` and open `?view=verdict`, `?view=verdict-earned`, `?view=today` or `?view=catalogue`. ADR-041 to ADR-044 explain each choice; any of them can still change.
 
 ## Only you can do these (outward actions)
 

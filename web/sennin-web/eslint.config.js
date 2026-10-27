@@ -7,7 +7,7 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default defineConfig([
-  globalIgnores(['dist', 'playwright-report', 'test-results']),
+  globalIgnores(['dist', 'playwright-report', 'test-results', 'scripts']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -28,6 +28,34 @@ export default defineConfig([
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
+      // One icon set (ADR-042): every icon goes through src/components/Icon.tsx.
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                'lucide-react',
+                'lucide*',
+                'react-icons',
+                'react-icons/*',
+                '@heroicons/*',
+                '@phosphor-icons/*',
+                '@tabler/*',
+                '@radix-ui/react-icons',
+                'hugeicons-react',
+                '@fortawesome/*',
+                '@mui/icons-material',
+                '@mui/icons-material/*',
+                '@iconify/*',
+                '@iconify-json/*',
+              ],
+              message:
+                'Use <Icon> from src/components/Icon.tsx; it is the only icon source (ADR-042).',
+            },
+          ],
+        },
+      ],
     },
   },
   {

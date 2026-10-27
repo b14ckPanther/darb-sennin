@@ -1,6 +1,7 @@
 /// <reference types="vitest/config" />
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv } from 'vite'
 
 export default defineConfig(({ mode }) => {
@@ -10,16 +11,21 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), tailwindcss()],
+    resolve: {
+      // Copy and other changeable data live in the repo-root config/ (CLAUDE.md 1.2).
+      alias: { '@config': fileURLToPath(new URL('../../config', import.meta.url)) },
+    },
     envDir: '../..',
     envPrefix: 'SENNIN_PUBLIC_',
-    server: apiOrigin
-      ? {
-          proxy: {
+    server: {
+      fs: { allow: ['../..'] },
+      proxy: apiOrigin
+        ? {
             '/api': apiOrigin,
             '/hubs': { target: apiOrigin, ws: true },
-          },
-        }
-      : undefined,
+          }
+        : undefined,
+    },
     test: {
       environment: 'jsdom',
       globals: false,

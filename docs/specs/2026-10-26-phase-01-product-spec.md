@@ -1,6 +1,6 @@
 # Phase 1 product spec
 
-Date: 2026-10-26. Status: **approved**. Decided by Claude under Nour's delegation (2026-10-26): Nour said "the review must be up to u ... any choice by u will be approved from my side". Each answer is recorded as an ADR in `docs/DECISIONS.md` (ADR-025 to ADR-040). Outward actions (creating repos, pushing, Azure resources, paid API keys, DNS) still need Nour's explicit "yes".
+Date: 2026-10-26. Status: **approved**. Decided by the agent under Nour's delegation (2026-10-26): Nour said "the review must be up to u ... any choice by u will be approved from my side". Each answer is recorded as an ADR in `docs/DECISIONS.md` (ADR-025 to ADR-040). Outward actions (creating repos, pushing, Azure resources, paid API keys, DNS) still need Nour's explicit "yes".
 
 ## Users
 

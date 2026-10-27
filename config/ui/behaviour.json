@@ -1,0 +1,5 @@
+{
+  "$comment": "Interface behaviour values that are rules, not code (CLAUDE.md 1.2). Phase 4 adds the schema.",
+  "sheet": { "detents": [0.35, 0.6, 0.92] },
+  "toast": { "durationMs": 4000 }
+}
