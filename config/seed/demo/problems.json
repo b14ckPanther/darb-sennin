@@ -1,0 +1,563 @@
+{
+ "$comment": "Demo data (CLAUDE.md 1.2). Twelve original problems for the Phase 3 prototype; hidden tests are not here, only their recorded outcomes in submissions.json.",
+ "problems": [
+  {
+   "id": "ledger-reconciliation",
+   "title": "Ledger reconciliation",
+   "family": "fintech",
+   "tags": [
+    "hashing",
+    "fintech"
+   ],
+   "difficulty": 2,
+   "isBoss": false,
+   "status": "failed",
+   "bestScore": 47,
+   "lastAttemptAt": "2026-10-27T19:42:00.000Z",
+   "pinned": true,
+   "hidden": false,
+   "contentVersion": "demo-2026.10",
+   "statementMd": "Your ledger records every payment you expect to clear. The bank sends a statement of what actually cleared. An entry is **confirmed** when the statement holds a line with the same reference and the same amount in cents.\n\nReturn the ids of ledger entries the statement does not confirm, in ledger order.\n\nA statement line confirms at most one ledger entry. If the ledger holds the same reference and amount twice, the statement must hold it twice too.",
+   "constraints": [
+    "0 ≤ entries, statement lines ≤ 2 · 10^5",
+    "Amounts are whole cents, 1 ≤ cents ≤ 10^9",
+    "References are 1 to 16 letters and digits"
+   ],
+   "samples": [
+    {
+     "input": "entries: [(a1, 1250), (a2, 900), (a3, 4000)]\nstatement: [(a1, 1250), (a3, 4000)]",
+     "output": "[\"a2\"]",
+     "note": "a2 never cleared."
+    },
+    {
+     "input": "entries: [(a1, 500), (a1, 500)]\nstatement: [(a1, 500)]",
+     "output": "[\"a1\"]",
+     "note": "One line confirms one entry."
+    }
+   ],
+   "starters": {
+    "python": "def reconcile(entries, statement):\n    \"\"\"Return ids in the ledger that the bank statement does not confirm.\"\"\"\n    ...\n",
+    "csharp": "public static List<string> Reconcile(List<Entry> entries, List<Line> statement)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function reconcile(entries, statement) {\n  // return ids the statement does not confirm\n}\n",
+    "pseudo": "function reconcile(entries, statement)\n  // return ids the statement does not confirm\nend\n"
+   },
+   "limits": {
+    "timeMs": 2000,
+    "memoryMb": 256
+   },
+   "caseCount": 12,
+   "draft": {
+    "language": "python",
+    "code": "def reconcile(entries, statement):\n    \"\"\"Return ids in the ledger that the bank statement does not confirm.\"\"\"\n    seen = []\n    for entry in entries:\n        seen.append((entry.id, entry.cents))\n\n    missing = []\n    for line in statement:\n        pass\n\n    for entry_id, cents in seen:\n        matched = False\n        for line in statement:\n            if line.ref == entry_id and line.cents == cents:\n                matched = True\n        if not matched:\n            missing.append(entry_id)\n    return missing[:-1]"
+   }
+  },
+  {
+   "id": "merge-overlapping-bookings",
+   "title": "Merge overlapping bookings",
+   "family": "classic",
+   "tags": [
+    "sorting",
+    "intervals"
+   ],
+   "difficulty": 1,
+   "isBoss": false,
+   "status": "clean",
+   "bestScore": 100,
+   "lastAttemptAt": "2026-10-26T20:05:00.000Z",
+   "pinned": false,
+   "hidden": false,
+   "contentVersion": "demo-2026.10",
+   "statementMd": "A meeting room's bookings arrive as `[start, end]` pairs in minutes since midnight, in no particular order. Two bookings that overlap or touch (one ends the minute the other starts) belong to one block.\n\nReturn the blocks, sorted by start.",
+   "constraints": [
+    "0 ≤ bookings ≤ 10^5",
+    "0 ≤ start ≤ end ≤ 1440"
+   ],
+   "samples": [
+    {
+     "input": "[[540, 600], [590, 660], [720, 780]]",
+     "output": "[[540, 660], [720, 780]]"
+    },
+    {
+     "input": "[[600, 660], [660, 690]]",
+     "output": "[[600, 690]]",
+     "note": "Touching bookings merge."
+    }
+   ],
+   "starters": {
+    "python": "def merge(bookings):\n    ...\n",
+    "csharp": "public static int[][] Merge(int[][] spans)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function merge(bookings) {\n}\n",
+    "pseudo": "function merge(bookings)\nend\n"
+   },
+   "limits": {
+    "timeMs": 1000,
+    "memoryMb": 256
+   },
+   "caseCount": 12,
+   "draft": {
+    "language": "csharp",
+    "code": "public static int[][] Merge(int[][] spans)\n{\n    if (spans.Length == 0) return [];\n    var sorted = spans.OrderBy(s => s[0]).ToArray();\n    var merged = new List<int[]> { sorted[0] };\n    foreach (var s in sorted.Skip(1))\n    {\n        var last = merged[^1];\n        if (s[0] <= last[1]) last[1] = Math.Max(last[1], s[1]);\n        else merged.Add(s);\n    }\n    return [.. merged];\n}"
+   }
+  },
+  {
+   "id": "sliding-window-maximum",
+   "title": "Sliding window maximum",
+   "family": "classic",
+   "tags": [
+    "deque",
+    "arrays"
+   ],
+   "difficulty": 2,
+   "isBoss": false,
+   "status": "clean",
+   "bestScore": 100,
+   "lastAttemptAt": "2026-10-21T19:01:00.000Z",
+   "pinned": false,
+   "hidden": false,
+   "contentVersion": "demo-2026.10",
+   "statementMd": "A sensor reports one temperature reading per second. For every window of `k` consecutive readings, report the highest reading in that window.\n\nReturn the maxima in window order. When there are fewer than `k` readings, return an empty list.",
+   "constraints": [
+    "0 ≤ readings ≤ 10^6",
+    "1 ≤ k ≤ 10^6",
+    "-10^4 ≤ reading ≤ 10^4"
+   ],
+   "samples": [
+    {
+     "input": "readings: [3, 1, 4, 1, 5, 9, 2]\nk: 3",
+     "output": "[4, 4, 5, 9, 9]"
+    },
+    {
+     "input": "readings: []\nk: 2",
+     "output": "[]"
+    }
+   ],
+   "starters": {
+    "python": "def window_max(readings, k):\n    ...\n",
+    "csharp": "public static int[] WindowMax(int[] readings, int k)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function windowMax(readings, k) {\n}\n",
+    "pseudo": "function windowMax(readings, k)\nend\n"
+   },
+   "limits": {
+    "timeMs": 1500,
+    "memoryMb": 256
+   },
+   "caseCount": 14,
+   "draft": {
+    "language": "javascript",
+    "code": "export function windowMax(readings, k) {\n  const out = []\n  const dq = []\n  for (let i = 0; i < readings.length; i++) {\n    while (dq.length && readings[dq[dq.length - 1]] <= readings[i]) dq.pop()\n    dq.push(i)\n    if (dq[0] <= i - k) dq.shift()\n    if (i >= k - 1) out.push(readings[dq[0]])\n  }\n  return out.length ? out : [readings[0]]\n}"
+   }
+  },
+  {
+   "id": "idempotent-payment-capture",
+   "title": "Idempotent payment capture",
+   "family": "fintech",
+   "tags": [
+    "hashing",
+    "fintech"
+   ],
+   "difficulty": 2,
+   "isBoss": false,
+   "status": "failed",
+   "bestScore": 56,
+   "lastAttemptAt": "2026-10-19T17:21:00.000Z",
+   "pinned": false,
+   "hidden": false,
+   "contentVersion": "demo-2026.10",
+   "statementMd": "A payment gateway retries requests when the network drops, so the same capture can arrive more than once. Each request carries an idempotency key, an account and an amount in cents.\n\nProcess the requests in order. The first request with a key captures the amount. A later request with the same key and the same account and amount is a retry: it captures nothing and returns the first result. A later request with the same key but a different account or amount is rejected as a conflict.\n\nReturn the balance captured per account, and the list of rejected request indexes.",
+   "constraints": [
+    "0 ≤ requests ≤ 2 · 10^5",
+    "1 ≤ cents ≤ 10^9",
+    "Balances fit in a 64-bit signed integer"
+   ],
+   "samples": [
+    {
+     "input": "[(k1, acc7, 1200), (k1, acc7, 1200), (k2, acc7, 300)]",
+     "output": "balances: {acc7: 1500}\nrejected: []"
+    },
+    {
+     "input": "[(k1, acc7, 1200), (k1, acc7, 1300)]",
+     "output": "balances: {acc7: 1200}\nrejected: [1]"
+    }
+   ],
+   "starters": {
+    "python": "def capture(requests):\n    ...\n",
+    "csharp": "public static Result Capture(List<Request> requests)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function capture(requests) {\n}\n",
+    "pseudo": "function capture(requests)\nend\n"
+   },
+   "limits": {
+    "timeMs": 1500,
+    "memoryMb": 256
+   },
+   "caseCount": 16,
+   "draft": {
+    "language": "python",
+    "code": "def capture(requests):\n    seen = {}\n    balances = {}\n    rejected = []\n    for i, (key, account, cents) in enumerate(requests):\n        if key in seen:\n            continue\n        seen[key] = (account, cents)\n        balances[account] = balances.get(account, 0) + cents\n    return balances, rejected"
+   }
+  },
+  {
+   "id": "split-bill-to-the-cent",
+   "title": "Split a bill to the cent",
+   "family": "fintech",
+   "tags": [
+    "rounding",
+    "fintech"
+   ],
+   "difficulty": 1,
+   "isBoss": false,
+   "status": "clean",
+   "bestScore": 99,
+   "lastAttemptAt": "2026-10-22T18:52:00.000Z",
+   "pinned": false,
+   "hidden": false,
+   "contentVersion": "demo-2026.10",
+   "statementMd": "Split a bill of `total` cents between people by weight. Each person's share is their weight's fraction of the total, rounded down to a whole cent. The cents left over go one each to the people with the largest discarded fractions, ties broken by position.\n\nThe shares must add up to the total exactly.",
+   "constraints": [
+    "0 ≤ total ≤ 10^12",
+    "1 ≤ people ≤ 10^5",
+    "1 ≤ weight ≤ 10^6"
+   ],
+   "samples": [
+    {
+     "input": "total: 1000\nweights: [1, 1, 1]",
+     "output": "[334, 333, 333]"
+    },
+    {
+     "input": "total: 1\nweights: [2, 1]",
+     "output": "[1, 0]"
+    }
+   ],
+   "starters": {
+    "python": "def split(total, weights):\n    ...\n",
+    "csharp": "public static long[] Split(long total, int[] weights)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function split(total, weights) {\n}\n",
+    "pseudo": "function split(total, weights)\nend\n"
+   },
+   "limits": {
+    "timeMs": 1000,
+    "memoryMb": 128
+   },
+   "caseCount": 10,
+   "draft": {
+    "language": "python",
+    "code": "def split(total, weights):\n    whole = sum(weights)\n    shares, rests = [], []\n    for i, w in enumerate(weights):\n        share, rest = divmod(total * w, whole)\n        shares.append(share)\n        rests.append((-rest, i))\n    for _, i in sorted(rests)[: total - sum(shares)]:\n        shares[i] += 1\n    return shares"
+   }
+  },
+  {
+   "id": "token-bucket-limiter",
+   "title": "Token bucket rate limiter",
+   "family": "practical",
+   "tags": [
+    "simulation",
+    "queues"
+   ],
+   "difficulty": 2,
+   "isBoss": false,
+   "status": "failed",
+   "bestScore": 59,
+   "lastAttemptAt": "2026-10-21T18:36:00.000Z",
+   "pinned": false,
+   "hidden": false,
+   "contentVersion": "demo-2026.10",
+   "statementMd": "Each client of an API has a bucket that holds at most `capacity` tokens and refills at `rate` tokens per second, continuously. A request costs one token. A bucket starts full.\n\nGiven requests as `(timestamp in milliseconds, client)` sorted by time, return for each request whether it is allowed.",
+   "constraints": [
+    "0 ≤ requests ≤ 10^6",
+    "1 ≤ capacity ≤ 10^4",
+    "1 ≤ rate ≤ 10^4"
+   ],
+   "samples": [
+    {
+     "input": "capacity: 2, rate: 1\n[(0, c1), (10, c1), (20, c1), (1020, c1)]",
+     "output": "[true, true, false, true]"
+    }
+   ],
+   "starters": {
+    "python": "def allow(capacity, rate, requests):\n    ...\n",
+    "csharp": "public static bool[] Allow(int capacity, int rate, List<Request> requests)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function allow(capacity, rate, requests) {\n}\n",
+    "pseudo": "function allow(capacity, rate, requests)\nend\n"
+   },
+   "limits": {
+    "timeMs": 1500,
+    "memoryMb": 256
+   },
+   "caseCount": 14,
+   "draft": {
+    "language": "csharp",
+    "code": "public static bool[] Allow(int capacity, int rate, List<Request> requests)\n{\n    var tokens = new Dictionary<string, double>();\n    var last = new Dictionary<string, long>();\n    var result = new bool[requests.Count];\n    for (var i = 0; i < requests.Count; i++)\n    {\n        var (at, client) = requests[i];\n        var t = tokens.GetValueOrDefault(client, capacity);\n        var since = at - last.GetValueOrDefault(client, at);\n        t = t + since / 1000 * rate;\n        last[client] = at;\n        result[i] = t >= 1;\n        tokens[client] = result[i] ? t - 1 : t;\n    }\n    return result;\n}"
+   }
+  },
+  {
+   "id": "slowest-endpoints",
+   "title": "Slowest endpoints in an access log",
+   "family": "practical",
+   "tags": [
+    "parsing",
+    "sorting"
+   ],
+   "difficulty": 1,
+   "isBoss": false,
+   "status": "failed",
+   "bestScore": 62,
+   "lastAttemptAt": "2026-10-20T18:47:00.000Z",
+   "pinned": false,
+   "hidden": false,
+   "contentVersion": "demo-2026.10",
+   "statementMd": "Each line of an access log reads `METHOD PATH STATUS MILLISECONDS`. Lines that do not match this shape are skipped.\n\nReturn the `k` endpoints (method and path together) with the highest median response time, slowest first. Break ties by endpoint name.",
+   "constraints": [
+    "0 ≤ lines ≤ 10^5",
+    "1 ≤ k ≤ 100"
+   ],
+   "samples": [
+    {
+     "input": "k: 1\nGET /a 200 30\nGET /a 200 50\nPOST /b 201 45\nbroken line",
+     "output": "[\"POST /b\"]",
+     "note": "GET /a has median 40."
+    }
+   ],
+   "starters": {
+    "python": "def slowest(lines, k):\n    ...\n",
+    "csharp": "public static List<string> Slowest(string[] lines, int k)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function slowest(lines, k) {\n}\n",
+    "pseudo": "function slowest(lines, k)\nend\n"
+   },
+   "limits": {
+    "timeMs": 1000,
+    "memoryMb": 256
+   },
+   "caseCount": 10,
+   "draft": {
+    "language": "python",
+    "code": "def slowest(lines, k):\n    times = {}\n    for line in lines:\n        parts = line.split()\n        if len(parts) != 4:\n            continue\n        method, path, status, ms = parts\n        times.setdefault(f\"{method} {path}\", []).append(int(ms))\n    medians = {e: sorted(t)[len(t) // 2] for e, t in times.items()}\n    return sorted(medians, key=lambda e: -medians[e])[:k]"
+   }
+  },
+  {
+   "id": "fewest-transfers",
+   "title": "Fewest transfers between stations",
+   "family": "classic",
+   "tags": [
+    "graphs",
+    "bfs"
+   ],
+   "difficulty": 2,
+   "isBoss": false,
+   "status": "failed",
+   "bestScore": 70,
+   "lastAttemptAt": "2026-10-19T17:53:00.000Z",
+   "pinned": false,
+   "hidden": false,
+   "contentVersion": "demo-2026.10",
+   "statementMd": "A rail network has numbered lines; each line is a list of stations it stops at. Riding a line between any two of its stops costs nothing; changing lines costs one transfer.\n\nReturn the fewest transfers needed to get from station `from` to station `to`, or `-1` when it cannot be done. Staying on the first line you board costs zero.",
+   "constraints": [
+    "1 ≤ lines ≤ 500",
+    "Total stops across lines ≤ 10^5"
+   ],
+   "samples": [
+    {
+     "input": "lines: [[1, 2, 7], [3, 6, 7]]\nfrom: 1, to: 6",
+     "output": "1"
+    },
+    {
+     "input": "lines: [[1, 2]]\nfrom: 1, to: 9",
+     "output": "-1"
+    }
+   ],
+   "starters": {
+    "python": "def fewest_transfers(lines, start, goal):\n    ...\n",
+    "csharp": "public static int FewestTransfers(int[][] lines, int from, int to)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function fewestTransfers(lines, from, to) {\n}\n",
+    "pseudo": "function fewestTransfers(lines, from, to)\nend\n"
+   },
+   "limits": {
+    "timeMs": 2000,
+    "memoryMb": 256
+   },
+   "caseCount": 12,
+   "draft": {
+    "language": "python",
+    "code": "from collections import deque, defaultdict\n\ndef fewest_transfers(lines, start, goal):\n    if start == goal:\n        return 0\n    by_station = defaultdict(list)\n    for i, stops in enumerate(lines):\n        for s in stops:\n            by_station[s].append(i)\n    queue = deque((line, 0) for line in by_station[start])\n    seen = set(by_station[start])\n    while queue:\n        line, changes = queue.popleft()\n        if goal in lines[line]:\n            return changes\n        for s in lines[line]:\n            for nxt in by_station[s]:\n                if nxt not in seen:\n                    seen.add(nxt)\n                    queue.append((nxt, changes + 1))\n    return -1"
+   }
+  },
+  {
+   "id": "fewest-coins",
+   "title": "Fewest coins for change",
+   "family": "classic",
+   "tags": [
+    "dynamic programming"
+   ],
+   "difficulty": 2,
+   "isBoss": false,
+   "status": "clean",
+   "bestScore": 100,
+   "lastAttemptAt": "2026-10-25T19:12:00.000Z",
+   "pinned": false,
+   "hidden": false,
+   "contentVersion": "demo-2026.10",
+   "statementMd": "A till holds unlimited coins of each listed value. Return the fewest coins that add up to `amount` exactly, or `-1` when no combination does. An amount of zero needs zero coins.",
+   "constraints": [
+    "1 ≤ coin values ≤ 50",
+    "1 ≤ value ≤ 10^4",
+    "0 ≤ amount ≤ 10^5"
+   ],
+   "samples": [
+    {
+     "input": "coins: [1, 5, 12]\namount: 15",
+     "output": "3",
+     "note": "Five plus five plus five; twelve first needs four coins."
+    },
+    {
+     "input": "coins: [4]\namount: 6",
+     "output": "-1"
+    }
+   ],
+   "starters": {
+    "python": "def fewest_coins(coins, amount):\n    ...\n",
+    "csharp": "public static int FewestCoins(int[] coins, int amount)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function fewestCoins(coins, amount) {\n}\n",
+    "pseudo": "function fewestCoins(coins, amount)\nend\n"
+   },
+   "limits": {
+    "timeMs": 2000,
+    "memoryMb": 256
+   },
+   "caseCount": 12,
+   "draft": {
+    "language": "python",
+    "code": "def fewest_coins(coins, amount):\n    best = [0] + [amount + 1] * amount\n    for value in range(1, amount + 1):\n        for c in coins:\n            if c <= value and best[value - c] + 1 < best[value]:\n                best[value] = best[value - c] + 1\n    return best[amount] if best[amount] <= amount else -1"
+   }
+  },
+  {
+   "id": "transfers-that-net-to-zero",
+   "title": "Two transfers that net to zero",
+   "family": "classic",
+   "tags": [
+    "hashing",
+    "arrays"
+   ],
+   "difficulty": 1,
+   "isBoss": false,
+   "status": "clean",
+   "bestScore": 100,
+   "lastAttemptAt": "2026-10-27T18:58:00.000Z",
+   "pinned": false,
+   "hidden": false,
+   "contentVersion": "demo-2026.10",
+   "statementMd": "An audit flags pairs of transfers that cancel each other out. Given signed amounts in cents, return the indexes `[i, j]` with `i < j` of the first pair, in order of `j`, whose amounts add up to zero. Return an empty list when there is none.",
+   "constraints": [
+    "0 ≤ transfers ≤ 10^6",
+    "-10^9 ≤ cents ≤ 10^9"
+   ],
+   "samples": [
+    {
+     "input": "[400, -150, 75, 150]",
+     "output": "[1, 3]"
+    },
+    {
+     "input": "[0]",
+     "output": "[]",
+     "note": "A single zero has no partner."
+    }
+   ],
+   "starters": {
+    "python": "def net_zero_pair(cents):\n    ...\n",
+    "csharp": "public static int[] NetZeroPair(long[] cents)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function netZeroPair(cents) {\n}\n",
+    "pseudo": "function netZeroPair(cents)\nend\n"
+   },
+   "limits": {
+    "timeMs": 1000,
+    "memoryMb": 128
+   },
+   "caseCount": 10,
+   "draft": null
+  },
+  {
+   "id": "top-merchants",
+   "title": "Top merchants by volume",
+   "family": "fintech",
+   "tags": [
+    "heaps",
+    "hashing"
+   ],
+   "difficulty": 2,
+   "isBoss": false,
+   "status": "clean",
+   "bestScore": 99,
+   "lastAttemptAt": "2026-10-24T18:16:00.000Z",
+   "pinned": false,
+   "hidden": false,
+   "contentVersion": "demo-2026.10",
+   "statementMd": "Card transactions stream in as `(merchant, cents)`. Return the `k` merchants with the highest total volume, highest first, ties broken by merchant name. Refunds arrive as negative amounts and count against the total.",
+   "constraints": [
+    "0 ≤ transactions ≤ 10^6",
+    "1 ≤ k ≤ 1000"
+   ],
+   "samples": [
+    {
+     "input": "k: 2\n[(m1, 900), (m2, 400), (m1, -600), (m3, 350)]",
+     "output": "[\"m2\", \"m3\"]"
+    }
+   ],
+   "starters": {
+    "python": "def top_merchants(transactions, k):\n    ...\n",
+    "csharp": "public static List<string> TopMerchants(List<Txn> transactions, int k)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function topMerchants(transactions, k) {\n}\n",
+    "pseudo": "function topMerchants(transactions, k)\nend\n"
+   },
+   "limits": {
+    "timeMs": 1500,
+    "memoryMb": 256
+   },
+   "caseCount": 12,
+   "draft": {
+    "language": "javascript",
+    "code": "export function topMerchants(transactions, k) {\n  const volume = new Map()\n  for (const [m, cents] of transactions) {\n    volume.set(m, (volume.get(m) ?? 0) + cents)\n  }\n  return [...volume.entries()]\n    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))\n    .slice(0, k)\n    .map(([m]) => m)\n}"
+   }
+  },
+  {
+   "id": "double-entry-ledger",
+   "title": "The double-entry ledger",
+   "family": "fintech",
+   "tags": [
+    "graphs",
+    "fintech",
+    "hashing"
+   ],
+   "difficulty": 3,
+   "isBoss": true,
+   "status": "failed",
+   "bestScore": 26,
+   "lastAttemptAt": "2026-10-24T19:20:00.000Z",
+   "pinned": false,
+   "hidden": false,
+   "contentVersion": "demo-2026.10",
+   "statementMd": "Every posting in a double-entry ledger debits one account and credits another by the same amount, under a journal id. A journal is **balanced** when its debits equal its credits.\n\nYou receive postings in arrival order, some of them duplicated by a faulty importer and some journals cut short.\n\n1. Drop exact duplicate postings (same journal, accounts, amount and sequence number).\n2. Report every journal that is still unbalanced, with the amount it is off by.\n3. For the balanced journals, return each account's closing balance.\n\nReport journals in the order their first posting arrived.",
+   "constraints": [
+    "0 ≤ postings ≤ 5 · 10^5",
+    "Amounts are whole cents up to 10^12",
+    "Up to 10^5 accounts"
+   ],
+   "samples": [
+    {
+     "input": "[(j1, cash, sales, 500, 1), (j1, cash, sales, 500, 1), (j2, bank, cash, 200, 1)]",
+     "output": "unbalanced: []\nbalances: {cash: 300, sales: -500, bank: 200}"
+    }
+   ],
+   "starters": {
+    "python": "def close_books(postings):\n    ...\n",
+    "csharp": "public static Books CloseBooks(List<Posting> postings)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function closeBooks(postings) {\n}\n",
+    "pseudo": "function closeBooks(postings)\nend\n"
+   },
+   "limits": {
+    "timeMs": 3000,
+    "memoryMb": 512
+   },
+   "caseCount": 24,
+   "draft": {
+    "language": "python",
+    "code": "def close_books(postings):\n    seen = set()\n    journals = {}\n    balances = {}\n    for p in postings:\n        key = (p.journal, p.debit, p.credit, p.cents)\n        if key in seen:\n            continue\n        seen.add(key)\n        j = journals.setdefault(p.journal, 0)\n        journals[p.journal] = j + p.cents - p.cents\n        balances[p.debit] = balances.get(p.debit, 0) + p.cents\n        balances[p.credit] = balances.get(p.credit, 0) - p.cents\n    unbalanced = [j for j, off in journals.items() if off != 0]\n    return unbalanced, balances"
+   }
+  }
+ ]
+}

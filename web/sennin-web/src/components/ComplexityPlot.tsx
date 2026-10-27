@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import { fill, useCopy } from '../copy/copy'
+import { defaultCopy, fill, useCopy } from '../copy/copy'
 
 export interface ProbePoint {
   n: number
@@ -24,7 +24,9 @@ function round(value: number): string {
 }
 
 function formatMs(ms: number): string {
-  return ms >= 1000 ? `${round(ms / 1000)} s` : `${round(ms)} ms`
+  return ms >= 1000
+    ? fill(defaultCopy.units.s, { n: round(ms / 1000) })
+    : fill(defaultCopy.units.ms, { n: round(ms) })
 }
 
 function Power({ value }: { value: number }) {
@@ -184,23 +186,25 @@ export function ComplexityPlot(props: Props) {
       <figcaption id={captionId} className="mt-2 text-footnote text-ink-muted">
         {summary}
       </figcaption>
-      <table className="sr-only">
-        <caption>{copy.plot.pointsCaption}</caption>
-        <thead>
-          <tr>
-            <th scope="col">{copy.plot.axisX}</th>
-            <th scope="col">{copy.plot.axisY}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {points.map((p) => (
-            <tr key={p.n}>
-              <td>{p.n.toLocaleString('en')}</td>
-              <td>{formatMs(p.ms)}</td>
+      <div className="sr-only">
+        <table>
+          <caption>{copy.plot.pointsCaption}</caption>
+          <thead>
+            <tr>
+              <th scope="col">{copy.plot.axisX}</th>
+              <th scope="col">{copy.plot.axisY}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {points.map((p) => (
+              <tr key={p.n}>
+                <td>{p.n.toLocaleString('en')}</td>
+                <td>{formatMs(p.ms)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </figure>
   )
 }

@@ -43,18 +43,21 @@ export function TestRow({ id, index, status, time, children }: TestRowProps) {
     <li
       id={id}
       data-status={status}
+      // Evidence chips move focus here; a lit or flashed row is the chip's target.
+      tabIndex={-1}
       className={cx(
-        'scroll-mt-24 border-b',
+        'scroll-mt-24 border-b outline-none transition-colors duration-(--duration-state) data-[flash=true]:bg-highlight data-[lit=true]:bg-highlight',
         status === 'fail' ? 'border-fail-mark' : 'border-line',
         status === 'pending' && 'border-dashed',
       )}
     >
       <div className="grid min-h-10 grid-cols-[1.25rem_1fr_auto] items-center gap-3 py-2 text-callout">
         <Icon
+          key={status}
           name={statusIcon[status]}
           filled={status !== 'pending'}
           size={18}
-          className={markClass[status]}
+          className={cx(markClass[status], status !== 'pending' && 'animate-resolve')}
         />
         <span className="flex items-baseline gap-3">
           <span className="num text-ink">{label}</span>

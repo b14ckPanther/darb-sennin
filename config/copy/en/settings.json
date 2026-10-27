@@ -1,0 +1,48 @@
+{
+  "$comment": "Copy for settings and admin (UI_DESIGN.md 2.10). Plain sentences, sentence case, no exclamation marks.",
+  "title": "Settings",
+  "loading": "settings",
+  "appearance": "Appearance",
+  "theme": "Theme",
+  "themes": {
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "motion": "Motion",
+  "motions": {
+    "system": "System",
+    "reduce": "Reduce",
+    "allow": "Full"
+  },
+  "motionHelp": "Reduce turns slides, expansions and falling segments into instant changes.",
+  "editor": "Editor",
+  "fontSize": "Font size",
+  "fontSizeValue": "{n} px",
+  "keymap": "Keybindings",
+  "keymaps": {
+    "default": "Default",
+    "vim": "Vim"
+  },
+  "sound": "Sound",
+  "soundHelp": "A low tone per boss segment that falls. Off by default.",
+  "shortcuts": "Keyboard shortcuts",
+  "admin": "Content and reviewer",
+  "contentVersion": "Content version",
+  "importStatus": "Last import",
+  "rubric": "Rubric",
+  "llmMode": "Reviewer mode",
+  "llmModes": {
+    "fixture": "Recorded responses, no spend",
+    "live": "Live"
+  },
+  "spend": "Reviewer spend this month",
+  "spendValue": "{spent} of {cap} USD",
+  "prototype": "Prototype switches",
+  "prototypeHelp": "Demo only. These change what the demo backend answers, so you can see each empty and error state.",
+  "judgePaused": "Judge paused",
+  "reviewerDown": "Reviewer unavailable",
+  "newAccount": "New account, no history",
+  "offline": "Server unreachable",
+  "catalogue": "Component catalogue"
+}

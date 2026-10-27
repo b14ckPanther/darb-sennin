@@ -1,0 +1,9 @@
+{
+  "$comment": "Copy for the phone Profile tab, which gathers weakness, history, ranks and settings.",
+  "title": "Profile",
+  "lead": "Your record and preferences",
+  "weakness": "Where you lose points",
+  "history": "Every graded submission",
+  "ranks": "Rank, streak and bosses",
+  "settings": "Theme, editor and sound"
+}

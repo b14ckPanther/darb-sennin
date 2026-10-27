@@ -1,8 +1,9 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { m } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { useCopy } from '../copy/copy'
 import { spring } from '../design/motion'
 import { Icon } from './Icon'
+import { useReduceMotion } from '../lib/motion'
 
 type Tone = 'info' | 'error'
 
@@ -17,7 +18,7 @@ interface ToastProps {
 /** The visible card. Announcement comes from the region it is rendered in (ToastRegion). */
 export function Toast({ message, tone = 'info', durationMs, onDismiss }: ToastProps) {
   const copy = useCopy()
-  const reduce = useReducedMotion()
+  const reduce = useReduceMotion()
   const [paused, setPaused] = useState(false)
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export function Toast({ message, tone = 'info', durationMs, onDismiss }: ToastPr
   }
 
   return (
-    <motion.div
+    <m.div
       initial={reduce ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={spring.ui}
@@ -61,7 +62,7 @@ export function Toast({ message, tone = 'info', durationMs, onDismiss }: ToastPr
       >
         <Icon name="fail" size={18} label={copy.toast.dismiss} />
       </button>
-    </motion.div>
+    </m.div>
   )
 }
 

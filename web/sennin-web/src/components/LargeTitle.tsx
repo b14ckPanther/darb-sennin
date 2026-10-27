@@ -5,11 +5,13 @@ interface LargeTitleProps {
   title: string
   /** Controls on the trailing edge of the bar, such as a filter button. */
   trailing?: ReactNode
+  /** A back button on the leading edge, for pages pushed from another page. */
+  leading?: ReactNode
   children?: ReactNode
 }
 
 /** iOS-style large title that collapses into a compact bar title once it scrolls away. */
-export function LargeTitle({ title, trailing, children }: LargeTitleProps) {
+export function LargeTitle({ title, trailing, leading, children }: LargeTitleProps) {
   const heading = useRef<HTMLHeadingElement>(null)
   const bar = useRef<HTMLDivElement>(null)
   const [collapsed, setCollapsed] = useState(false)
@@ -45,11 +47,12 @@ export function LargeTitle({ title, trailing, children }: LargeTitleProps) {
           collapsed ? 'material-bar border-b border-line' : 'border-b border-transparent',
         )}
       >
-        <div className="flex h-14 items-center justify-between gap-4 px-4">
+        <div className="flex h-14 items-center justify-between gap-2 px-4">
+          {leading}
           <span
             aria-hidden="true"
             className={cx(
-              'font-sans text-body font-semibold text-ink transition-opacity duration-(--duration-state)',
+              'min-w-0 flex-1 truncate font-sans text-body font-semibold text-ink transition-opacity duration-(--duration-state)',
               collapsed ? 'opacity-100' : 'opacity-0',
             )}
           >

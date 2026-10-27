@@ -1,0 +1,6992 @@
+{
+ "$comment": "Demo data (CLAUDE.md 1.2). Forty graded submissions with evidence and findings, newest first. Scores follow the demo grading in docs/specs/2026-10-27-phase-03-prototype.md.",
+ "submissions": [
+  {
+   "id": "sub-040",
+   "problemId": "ledger-reconciliation",
+   "problemTitle": "Ledger reconciliation",
+   "language": "python",
+   "createdAt": "2026-10-27T19:42:00.000Z",
+   "verdict": "failed",
+   "score": 47,
+   "maxScore": 100,
+   "passed": 8,
+   "total": 12,
+   "tags": [
+    "off-by-one",
+    "quadratic-scan",
+    "duplicates",
+    "dead-code"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "def reconcile(entries, statement):\n    \"\"\"Return ids in the ledger that the bank statement does not confirm.\"\"\"\n    seen = []\n    for entry in entries:\n        seen.append((entry.id, entry.cents))\n\n    missing = []\n    for line in statement:\n        pass\n\n    for entry_id, cents in seen:\n        matched = False\n        for line in statement:\n            if line.ref == entry_id and line.cents == cents:\n                matched = True\n        if not matched:\n            missing.append(entry_id)\n    return missing[:-1]",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 8
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 6
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 6
+    },
+    {
+     "caseId": "case-04",
+     "status": "fail",
+     "timeMs": 7,
+     "evidence": {
+      "input": "entries: [(a1, 1250), (a2, 900), (a3, 4000)]\nstatement: [(a1, 1250), (a3, 4000)]",
+      "expected": "[\"a2\"]",
+      "actual": "[]",
+      "diffAt": 1,
+      "tags": [
+       "single missing entry",
+       "last element"
+      ]
+     },
+     "lines": [
+      18,
+      18
+     ]
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 7
+    },
+    {
+     "caseId": "case-06",
+     "status": "fail",
+     "timeMs": 6,
+     "evidence": {
+      "input": "entries: [(b1, 300), (b1, 300)]\nstatement: [(b1, 300)]",
+      "expected": "[\"b1\"]",
+      "actual": "[]",
+      "diffAt": 1,
+      "tags": [
+       "duplicates"
+      ]
+     },
+     "lines": [
+      13,
+      15
+     ]
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 8
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 8
+    },
+    {
+     "caseId": "case-09",
+     "status": "limit",
+     "timeMs": 2000
+    },
+    {
+     "caseId": "case-10",
+     "status": "limit",
+     "timeMs": 2000
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 20
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 22
+    }
+   ],
+   "probe": {
+    "points": [
+     {
+      "n": 1000,
+      "ms": 4.1
+     },
+     {
+      "n": 10000,
+      "ms": 380
+     },
+     {
+      "n": 100000,
+      "ms": 37000
+     }
+    ],
+    "fit": {
+     "exponent": 1.97,
+     "r2": 0.99
+    },
+    "target": {
+     "label": "n log n",
+     "exponent": 1.1
+    }
+   },
+   "findings": [
+    {
+     "id": "sub-040-f1",
+     "severity": "major",
+     "title": "The last missing entry is dropped",
+     "body": "Line 18 slices off the final element, so a statement that misses only the last ledger entry reports nothing.",
+     "tag": "off-by-one",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 04",
+       "target": "case-04"
+      },
+      {
+       "kind": "lines",
+       "label": "line 18",
+       "target": "code-line-18",
+       "lines": [
+        18,
+        18
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-040-f2",
+     "severity": "major",
+     "title": "Matching is quadratic",
+     "body": "Every ledger entry scans the whole statement. Index the statement by reference once, then each lookup is constant time.",
+     "tag": "quadratic-scan",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "lines 11-15",
+       "target": "code-line-11",
+       "lines": [
+        11,
+        15
+       ]
+      },
+      {
+       "kind": "probe",
+       "label": "probe n=10^5",
+       "target": "probe"
+      }
+     ]
+    },
+    {
+     "id": "sub-040-f3",
+     "severity": "major",
+     "title": "One statement line confirms many entries",
+     "body": "A matched line is never consumed, so two identical ledger entries are both confirmed by one line.",
+     "tag": "duplicates",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 06",
+       "target": "case-06"
+      },
+      {
+       "kind": "lines",
+       "label": "lines 13-15",
+       "target": "code-line-13",
+       "lines": [
+        13,
+        15
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-040-f4",
+     "severity": "minor",
+     "title": "A loop does nothing",
+     "body": "Lines 8 and 9 iterate the statement without using it.",
+     "tag": "dead-code",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "lines 8-9",
+       "target": "code-line-8",
+       "lines": [
+        8,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-040-f5",
+     "severity": "nit",
+     "title": "A list stands in for a set",
+     "body": "`seen` is only iterated; a list of tuples is fine, but the name suggests a membership test.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 47,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 0,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-039",
+   "problemId": "transfers-that-net-to-zero",
+   "problemTitle": "Two transfers that net to zero",
+   "language": "pseudo",
+   "createdAt": "2026-10-27T18:58:00.000Z",
+   "verdict": "accepted",
+   "score": 100,
+   "maxScore": 100,
+   "passed": 10,
+   "total": 10,
+   "tags": [],
+   "translated": true,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "function netZeroPair(cents)\n  seen <- empty map from amount to index\n  for j from 0 to length(cents) - 1\n    if seen has -cents[j]\n      return [seen[-cents[j]], j]\n    if seen does not have cents[j]\n      seen[cents[j]] <- j\n  return []\nend",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 32
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 31
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 31
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 21
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 30
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 81
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 102
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 97
+    }
+   ],
+   "probe": {
+    "points": [
+     {
+      "n": 10000,
+      "ms": 1.9
+     },
+     {
+      "n": 100000,
+      "ms": 21
+     },
+     {
+      "n": 1000000,
+      "ms": 236
+     }
+    ],
+    "fit": {
+     "exponent": 1.05,
+     "r2": 0.99
+    },
+    "target": {
+     "label": "n",
+     "exponent": 1
+    }
+   },
+   "findings": [
+    {
+     "id": "sub-039-f1",
+     "severity": "nit",
+     "title": "The loop bound is spelled out by hand",
+     "body": "Line 3 counts to length minus one; \"for each amount at index j\" says the same with less to check.",
+     "tag": "clarity",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 70,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 20,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 10,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": {
+    "python": "def net_zero_pair(cents):\n    seen = {}\n    for j in range(len(cents)):\n        if -cents[j] in seen:\n            return [seen[-cents[j]], j]\n        if cents[j] not in seen:\n            seen[cents[j]] = j\n    return []",
+    "mapping": [
+     [
+      1,
+      1
+     ],
+     [
+      2,
+      2
+     ],
+     [
+      3,
+      3
+     ],
+     [
+      4,
+      4
+     ],
+     [
+      5,
+      5
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      8,
+      8
+     ]
+    ],
+    "disputed": false
+   },
+   "isBoss": false
+  },
+  {
+   "id": "sub-038",
+   "problemId": "merge-overlapping-bookings",
+   "problemTitle": "Merge overlapping bookings",
+   "language": "csharp",
+   "createdAt": "2026-10-26T20:05:00.000Z",
+   "verdict": "accepted",
+   "score": 100,
+   "maxScore": 100,
+   "passed": 12,
+   "total": 12,
+   "tags": [],
+   "translated": false,
+   "praised": true,
+   "contentVersion": "demo-2026.10",
+   "code": "public static int[][] Merge(int[][] spans)\n{\n    if (spans.Length == 0) return [];\n    var sorted = spans.OrderBy(s => s[0]).ToArray();\n    var merged = new List<int[]> { sorted[0] };\n    foreach (var s in sorted.Skip(1))\n    {\n        var last = merged[^1];\n        if (s[0] <= last[1]) last[1] = Math.Max(last[1], s[1]);\n        else merged.Add(s);\n    }\n    return [.. merged];\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 11
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 13
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 12
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 11
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 11
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 13
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 13
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 10
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 10
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 38
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 29
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 26
+    }
+   ],
+   "probe": {
+    "points": [
+     {
+      "n": 1000,
+      "ms": 0.9
+     },
+     {
+      "n": 10000,
+      "ms": 11
+     },
+     {
+      "n": 100000,
+      "ms": 128
+     }
+    ],
+    "fit": {
+     "exponent": 1.07,
+     "r2": 0.99
+    },
+    "target": {
+     "label": "n log n",
+     "exponent": 1.1
+    }
+   },
+   "findings": [
+    {
+     "id": "sub-038-f1",
+     "severity": "nit",
+     "title": "Name the comparison",
+     "body": "The lambda on line 4 sorts by start; a named key reads faster.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 4",
+       "target": "code-line-4",
+       "lines": [
+        4,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 70,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 20,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 10,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": "Linear after the sort, and every edge case handled.",
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-037",
+   "problemId": "merge-overlapping-bookings",
+   "problemTitle": "Merge overlapping bookings",
+   "language": "csharp",
+   "createdAt": "2026-10-26T19:31:00.000Z",
+   "verdict": "failed",
+   "score": 65,
+   "maxScore": 100,
+   "passed": 10,
+   "total": 12,
+   "tags": [
+    "off-by-one"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "public static int[][] Merge(int[][] spans)\n{\n    if (spans.Length == 0) return [];\n    var sorted = spans.OrderBy(s => s[0]).ToArray();\n    var merged = new List<int[]> { sorted[0] };\n    foreach (var s in sorted.Skip(1))\n    {\n        var last = merged[^1];\n        if (s[0] < last[1]) last[1] = Math.Max(last[1], s[1]);\n        else merged.Add(s);\n    }\n    return [.. merged];\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 16
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 15
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 20
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 17
+    },
+    {
+     "caseId": "case-05",
+     "status": "fail",
+     "timeMs": 18,
+     "evidence": {
+      "input": "[[600, 660], [660, 690]]",
+      "expected": "[[600, 690]]",
+      "actual": "[[600, 660], [660, 690]]",
+      "diffAt": 3,
+      "tags": [
+       "touching bookings"
+      ]
+     },
+     "lines": [
+      9,
+      9
+     ]
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 20
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 12
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 14
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 17
+    },
+    {
+     "caseId": "case-10",
+     "status": "fail",
+     "timeMs": 50
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 47
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 41
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 2 hidden tests failed. Timing a wrong answer measures nothing useful."
+   },
+   "findings": [
+    {
+     "id": "sub-037-f1",
+     "severity": "major",
+     "title": "Touching bookings stay apart",
+     "body": "Line 9 compares with `<`, so a booking that starts the minute the last one ends opens a new block. The statement says touching bookings merge.",
+     "tag": "off-by-one",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 05",
+       "target": "case-05"
+      },
+      {
+       "kind": "lines",
+       "label": "line 9",
+       "target": "code-line-9",
+       "lines": [
+        9,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-037-f2",
+     "severity": "nit",
+     "title": "Name the comparison",
+     "body": "The lambda on line 4 sorts by start; a named key reads faster.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 4",
+       "target": "code-line-4",
+       "lines": [
+        4,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 58,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 7,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-036",
+   "problemId": "fewest-coins",
+   "problemTitle": "Fewest coins for change",
+   "language": "python",
+   "createdAt": "2026-10-25T19:12:00.000Z",
+   "verdict": "accepted",
+   "score": 100,
+   "maxScore": 100,
+   "passed": 12,
+   "total": 12,
+   "tags": [],
+   "translated": false,
+   "praised": true,
+   "contentVersion": "demo-2026.10",
+   "code": "def fewest_coins(coins, amount):\n    best = [0] + [amount + 1] * amount\n    for value in range(1, amount + 1):\n        for c in coins:\n            if c <= value and best[value - c] + 1 < best[value]:\n                best[value] = best[value - c] + 1\n    return best[amount] if best[amount] <= amount else -1",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 28
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 34
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 40
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 45
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 37
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 30
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 35
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 32
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 102
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 105
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 100
+    }
+   ],
+   "probe": {
+    "points": [
+     {
+      "n": 1000,
+      "ms": 0.8
+     },
+     {
+      "n": 10000,
+      "ms": 8.6
+     },
+     {
+      "n": 100000,
+      "ms": 90
+     }
+    ],
+    "fit": {
+     "exponent": 1.03,
+     "r2": 0.99
+    },
+    "target": {
+     "label": "n · amount",
+     "exponent": 1
+    }
+   },
+   "findings": [],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 70,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 20,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 10,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": "Exact on every coin system, and the sentinel is chosen with care.",
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-035",
+   "problemId": "fewest-coins",
+   "problemTitle": "Fewest coins for change",
+   "language": "javascript",
+   "createdAt": "2026-10-25T18:44:00.000Z",
+   "verdict": "failed",
+   "score": 45,
+   "maxScore": 100,
+   "passed": 7,
+   "total": 12,
+   "tags": [
+    "wrong-algorithm"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "export function fewestCoins(coins, amount) {\n  const sorted = [...coins].sort((a, b) => b - a)\n  let left = amount\n  let count = 0\n  for (const c of sorted) {\n    count += Math.floor(left / c)\n    left %= c\n  }\n  return left === 0 ? count : -1\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-02",
+     "status": "fail",
+     "timeMs": 21,
+     "evidence": {
+      "input": "coins: [1, 5, 12]\namount: 15",
+      "expected": "3",
+      "actual": "4",
+      "diffAt": 0,
+      "tags": [
+       "greedy trap"
+      ]
+     },
+     "lines": [
+      5,
+      8
+     ]
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 29
+    },
+    {
+     "caseId": "case-04",
+     "status": "fail",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-05",
+     "status": "fail",
+     "timeMs": 29
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-07",
+     "status": "fail",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-10",
+     "status": "fail",
+     "timeMs": 80
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 90
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 68
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 5 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-035-f1",
+     "severity": "critical",
+     "title": "Greedy is not optimal for these coins",
+     "body": "Taking the largest coin first works for some coin systems, not all. With 1, 5 and 12, fifteen takes four coins greedily and three optimally. This needs dynamic programming over amounts.",
+     "tag": "wrong-algorithm",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 02",
+       "target": "case-02"
+      },
+      {
+       "kind": "lines",
+       "label": "lines 5-8",
+       "target": "code-line-5",
+       "lines": [
+        5,
+        8
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 41,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 4,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-034",
+   "problemId": "double-entry-ledger",
+   "problemTitle": "The double-entry ledger",
+   "language": "python",
+   "createdAt": "2026-10-24T19:20:00.000Z",
+   "verdict": "failed",
+   "score": 26,
+   "maxScore": 100,
+   "passed": 9,
+   "total": 24,
+   "tags": [
+    "duplicates",
+    "missing-branch"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "def close_books(postings):\n    seen = set()\n    journals = {}\n    balances = {}\n    for p in postings:\n        key = (p.journal, p.debit, p.credit, p.cents)\n        if key in seen:\n            continue\n        seen.add(key)\n        j = journals.setdefault(p.journal, 0)\n        journals[p.journal] = j + p.cents - p.cents\n        balances[p.debit] = balances.get(p.debit, 0) + p.cents\n        balances[p.credit] = balances.get(p.credit, 0) - p.cents\n    unbalanced = [j for j, off in journals.items() if off != 0]\n    return unbalanced, balances",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-02",
+     "status": "fail",
+     "timeMs": 31,
+     "evidence": {
+      "input": null,
+      "expected": null,
+      "actual": null,
+      "diffAt": 0,
+      "tags": [
+       "repeated postings",
+       "same accounts and amount"
+      ],
+      "inputSize": "48,000 postings"
+     }
+    },
+    {
+     "caseId": "case-03",
+     "status": "fail",
+     "timeMs": 28
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 27
+    },
+    {
+     "caseId": "case-05",
+     "status": "fail",
+     "timeMs": 28
+    },
+    {
+     "caseId": "case-06",
+     "status": "fail",
+     "timeMs": 35
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 36
+    },
+    {
+     "caseId": "case-08",
+     "status": "fail",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 35
+    },
+    {
+     "caseId": "case-10",
+     "status": "fail",
+     "timeMs": 23
+    },
+    {
+     "caseId": "case-11",
+     "status": "fail",
+     "timeMs": 28
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-13",
+     "status": "fail",
+     "timeMs": 23
+    },
+    {
+     "caseId": "case-14",
+     "status": "fail",
+     "timeMs": 38
+    },
+    {
+     "caseId": "case-15",
+     "status": "pass",
+     "timeMs": 25
+    },
+    {
+     "caseId": "case-16",
+     "status": "fail",
+     "timeMs": 32
+    },
+    {
+     "caseId": "case-17",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-18",
+     "status": "fail",
+     "timeMs": 29
+    },
+    {
+     "caseId": "case-19",
+     "status": "fail",
+     "timeMs": 31
+    },
+    {
+     "caseId": "case-20",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-21",
+     "status": "fail",
+     "timeMs": 37
+    },
+    {
+     "caseId": "case-22",
+     "status": "fail",
+     "timeMs": 109
+    },
+    {
+     "caseId": "case-23",
+     "status": "pass",
+     "timeMs": 109
+    },
+    {
+     "caseId": "case-24",
+     "status": "fail",
+     "timeMs": 109
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 15 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-034-f1",
+     "severity": "critical",
+     "title": "The duplicate key ignores the sequence number",
+     "body": "Line 6 leaves out the sequence number, so two genuine postings with the same accounts and amount collapse into one.",
+     "tag": "duplicates",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 03",
+       "target": "case-03"
+      },
+      {
+       "kind": "lines",
+       "label": "line 6",
+       "target": "code-line-6",
+       "lines": [
+        6,
+        6
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-034-f2",
+     "severity": "critical",
+     "title": "No journal can ever be unbalanced",
+     "body": "Line 11 adds and subtracts the same amount, so every journal sums to zero. Track debits and credits separately per journal.",
+     "tag": "missing-branch",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 06",
+       "target": "case-06"
+      },
+      {
+       "kind": "lines",
+       "label": "line 11",
+       "target": "code-line-11",
+       "lines": [
+        11,
+        11
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-034-f3",
+     "severity": "major",
+     "title": "Unbalanced journals still move balances",
+     "body": "Lines 12 and 13 post every line before knowing whether its journal balances. The statement closes only balanced journals.",
+     "tag": "missing-branch",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 10",
+       "target": "case-10"
+      },
+      {
+       "kind": "lines",
+       "label": "lines 12-13",
+       "target": "code-line-12",
+       "lines": [
+        12,
+        13
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 26,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 0,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": true
+  },
+  {
+   "id": "sub-033",
+   "problemId": "top-merchants",
+   "problemTitle": "Top merchants by volume",
+   "language": "javascript",
+   "createdAt": "2026-10-24T18:16:00.000Z",
+   "verdict": "accepted",
+   "score": 99,
+   "maxScore": 100,
+   "passed": 12,
+   "total": 12,
+   "tags": [
+    "complexity"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "export function topMerchants(transactions, k) {\n  const volume = new Map()\n  for (const [m, cents] of transactions) {\n    volume.set(m, (volume.get(m) ?? 0) + cents)\n  }\n  return [...volume.entries()]\n    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))\n    .slice(0, k)\n    .map(([m]) => m)\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 42
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 32
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 27
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 32
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 28
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 27
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 39
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 31
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 41
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 109
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 121
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 94
+    }
+   ],
+   "probe": {
+    "points": [
+     {
+      "n": 10000,
+      "ms": 2.9
+     },
+     {
+      "n": 100000,
+      "ms": 34
+     },
+     {
+      "n": 1000000,
+      "ms": 410
+     }
+    ],
+    "fit": {
+     "exponent": 1.08,
+     "r2": 0.99
+    },
+    "target": {
+     "label": "n log k",
+     "exponent": 1.05
+    }
+   },
+   "findings": [
+    {
+     "id": "sub-033-f1",
+     "severity": "minor",
+     "title": "Sorting every merchant to keep k",
+     "body": "Line 7 sorts all merchants. With a million merchants and k of ten, a bounded heap does less work; the measured growth is still inside the target here.",
+     "tag": "complexity",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "lines 6-8",
+       "target": "code-line-6",
+       "lines": [
+        6,
+        8
+       ]
+      },
+      {
+       "kind": "probe",
+       "label": "probe n=10^6",
+       "target": "probe"
+      }
+     ]
+    },
+    {
+     "id": "sub-033-f2",
+     "severity": "nit",
+     "title": "localeCompare depends on the locale",
+     "body": "Ties are broken by name; `localeCompare` can order accented names differently per machine. Compare code units for a stable order.",
+     "tag": "locale",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 7",
+       "target": "code-line-7",
+       "lines": [
+        7,
+        7
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 70,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 20,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 9,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-032",
+   "problemId": "split-bill-to-the-cent",
+   "problemTitle": "Split a bill to the cent",
+   "language": "python",
+   "createdAt": "2026-10-22T18:52:00.000Z",
+   "verdict": "accepted",
+   "score": 99,
+   "maxScore": 100,
+   "passed": 10,
+   "total": 10,
+   "tags": [
+    "clarity"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "def split(total, weights):\n    whole = sum(weights)\n    shares, rests = [], []\n    for i, w in enumerate(weights):\n        share, rest = divmod(total * w, whole)\n        shares.append(share)\n        rests.append((-rest, i))\n    for _, i in sorted(rests)[: total - sum(shares)]:\n        shares[i] += 1\n    return shares",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 31
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 43
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 28
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 35
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 44
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 115
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 132
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 79
+    }
+   ],
+   "probe": {
+    "points": [
+     {
+      "n": 1000,
+      "ms": 0.4
+     },
+     {
+      "n": 10000,
+      "ms": 4.9
+     },
+     {
+      "n": 100000,
+      "ms": 58
+     }
+    ],
+    "fit": {
+     "exponent": 1.08,
+     "r2": 0.98
+    },
+    "target": {
+     "label": "n",
+     "exponent": 1
+    }
+   },
+   "findings": [
+    {
+     "id": "sub-032-f1",
+     "severity": "minor",
+     "title": "The negative sort key needs a word",
+     "body": "Line 7 negates the remainder so the sort puts the largest first. A one-line comment or `key=` with `reverse` says the same thing in plain terms.",
+     "tag": "clarity",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "lines 7-8",
+       "target": "code-line-7",
+       "lines": [
+        7,
+        8
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 70,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 20,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 9,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-031",
+   "problemId": "split-bill-to-the-cent",
+   "problemTitle": "Split a bill to the cent",
+   "language": "javascript",
+   "createdAt": "2026-10-22T18:24:00.000Z",
+   "verdict": "failed",
+   "score": 36,
+   "maxScore": 100,
+   "passed": 5,
+   "total": 10,
+   "tags": [
+    "rounding",
+    "overflow"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "export function split(total, weights) {\n  const sum = weights.reduce((a, b) => a + b, 0)\n  const shares = weights.map((w) => Math.round((total * w) / sum))\n  return shares\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "fail",
+     "timeMs": 30,
+     "evidence": {
+      "input": "total: 1000\nweights: [1, 1, 1]",
+      "expected": "[334, 333, 333]",
+      "actual": "[333, 333, 333]",
+      "diffAt": 1,
+      "tags": [
+       "remainder",
+       "rounding"
+      ]
+     },
+     "lines": [
+      3,
+      3
+     ]
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 46
+    },
+    {
+     "caseId": "case-03",
+     "status": "fail",
+     "timeMs": 38
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 40
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 32
+    },
+    {
+     "caseId": "case-06",
+     "status": "fail",
+     "timeMs": 31
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 31
+    },
+    {
+     "caseId": "case-08",
+     "status": "fail",
+     "timeMs": 113
+    },
+    {
+     "caseId": "case-09",
+     "status": "fail",
+     "timeMs": 82
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 125
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 5 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-031-f1",
+     "severity": "critical",
+     "title": "Shares do not add up to the total",
+     "body": "Rounding each share on its own loses or invents cents. Three equal shares of 1000 come to 999. Round down, then hand out the remainder by largest fraction.",
+     "tag": "rounding",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 01",
+       "target": "case-01"
+      },
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-031-f2",
+     "severity": "major",
+     "title": "Large totals lose precision",
+     "body": "`total * w` exceeds 2^53 for totals near 10^12 with large weights, so the result is no longer exact. Use BigInt for the product.",
+     "tag": "overflow",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 09",
+       "target": "case-09"
+      },
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 35,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 1,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-030",
+   "problemId": "sliding-window-maximum",
+   "problemTitle": "Sliding window maximum",
+   "language": "javascript",
+   "createdAt": "2026-10-21T19:01:00.000Z",
+   "verdict": "failed",
+   "score": 56,
+   "maxScore": 100,
+   "passed": 11,
+   "total": 14,
+   "tags": [
+    "empty-input",
+    "quadratic-scan"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "export function windowMax(readings, k) {\n  const out = []\n  const dq = []\n  for (let i = 0; i < readings.length; i++) {\n    while (dq.length && readings[dq[dq.length - 1]] <= readings[i]) dq.pop()\n    dq.push(i)\n    if (dq[0] <= i - k) dq.shift()\n    if (i >= k - 1) out.push(readings[dq[0]])\n  }\n  return out.length ? out : [readings[0]]\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "fail",
+     "timeMs": 33,
+     "evidence": {
+      "input": "readings: []\nk: 2",
+      "expected": "[]",
+      "actual": "[undefined]",
+      "diffAt": 1,
+      "tags": [
+       "empty input"
+      ]
+     },
+     "lines": [
+      10,
+      10
+     ]
+    },
+    {
+     "caseId": "case-02",
+     "status": "fail",
+     "timeMs": 30
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 23
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 37
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 36
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 36
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 36
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 113
+    },
+    {
+     "caseId": "case-13",
+     "status": "limit",
+     "timeMs": 1500
+    },
+    {
+     "caseId": "case-14",
+     "status": "pass",
+     "timeMs": 111
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 2 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-030-f1",
+     "severity": "critical",
+     "title": "Empty input returns a reading that does not exist",
+     "body": "Line 10 falls back to `readings[0]` when no window fits. With no readings that is `undefined`; with fewer than k readings it invents a window. Return the empty list.",
+     "tag": "empty-input",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 01",
+       "target": "case-01"
+      },
+      {
+       "kind": "lines",
+       "label": "line 10",
+       "target": "code-line-10",
+       "lines": [
+        10,
+        10
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-030-f2",
+     "severity": "major",
+     "title": "shift() makes the deque linear per step",
+     "body": "Array.shift on line 7 moves every element. On a million readings with a wide window the total cost is quadratic, which case 13 shows as a time limit.",
+     "tag": "quadratic-scan",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 13",
+       "target": "case-13"
+      },
+      {
+       "kind": "lines",
+       "label": "line 7",
+       "target": "code-line-7",
+       "lines": [
+        7,
+        7
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-030-f3",
+     "severity": "nit",
+     "title": "dq is short for nothing",
+     "body": "Call it `candidates` and the loop explains itself.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 55,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 1,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-029",
+   "problemId": "token-bucket-limiter",
+   "problemTitle": "Token bucket rate limiter",
+   "language": "csharp",
+   "createdAt": "2026-10-21T18:36:00.000Z",
+   "verdict": "failed",
+   "score": 59,
+   "maxScore": 100,
+   "passed": 11,
+   "total": 14,
+   "tags": [
+    "integer-division",
+    "missing-branch"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "public static bool[] Allow(int capacity, int rate, List<Request> requests)\n{\n    var tokens = new Dictionary<string, double>();\n    var last = new Dictionary<string, long>();\n    var result = new bool[requests.Count];\n    for (var i = 0; i < requests.Count; i++)\n    {\n        var (at, client) = requests[i];\n        var t = tokens.GetValueOrDefault(client, capacity);\n        var since = at - last.GetValueOrDefault(client, at);\n        t = t + since / 1000 * rate;\n        last[client] = at;\n        result[i] = t >= 1;\n        tokens[client] = result[i] ? t - 1 : t;\n    }\n    return result;\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 30
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 27
+    },
+    {
+     "caseId": "case-03",
+     "status": "fail",
+     "timeMs": 36,
+     "evidence": {
+      "input": "capacity: 1, rate: 2\n[(0, c1), (600, c1)]",
+      "expected": "[true, true]",
+      "actual": "[true, false]",
+      "diffAt": 1,
+      "tags": [
+       "fractional refill"
+      ]
+     },
+     "lines": [
+      11,
+      11
+     ]
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 38
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 30
+    },
+    {
+     "caseId": "case-06",
+     "status": "fail",
+     "timeMs": 27
+    },
+    {
+     "caseId": "case-07",
+     "status": "fail",
+     "timeMs": 30
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 39
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 29
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 34
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 108
+    },
+    {
+     "caseId": "case-13",
+     "status": "pass",
+     "timeMs": 87
+    },
+    {
+     "caseId": "case-14",
+     "status": "pass",
+     "timeMs": 107
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 3 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-029-f1",
+     "severity": "major",
+     "title": "Refill truncates to whole seconds",
+     "body": "`since / 1000` on line 11 is integer division, so 600 ms refills nothing. The bucket refills continuously; divide as a double.",
+     "tag": "integer-division",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 03",
+       "target": "case-03"
+      },
+      {
+       "kind": "lines",
+       "label": "line 11",
+       "target": "code-line-11",
+       "lines": [
+        11,
+        11
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-029-f2",
+     "severity": "major",
+     "title": "The bucket can overfill",
+     "body": "Nothing caps `t` at capacity after a refill, so a quiet client banks unlimited tokens.",
+     "tag": "missing-branch",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 06",
+       "target": "case-06"
+      },
+      {
+       "kind": "lines",
+       "label": "line 11",
+       "target": "code-line-11",
+       "lines": [
+        11,
+        11
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 55,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 4,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-028",
+   "problemId": "slowest-endpoints",
+   "problemTitle": "Slowest endpoints in an access log",
+   "language": "python",
+   "createdAt": "2026-10-20T18:47:00.000Z",
+   "verdict": "failed",
+   "score": 62,
+   "maxScore": 100,
+   "passed": 8,
+   "total": 10,
+   "tags": [
+    "off-by-one",
+    "missing-branch"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "def slowest(lines, k):\n    times = {}\n    for line in lines:\n        parts = line.split()\n        if len(parts) != 4:\n            continue\n        method, path, status, ms = parts\n        times.setdefault(f\"{method} {path}\", []).append(int(ms))\n    medians = {e: sorted(t)[len(t) // 2] for e, t in times.items()}\n    return sorted(medians, key=lambda e: -medians[e])[:k]",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 17
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 18
+    },
+    {
+     "caseId": "case-03",
+     "status": "fail",
+     "timeMs": 26,
+     "evidence": {
+      "input": "k: 1\nGET /a 200 30\nGET /a 200 50\nPOST /b 201 45",
+      "expected": "[\"POST /b\"]",
+      "actual": "[\"GET /a\"]",
+      "diffAt": 0,
+      "tags": [
+       "even count median"
+      ]
+     },
+     "lines": [
+      9,
+      9
+     ]
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-05",
+     "status": "fail",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 25
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 25
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 52
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 67
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 49
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 2 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-028-f1",
+     "severity": "major",
+     "title": "Median of an even count takes the upper middle",
+     "body": "Line 9 picks index len // 2, which for two values is the larger one. The median of 30 and 50 is 40.",
+     "tag": "off-by-one",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 03",
+       "target": "case-03"
+      },
+      {
+       "kind": "lines",
+       "label": "line 9",
+       "target": "code-line-9",
+       "lines": [
+        9,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-028-f2",
+     "severity": "minor",
+     "title": "Ties are not broken by name",
+     "body": "Line 10 sorts by median only, so equal medians keep dictionary order instead of name order.",
+     "tag": "missing-branch",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 05",
+       "target": "case-05"
+      },
+      {
+       "kind": "lines",
+       "label": "line 10",
+       "target": "code-line-10",
+       "lines": [
+        10,
+        10
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 56,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 6,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-027",
+   "problemId": "fewest-transfers",
+   "problemTitle": "Fewest transfers between stations",
+   "language": "python",
+   "createdAt": "2026-10-19T17:53:00.000Z",
+   "verdict": "limit",
+   "score": 70,
+   "maxScore": 100,
+   "passed": 11,
+   "total": 12,
+   "tags": [
+    "quadratic-scan"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "from collections import deque, defaultdict\n\ndef fewest_transfers(lines, start, goal):\n    if start == goal:\n        return 0\n    by_station = defaultdict(list)\n    for i, stops in enumerate(lines):\n        for s in stops:\n            by_station[s].append(i)\n    queue = deque((line, 0) for line in by_station[start])\n    seen = set(by_station[start])\n    while queue:\n        line, changes = queue.popleft()\n        if goal in lines[line]:\n            return changes\n        for s in lines[line]:\n            for nxt in by_station[s]:\n                if nxt not in seen:\n                    seen.add(nxt)\n                    queue.append((nxt, changes + 1))\n    return -1",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 29
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 23
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 19
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 19
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 25
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 23
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 71
+    },
+    {
+     "caseId": "case-11",
+     "status": "limit",
+     "timeMs": 2000
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 69
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 1 hidden test hit the time limit."
+   },
+   "findings": [
+    {
+     "id": "sub-027-f1",
+     "severity": "major",
+     "title": "Membership test on a list inside the search",
+     "body": "`goal in lines[line]` on line 14 scans the whole line every time it is dequeued. Build a set per line once; case 11 has lines with tens of thousands of stops.",
+     "tag": "quadratic-scan",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 11",
+       "target": "case-11"
+      },
+      {
+       "kind": "lines",
+       "label": "line 14",
+       "target": "code-line-14",
+       "lines": [
+        14,
+        14
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-027-f2",
+     "severity": "minor",
+     "title": "Stations are expanded more than once",
+     "body": "Lines 16 and 17 revisit stations already expanded through another line. Mark stations as seen too.",
+     "tag": "quadratic-scan",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "lines 16-17",
+       "target": "code-line-16",
+       "lines": [
+        16,
+        17
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 64,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 6,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-026",
+   "problemId": "idempotent-payment-capture",
+   "problemTitle": "Idempotent payment capture",
+   "language": "python",
+   "createdAt": "2026-10-19T17:21:00.000Z",
+   "verdict": "failed",
+   "score": 56,
+   "maxScore": 100,
+   "passed": 12,
+   "total": 16,
+   "tags": [
+    "missing-branch",
+    "naming"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "def capture(requests):\n    seen = {}\n    balances = {}\n    rejected = []\n    for i, (key, account, cents) in enumerate(requests):\n        if key in seen:\n            continue\n        seen[key] = (account, cents)\n        balances[account] = balances.get(account, 0) + cents\n    return balances, rejected",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 29
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 36
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 23
+    },
+    {
+     "caseId": "case-04",
+     "status": "fail",
+     "timeMs": 28,
+     "evidence": {
+      "input": "[(k1, acc7, 1200), (k1, acc7, 1300)]",
+      "expected": "rejected: [1]",
+      "actual": "rejected: []",
+      "diffAt": 1,
+      "tags": [
+       "conflicting retry"
+      ]
+     },
+     "lines": [
+      6,
+      7
+     ]
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 32
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-07",
+     "status": "fail",
+     "timeMs": 35
+    },
+    {
+     "caseId": "case-08",
+     "status": "fail",
+     "timeMs": 28
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 27
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 34
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 30
+    },
+    {
+     "caseId": "case-12",
+     "status": "fail",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-13",
+     "status": "pass",
+     "timeMs": 36
+    },
+    {
+     "caseId": "case-14",
+     "status": "pass",
+     "timeMs": 111
+    },
+    {
+     "caseId": "case-15",
+     "status": "pass",
+     "timeMs": 116
+    },
+    {
+     "caseId": "case-16",
+     "status": "pass",
+     "timeMs": 116
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 4 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-026-f1",
+     "severity": "critical",
+     "title": "Conflicts are treated as retries",
+     "body": "Lines 6 and 7 skip any repeated key without comparing account and amount, so a request that reuses a key for a different payment is silently dropped instead of rejected.",
+     "tag": "missing-branch",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 04",
+       "target": "case-04"
+      },
+      {
+       "kind": "lines",
+       "label": "lines 6-7",
+       "target": "code-line-6",
+       "lines": [
+        6,
+        7
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-026-f2",
+     "severity": "minor",
+     "title": "rejected is never written",
+     "body": "The list on line 4 is returned but nothing appends to it, which hides the missing branch above.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 4",
+       "target": "code-line-4",
+       "lines": [
+        4,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 53,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 3,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-025",
+   "problemId": "sliding-window-maximum",
+   "problemTitle": "Sliding window maximum",
+   "language": "javascript",
+   "createdAt": "2026-10-17T18:40:00.000Z",
+   "verdict": "failed",
+   "score": 55,
+   "maxScore": 90,
+   "passed": 11,
+   "total": 14,
+   "tags": [],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "export function windowMax(readings, k) {\n  const out = []\n  const dq = []\n  for (let i = 0; i < readings.length; i++) {\n    while (dq.length && readings[dq[dq.length - 1]] <= readings[i]) dq.pop()\n    dq.push(i)\n    if (dq[0] <= i - k) dq.shift()\n    if (i >= k - 1) out.push(readings[dq[0]])\n  }\n  return out.length ? out : [readings[0]]\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "fail",
+     "timeMs": 36,
+     "evidence": {
+      "input": "readings: []\nk: 2",
+      "expected": "[]",
+      "actual": "[undefined]",
+      "diffAt": 1,
+      "tags": [
+       "empty input"
+      ]
+     },
+     "lines": [
+      10,
+      10
+     ]
+    },
+    {
+     "caseId": "case-02",
+     "status": "fail",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 31
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 35
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 23
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 23
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 64
+    },
+    {
+     "caseId": "case-13",
+     "status": "limit",
+     "timeMs": 1500
+    },
+    {
+     "caseId": "case-14",
+     "status": "pass",
+     "timeMs": 92
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 2 hidden tests failed."
+   },
+   "findings": null,
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 55,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-024",
+   "problemId": "ledger-reconciliation",
+   "problemTitle": "Ledger reconciliation",
+   "language": "python",
+   "createdAt": "2026-10-16T19:12:00.000Z",
+   "verdict": "failed",
+   "score": 47,
+   "maxScore": 100,
+   "passed": 8,
+   "total": 12,
+   "tags": [
+    "off-by-one",
+    "quadratic-scan",
+    "duplicates",
+    "dead-code"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "def reconcile(entries, statement):\n    \"\"\"Return ids in the ledger that the bank statement does not confirm.\"\"\"\n    seen = []\n    for entry in entries:\n        seen.append((entry.id, entry.cents))\n\n    missing = []\n    for line in statement:\n        pass\n\n    for entry_id, cents in seen:\n        matched = False\n        for line in statement:\n            if line.ref == entry_id and line.cents == cents:\n                matched = True\n        if not matched:\n            missing.append(entry_id)\n    return missing[:-1]",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 31
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 30
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 32
+    },
+    {
+     "caseId": "case-04",
+     "status": "fail",
+     "timeMs": 41,
+     "evidence": {
+      "input": "entries: [(a1, 1250), (a2, 900), (a3, 4000)]\nstatement: [(a1, 1250), (a3, 4000)]",
+      "expected": "[\"a2\"]",
+      "actual": "[]",
+      "diffAt": 1,
+      "tags": [
+       "single missing entry",
+       "last element"
+      ]
+     },
+     "lines": [
+      18,
+      18
+     ]
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-06",
+     "status": "fail",
+     "timeMs": 37,
+     "evidence": {
+      "input": "entries: [(b1, 300), (b1, 300)]\nstatement: [(b1, 300)]",
+      "expected": "[\"b1\"]",
+      "actual": "[]",
+      "diffAt": 1,
+      "tags": [
+       "duplicates"
+      ]
+     },
+     "lines": [
+      13,
+      15
+     ]
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 48
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 36
+    },
+    {
+     "caseId": "case-09",
+     "status": "limit",
+     "timeMs": 2000
+    },
+    {
+     "caseId": "case-10",
+     "status": "limit",
+     "timeMs": 2000
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 124
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 130
+    }
+   ],
+   "probe": {
+    "points": [
+     {
+      "n": 1000,
+      "ms": 4.1
+     },
+     {
+      "n": 10000,
+      "ms": 380
+     },
+     {
+      "n": 100000,
+      "ms": 37000
+     }
+    ],
+    "fit": {
+     "exponent": 1.97,
+     "r2": 0.99
+    },
+    "target": {
+     "label": "n log n",
+     "exponent": 1.1
+    }
+   },
+   "findings": [
+    {
+     "id": "sub-024-f1",
+     "severity": "major",
+     "title": "The last missing entry is dropped",
+     "body": "Line 18 slices off the final element, so a statement that misses only the last ledger entry reports nothing.",
+     "tag": "off-by-one",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 04",
+       "target": "case-04"
+      },
+      {
+       "kind": "lines",
+       "label": "line 18",
+       "target": "code-line-18",
+       "lines": [
+        18,
+        18
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-024-f2",
+     "severity": "major",
+     "title": "Matching is quadratic",
+     "body": "Every ledger entry scans the whole statement. Index the statement by reference once, then each lookup is constant time.",
+     "tag": "quadratic-scan",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "lines 11-15",
+       "target": "code-line-11",
+       "lines": [
+        11,
+        15
+       ]
+      },
+      {
+       "kind": "probe",
+       "label": "probe n=10^5",
+       "target": "probe"
+      }
+     ]
+    },
+    {
+     "id": "sub-024-f3",
+     "severity": "major",
+     "title": "One statement line confirms many entries",
+     "body": "A matched line is never consumed, so two identical ledger entries are both confirmed by one line.",
+     "tag": "duplicates",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 06",
+       "target": "case-06"
+      },
+      {
+       "kind": "lines",
+       "label": "lines 13-15",
+       "target": "code-line-13",
+       "lines": [
+        13,
+        15
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-024-f4",
+     "severity": "minor",
+     "title": "A loop does nothing",
+     "body": "Lines 8 and 9 iterate the statement without using it.",
+     "tag": "dead-code",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "lines 8-9",
+       "target": "code-line-8",
+       "lines": [
+        8,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-024-f5",
+     "severity": "nit",
+     "title": "A list stands in for a set",
+     "body": "`seen` is only iterated; a list of tuples is fine, but the name suggests a membership test.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 47,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 0,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-023",
+   "problemId": "merge-overlapping-bookings",
+   "problemTitle": "Merge overlapping bookings",
+   "language": "csharp",
+   "createdAt": "2026-10-15T18:03:00.000Z",
+   "verdict": "failed",
+   "score": 65,
+   "maxScore": 100,
+   "passed": 10,
+   "total": 12,
+   "tags": [
+    "off-by-one"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "public static int[][] Merge(int[][] spans)\n{\n    if (spans.Length == 0) return [];\n    var sorted = spans.OrderBy(s => s[0]).ToArray();\n    var merged = new List<int[]> { sorted[0] };\n    foreach (var s in sorted.Skip(1))\n    {\n        var last = merged[^1];\n        if (s[0] < last[1]) last[1] = Math.Max(last[1], s[1]);\n        else merged.Add(s);\n    }\n    return [.. merged];\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 19
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 15
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 17
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 23
+    },
+    {
+     "caseId": "case-05",
+     "status": "fail",
+     "timeMs": 25,
+     "evidence": {
+      "input": "[[600, 660], [660, 690]]",
+      "expected": "[[600, 690]]",
+      "actual": "[[600, 660], [660, 690]]",
+      "diffAt": 3,
+      "tags": [
+       "touching bookings"
+      ]
+     },
+     "lines": [
+      9,
+      9
+     ]
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 16
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 20
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 16
+    },
+    {
+     "caseId": "case-10",
+     "status": "fail",
+     "timeMs": 50
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 62
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 48
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 2 hidden tests failed. Timing a wrong answer measures nothing useful."
+   },
+   "findings": [
+    {
+     "id": "sub-023-f1",
+     "severity": "major",
+     "title": "Touching bookings stay apart",
+     "body": "Line 9 compares with `<`, so a booking that starts the minute the last one ends opens a new block. The statement says touching bookings merge.",
+     "tag": "off-by-one",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 05",
+       "target": "case-05"
+      },
+      {
+       "kind": "lines",
+       "label": "line 9",
+       "target": "code-line-9",
+       "lines": [
+        9,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-023-f2",
+     "severity": "nit",
+     "title": "Name the comparison",
+     "body": "The lambda on line 4 sorts by start; a named key reads faster.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 4",
+       "target": "code-line-4",
+       "lines": [
+        4,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 58,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 7,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-022",
+   "problemId": "transfers-that-net-to-zero",
+   "problemTitle": "Two transfers that net to zero",
+   "language": "csharp",
+   "createdAt": "2026-10-14T18:27:00.000Z",
+   "verdict": "failed",
+   "score": 70,
+   "maxScore": 100,
+   "passed": 9,
+   "total": 10,
+   "tags": [
+    "mutation-order"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "public static int[] NetZeroPair(long[] cents)\n{\n    var firstAt = new Dictionary<long, int>();\n    for (var j = 0; j < cents.Length; j++)\n    {\n        firstAt.TryAdd(cents[j], j);\n        if (firstAt.TryGetValue(-cents[j], out var i) && i != j) return [i, j];\n    }\n    return [];\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 8
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 10
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 9
+    },
+    {
+     "caseId": "case-04",
+     "status": "fail",
+     "timeMs": 9,
+     "evidence": {
+      "input": "[0, 0]",
+      "expected": "[0, 1]",
+      "actual": "[]",
+      "diffAt": 0,
+      "tags": [
+       "zero amounts"
+      ]
+     },
+     "lines": [
+      6,
+      7
+     ]
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 12
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 7
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 9
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 25
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 20
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 20
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 1 hidden test failed."
+   },
+   "findings": [
+    {
+     "id": "sub-022-f1",
+     "severity": "major",
+     "title": "The current transfer is recorded before it is matched",
+     "body": "Line 6 stores index j before line 7 looks up its negation, so for two zeros the lookup finds j itself and the guard rejects it. Look up first, then record.",
+     "tag": "mutation-order",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 04",
+       "target": "case-04"
+      },
+      {
+       "kind": "lines",
+       "label": "lines 6-7",
+       "target": "code-line-6",
+       "lines": [
+        6,
+        7
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 63,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 7,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-021",
+   "problemId": "idempotent-payment-capture",
+   "problemTitle": "Idempotent payment capture",
+   "language": "python",
+   "createdAt": "2026-10-13T19:30:00.000Z",
+   "verdict": "failed",
+   "score": 56,
+   "maxScore": 100,
+   "passed": 12,
+   "total": 16,
+   "tags": [
+    "missing-branch",
+    "naming"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "def capture(requests):\n    seen = {}\n    balances = {}\n    rejected = []\n    for i, (key, account, cents) in enumerate(requests):\n        if key in seen:\n            continue\n        seen[key] = (account, cents)\n        balances[account] = balances.get(account, 0) + cents\n    return balances, rejected",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 16
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 17
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 25
+    },
+    {
+     "caseId": "case-04",
+     "status": "fail",
+     "timeMs": 23,
+     "evidence": {
+      "input": "[(k1, acc7, 1200), (k1, acc7, 1300)]",
+      "expected": "rejected: [1]",
+      "actual": "rejected: []",
+      "diffAt": 1,
+      "tags": [
+       "conflicting retry"
+      ]
+     },
+     "lines": [
+      6,
+      7
+     ]
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 23
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 20
+    },
+    {
+     "caseId": "case-07",
+     "status": "fail",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-08",
+     "status": "fail",
+     "timeMs": 25
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 21
+    },
+    {
+     "caseId": "case-12",
+     "status": "fail",
+     "timeMs": 19
+    },
+    {
+     "caseId": "case-13",
+     "status": "pass",
+     "timeMs": 19
+    },
+    {
+     "caseId": "case-14",
+     "status": "pass",
+     "timeMs": 61
+    },
+    {
+     "caseId": "case-15",
+     "status": "pass",
+     "timeMs": 61
+    },
+    {
+     "caseId": "case-16",
+     "status": "pass",
+     "timeMs": 63
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 4 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-021-f1",
+     "severity": "critical",
+     "title": "Conflicts are treated as retries",
+     "body": "Lines 6 and 7 skip any repeated key without comparing account and amount, so a request that reuses a key for a different payment is silently dropped instead of rejected.",
+     "tag": "missing-branch",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 04",
+       "target": "case-04"
+      },
+      {
+       "kind": "lines",
+       "label": "lines 6-7",
+       "target": "code-line-6",
+       "lines": [
+        6,
+        7
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-021-f2",
+     "severity": "minor",
+     "title": "rejected is never written",
+     "body": "The list on line 4 is returned but nothing appends to it, which hides the missing branch above.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 4",
+       "target": "code-line-4",
+       "lines": [
+        4,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 53,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 3,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-020",
+   "problemId": "sliding-window-maximum",
+   "problemTitle": "Sliding window maximum",
+   "language": "javascript",
+   "createdAt": "2026-10-12T18:18:00.000Z",
+   "verdict": "failed",
+   "score": 56,
+   "maxScore": 100,
+   "passed": 11,
+   "total": 14,
+   "tags": [
+    "empty-input",
+    "quadratic-scan"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "export function windowMax(readings, k) {\n  const out = []\n  const dq = []\n  for (let i = 0; i < readings.length; i++) {\n    while (dq.length && readings[dq[dq.length - 1]] <= readings[i]) dq.pop()\n    dq.push(i)\n    if (dq[0] <= i - k) dq.shift()\n    if (i >= k - 1) out.push(readings[dq[0]])\n  }\n  return out.length ? out : [readings[0]]\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "fail",
+     "timeMs": 33,
+     "evidence": {
+      "input": "readings: []\nk: 2",
+      "expected": "[]",
+      "actual": "[undefined]",
+      "diffAt": 1,
+      "tags": [
+       "empty input"
+      ]
+     },
+     "lines": [
+      10,
+      10
+     ]
+    },
+    {
+     "caseId": "case-02",
+     "status": "fail",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 34
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 37
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 36
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 39
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 29
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 30
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 38
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 38
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 28
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 70
+    },
+    {
+     "caseId": "case-13",
+     "status": "limit",
+     "timeMs": 1500
+    },
+    {
+     "caseId": "case-14",
+     "status": "pass",
+     "timeMs": 83
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 2 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-020-f1",
+     "severity": "critical",
+     "title": "Empty input returns a reading that does not exist",
+     "body": "Line 10 falls back to `readings[0]` when no window fits. With no readings that is `undefined`; with fewer than k readings it invents a window. Return the empty list.",
+     "tag": "empty-input",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 01",
+       "target": "case-01"
+      },
+      {
+       "kind": "lines",
+       "label": "line 10",
+       "target": "code-line-10",
+       "lines": [
+        10,
+        10
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-020-f2",
+     "severity": "major",
+     "title": "shift() makes the deque linear per step",
+     "body": "Array.shift on line 7 moves every element. On a million readings with a wide window the total cost is quadratic, which case 13 shows as a time limit.",
+     "tag": "quadratic-scan",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 13",
+       "target": "case-13"
+      },
+      {
+       "kind": "lines",
+       "label": "line 7",
+       "target": "code-line-7",
+       "lines": [
+        7,
+        7
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-020-f3",
+     "severity": "nit",
+     "title": "dq is short for nothing",
+     "body": "Call it `candidates` and the loop explains itself.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 55,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 1,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-019",
+   "problemId": "split-bill-to-the-cent",
+   "problemTitle": "Split a bill to the cent",
+   "language": "javascript",
+   "createdAt": "2026-10-11T17:40:00.000Z",
+   "verdict": "failed",
+   "score": 36,
+   "maxScore": 100,
+   "passed": 5,
+   "total": 10,
+   "tags": [
+    "rounding",
+    "overflow"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "export function split(total, weights) {\n  const sum = weights.reduce((a, b) => a + b, 0)\n  const shares = weights.map((w) => Math.round((total * w) / sum))\n  return shares\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "fail",
+     "timeMs": 40,
+     "evidence": {
+      "input": "total: 1000\nweights: [1, 1, 1]",
+      "expected": "[334, 333, 333]",
+      "actual": "[333, 333, 333]",
+      "diffAt": 1,
+      "tags": [
+       "remainder",
+       "rounding"
+      ]
+     },
+     "lines": [
+      3,
+      3
+     ]
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 40
+    },
+    {
+     "caseId": "case-03",
+     "status": "fail",
+     "timeMs": 45
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 41
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 30
+    },
+    {
+     "caseId": "case-06",
+     "status": "fail",
+     "timeMs": 31
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 42
+    },
+    {
+     "caseId": "case-08",
+     "status": "fail",
+     "timeMs": 84
+    },
+    {
+     "caseId": "case-09",
+     "status": "fail",
+     "timeMs": 131
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 125
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 5 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-019-f1",
+     "severity": "critical",
+     "title": "Shares do not add up to the total",
+     "body": "Rounding each share on its own loses or invents cents. Three equal shares of 1000 come to 999. Round down, then hand out the remainder by largest fraction.",
+     "tag": "rounding",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 01",
+       "target": "case-01"
+      },
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-019-f2",
+     "severity": "major",
+     "title": "Large totals lose precision",
+     "body": "`total * w` exceeds 2^53 for totals near 10^12 with large weights, so the result is no longer exact. Use BigInt for the product.",
+     "tag": "overflow",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 09",
+       "target": "case-09"
+      },
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 35,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 1,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-018",
+   "problemId": "fewest-coins",
+   "problemTitle": "Fewest coins for change",
+   "language": "javascript",
+   "createdAt": "2026-10-10T18:55:00.000Z",
+   "verdict": "failed",
+   "score": 45,
+   "maxScore": 100,
+   "passed": 7,
+   "total": 12,
+   "tags": [
+    "wrong-algorithm"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "export function fewestCoins(coins, amount) {\n  const sorted = [...coins].sort((a, b) => b - a)\n  let left = amount\n  let count = 0\n  for (const c of sorted) {\n    count += Math.floor(left / c)\n    left %= c\n  }\n  return left === 0 ? count : -1\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 31
+    },
+    {
+     "caseId": "case-02",
+     "status": "fail",
+     "timeMs": 28,
+     "evidence": {
+      "input": "coins: [1, 5, 12]\namount: 15",
+      "expected": "3",
+      "actual": "4",
+      "diffAt": 0,
+      "tags": [
+       "greedy trap"
+      ]
+     },
+     "lines": [
+      5,
+      8
+     ]
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 27
+    },
+    {
+     "caseId": "case-04",
+     "status": "fail",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-05",
+     "status": "fail",
+     "timeMs": 29
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-07",
+     "status": "fail",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 30
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 27
+    },
+    {
+     "caseId": "case-10",
+     "status": "fail",
+     "timeMs": 78
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 69
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 87
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 5 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-018-f1",
+     "severity": "critical",
+     "title": "Greedy is not optimal for these coins",
+     "body": "Taking the largest coin first works for some coin systems, not all. With 1, 5 and 12, fifteen takes four coins greedily and three optimally. This needs dynamic programming over amounts.",
+     "tag": "wrong-algorithm",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 02",
+       "target": "case-02"
+      },
+      {
+       "kind": "lines",
+       "label": "lines 5-8",
+       "target": "code-line-5",
+       "lines": [
+        5,
+        8
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 41,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 4,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-017",
+   "problemId": "slowest-endpoints",
+   "problemTitle": "Slowest endpoints in an access log",
+   "language": "python",
+   "createdAt": "2026-10-09T18:09:00.000Z",
+   "verdict": "failed",
+   "score": 62,
+   "maxScore": 100,
+   "passed": 8,
+   "total": 10,
+   "tags": [
+    "off-by-one",
+    "missing-branch"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "def slowest(lines, k):\n    times = {}\n    for line in lines:\n        parts = line.split()\n        if len(parts) != 4:\n            continue\n        method, path, status, ms = parts\n        times.setdefault(f\"{method} {path}\", []).append(int(ms))\n    medians = {e: sorted(t)[len(t) // 2] for e, t in times.items()}\n    return sorted(medians, key=lambda e: -medians[e])[:k]",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 17
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 17
+    },
+    {
+     "caseId": "case-03",
+     "status": "fail",
+     "timeMs": 13,
+     "evidence": {
+      "input": "k: 1\nGET /a 200 30\nGET /a 200 50\nPOST /b 201 45",
+      "expected": "[\"POST /b\"]",
+      "actual": "[\"GET /a\"]",
+      "diffAt": 0,
+      "tags": [
+       "even count median"
+      ]
+     },
+     "lines": [
+      9,
+      9
+     ]
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 16
+    },
+    {
+     "caseId": "case-05",
+     "status": "fail",
+     "timeMs": 17
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 11
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 13
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 53
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 31
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 34
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 2 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-017-f1",
+     "severity": "major",
+     "title": "Median of an even count takes the upper middle",
+     "body": "Line 9 picks index len // 2, which for two values is the larger one. The median of 30 and 50 is 40.",
+     "tag": "off-by-one",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 03",
+       "target": "case-03"
+      },
+      {
+       "kind": "lines",
+       "label": "line 9",
+       "target": "code-line-9",
+       "lines": [
+        9,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-017-f2",
+     "severity": "minor",
+     "title": "Ties are not broken by name",
+     "body": "Line 10 sorts by median only, so equal medians keep dictionary order instead of name order.",
+     "tag": "missing-branch",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 05",
+       "target": "case-05"
+      },
+      {
+       "kind": "lines",
+       "label": "line 10",
+       "target": "code-line-10",
+       "lines": [
+        10,
+        10
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 56,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 6,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-016",
+   "problemId": "token-bucket-limiter",
+   "problemTitle": "Token bucket rate limiter",
+   "language": "csharp",
+   "createdAt": "2026-10-08T19:14:00.000Z",
+   "verdict": "failed",
+   "score": 59,
+   "maxScore": 100,
+   "passed": 11,
+   "total": 14,
+   "tags": [
+    "integer-division",
+    "missing-branch"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "public static bool[] Allow(int capacity, int rate, List<Request> requests)\n{\n    var tokens = new Dictionary<string, double>();\n    var last = new Dictionary<string, long>();\n    var result = new bool[requests.Count];\n    for (var i = 0; i < requests.Count; i++)\n    {\n        var (at, client) = requests[i];\n        var t = tokens.GetValueOrDefault(client, capacity);\n        var since = at - last.GetValueOrDefault(client, at);\n        t = t + since / 1000 * rate;\n        last[client] = at;\n        result[i] = t >= 1;\n        tokens[client] = result[i] ? t - 1 : t;\n    }\n    return result;\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 15
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-03",
+     "status": "fail",
+     "timeMs": 24,
+     "evidence": {
+      "input": "capacity: 1, rate: 2\n[(0, c1), (600, c1)]",
+      "expected": "[true, true]",
+      "actual": "[true, false]",
+      "diffAt": 1,
+      "tags": [
+       "fractional refill"
+      ]
+     },
+     "lines": [
+      11,
+      11
+     ]
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 16
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 17
+    },
+    {
+     "caseId": "case-06",
+     "status": "fail",
+     "timeMs": 25
+    },
+    {
+     "caseId": "case-07",
+     "status": "fail",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 16
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 16
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 21
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 15
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 69
+    },
+    {
+     "caseId": "case-13",
+     "status": "pass",
+     "timeMs": 62
+    },
+    {
+     "caseId": "case-14",
+     "status": "pass",
+     "timeMs": 67
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 3 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-016-f1",
+     "severity": "major",
+     "title": "Refill truncates to whole seconds",
+     "body": "`since / 1000` on line 11 is integer division, so 600 ms refills nothing. The bucket refills continuously; divide as a double.",
+     "tag": "integer-division",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 03",
+       "target": "case-03"
+      },
+      {
+       "kind": "lines",
+       "label": "line 11",
+       "target": "code-line-11",
+       "lines": [
+        11,
+        11
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-016-f2",
+     "severity": "major",
+     "title": "The bucket can overfill",
+     "body": "Nothing caps `t` at capacity after a refill, so a quiet client banks unlimited tokens.",
+     "tag": "missing-branch",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 06",
+       "target": "case-06"
+      },
+      {
+       "kind": "lines",
+       "label": "line 11",
+       "target": "code-line-11",
+       "lines": [
+        11,
+        11
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 55,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 4,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-015",
+   "problemId": "sliding-window-maximum",
+   "problemTitle": "Sliding window maximum",
+   "language": "javascript",
+   "createdAt": "2026-10-07T18:33:00.000Z",
+   "verdict": "failed",
+   "score": 56,
+   "maxScore": 100,
+   "passed": 11,
+   "total": 14,
+   "tags": [
+    "empty-input",
+    "quadratic-scan"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "export function windowMax(readings, k) {\n  const out = []\n  const dq = []\n  for (let i = 0; i < readings.length; i++) {\n    while (dq.length && readings[dq[dq.length - 1]] <= readings[i]) dq.pop()\n    dq.push(i)\n    if (dq[0] <= i - k) dq.shift()\n    if (i >= k - 1) out.push(readings[dq[0]])\n  }\n  return out.length ? out : [readings[0]]\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "fail",
+     "timeMs": 10,
+     "evidence": {
+      "input": "readings: []\nk: 2",
+      "expected": "[]",
+      "actual": "[undefined]",
+      "diffAt": 1,
+      "tags": [
+       "empty input"
+      ]
+     },
+     "lines": [
+      10,
+      10
+     ]
+    },
+    {
+     "caseId": "case-02",
+     "status": "fail",
+     "timeMs": 12
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 14
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 11
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 11
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 12
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 12
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 12
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 11
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 8
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 8
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 34
+    },
+    {
+     "caseId": "case-13",
+     "status": "limit",
+     "timeMs": 1500
+    },
+    {
+     "caseId": "case-14",
+     "status": "pass",
+     "timeMs": 28
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 2 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-015-f1",
+     "severity": "critical",
+     "title": "Empty input returns a reading that does not exist",
+     "body": "Line 10 falls back to `readings[0]` when no window fits. With no readings that is `undefined`; with fewer than k readings it invents a window. Return the empty list.",
+     "tag": "empty-input",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 01",
+       "target": "case-01"
+      },
+      {
+       "kind": "lines",
+       "label": "line 10",
+       "target": "code-line-10",
+       "lines": [
+        10,
+        10
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-015-f2",
+     "severity": "major",
+     "title": "shift() makes the deque linear per step",
+     "body": "Array.shift on line 7 moves every element. On a million readings with a wide window the total cost is quadratic, which case 13 shows as a time limit.",
+     "tag": "quadratic-scan",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 13",
+       "target": "case-13"
+      },
+      {
+       "kind": "lines",
+       "label": "line 7",
+       "target": "code-line-7",
+       "lines": [
+        7,
+        7
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-015-f3",
+     "severity": "nit",
+     "title": "dq is short for nothing",
+     "body": "Call it `candidates` and the loop explains itself.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 55,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 1,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-014",
+   "problemId": "fewest-transfers",
+   "problemTitle": "Fewest transfers between stations",
+   "language": "python",
+   "createdAt": "2026-10-06T18:41:00.000Z",
+   "verdict": "limit",
+   "score": 70,
+   "maxScore": 100,
+   "passed": 11,
+   "total": 12,
+   "tags": [
+    "quadratic-scan"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "from collections import deque, defaultdict\n\ndef fewest_transfers(lines, start, goal):\n    if start == goal:\n        return 0\n    by_station = defaultdict(list)\n    for i, stops in enumerate(lines):\n        for s in stops:\n            by_station[s].append(i)\n    queue = deque((line, 0) for line in by_station[start])\n    seen = set(by_station[start])\n    while queue:\n        line, changes = queue.popleft()\n        if goal in lines[line]:\n            return changes\n        for s in lines[line]:\n            for nxt in by_station[s]:\n                if nxt not in seen:\n                    seen.add(nxt)\n                    queue.append((nxt, changes + 1))\n    return -1",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 27
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 28
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 30
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 31
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 19
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 28
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 73
+    },
+    {
+     "caseId": "case-11",
+     "status": "limit",
+     "timeMs": 2000
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 90
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 1 hidden test hit the time limit."
+   },
+   "findings": [
+    {
+     "id": "sub-014-f1",
+     "severity": "major",
+     "title": "Membership test on a list inside the search",
+     "body": "`goal in lines[line]` on line 14 scans the whole line every time it is dequeued. Build a set per line once; case 11 has lines with tens of thousands of stops.",
+     "tag": "quadratic-scan",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 11",
+       "target": "case-11"
+      },
+      {
+       "kind": "lines",
+       "label": "line 14",
+       "target": "code-line-14",
+       "lines": [
+        14,
+        14
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-014-f2",
+     "severity": "minor",
+     "title": "Stations are expanded more than once",
+     "body": "Lines 16 and 17 revisit stations already expanded through another line. Mark stations as seen too.",
+     "tag": "quadratic-scan",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "lines 16-17",
+       "target": "code-line-16",
+       "lines": [
+        16,
+        17
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 64,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 6,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-013",
+   "problemId": "top-merchants",
+   "problemTitle": "Top merchants by volume",
+   "language": "javascript",
+   "createdAt": "2026-10-05T17:57:00.000Z",
+   "verdict": "accepted",
+   "score": 99,
+   "maxScore": 100,
+   "passed": 12,
+   "total": 12,
+   "tags": [
+    "complexity"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "export function topMerchants(transactions, k) {\n  const volume = new Map()\n  for (const [m, cents] of transactions) {\n    volume.set(m, (volume.get(m) ?? 0) + cents)\n  }\n  return [...volume.entries()]\n    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))\n    .slice(0, k)\n    .map(([m]) => m)\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 35
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 28
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 27
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 34
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 32
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 104
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 102
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 71
+    }
+   ],
+   "probe": {
+    "points": [
+     {
+      "n": 10000,
+      "ms": 2.9
+     },
+     {
+      "n": 100000,
+      "ms": 34
+     },
+     {
+      "n": 1000000,
+      "ms": 410
+     }
+    ],
+    "fit": {
+     "exponent": 1.08,
+     "r2": 0.99
+    },
+    "target": {
+     "label": "n log k",
+     "exponent": 1.05
+    }
+   },
+   "findings": [
+    {
+     "id": "sub-013-f1",
+     "severity": "minor",
+     "title": "Sorting every merchant to keep k",
+     "body": "Line 7 sorts all merchants. With a million merchants and k of ten, a bounded heap does less work; the measured growth is still inside the target here.",
+     "tag": "complexity",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "lines 6-8",
+       "target": "code-line-6",
+       "lines": [
+        6,
+        8
+       ]
+      },
+      {
+       "kind": "probe",
+       "label": "probe n=10^6",
+       "target": "probe"
+      }
+     ]
+    },
+    {
+     "id": "sub-013-f2",
+     "severity": "nit",
+     "title": "localeCompare depends on the locale",
+     "body": "Ties are broken by name; `localeCompare` can order accented names differently per machine. Compare code units for a stable order.",
+     "tag": "locale",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 7",
+       "target": "code-line-7",
+       "lines": [
+        7,
+        7
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 70,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 20,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 9,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-012",
+   "problemId": "ledger-reconciliation",
+   "problemTitle": "Ledger reconciliation",
+   "language": "python",
+   "createdAt": "2026-10-04T18:26:00.000Z",
+   "verdict": "failed",
+   "score": 47,
+   "maxScore": 100,
+   "passed": 8,
+   "total": 12,
+   "tags": [
+    "off-by-one",
+    "quadratic-scan",
+    "duplicates",
+    "dead-code"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "def reconcile(entries, statement):\n    \"\"\"Return ids in the ledger that the bank statement does not confirm.\"\"\"\n    seen = []\n    for entry in entries:\n        seen.append((entry.id, entry.cents))\n\n    missing = []\n    for line in statement:\n        pass\n\n    for entry_id, cents in seen:\n        matched = False\n        for line in statement:\n            if line.ref == entry_id and line.cents == cents:\n                matched = True\n        if not matched:\n            missing.append(entry_id)\n    return missing[:-1]",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 25
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 38
+    },
+    {
+     "caseId": "case-04",
+     "status": "fail",
+     "timeMs": 38,
+     "evidence": {
+      "input": "entries: [(a1, 1250), (a2, 900), (a3, 4000)]\nstatement: [(a1, 1250), (a3, 4000)]",
+      "expected": "[\"a2\"]",
+      "actual": "[]",
+      "diffAt": 1,
+      "tags": [
+       "single missing entry",
+       "last element"
+      ]
+     },
+     "lines": [
+      18,
+      18
+     ]
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 23
+    },
+    {
+     "caseId": "case-06",
+     "status": "fail",
+     "timeMs": 23,
+     "evidence": {
+      "input": "entries: [(b1, 300), (b1, 300)]\nstatement: [(b1, 300)]",
+      "expected": "[\"b1\"]",
+      "actual": "[]",
+      "diffAt": 1,
+      "tags": [
+       "duplicates"
+      ]
+     },
+     "lines": [
+      13,
+      15
+     ]
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 38
+    },
+    {
+     "caseId": "case-09",
+     "status": "limit",
+     "timeMs": 2000
+    },
+    {
+     "caseId": "case-10",
+     "status": "limit",
+     "timeMs": 2000
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 109
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 114
+    }
+   ],
+   "probe": {
+    "points": [
+     {
+      "n": 1000,
+      "ms": 4.1
+     },
+     {
+      "n": 10000,
+      "ms": 380
+     },
+     {
+      "n": 100000,
+      "ms": 37000
+     }
+    ],
+    "fit": {
+     "exponent": 1.97,
+     "r2": 0.99
+    },
+    "target": {
+     "label": "n log n",
+     "exponent": 1.1
+    }
+   },
+   "findings": [
+    {
+     "id": "sub-012-f1",
+     "severity": "major",
+     "title": "The last missing entry is dropped",
+     "body": "Line 18 slices off the final element, so a statement that misses only the last ledger entry reports nothing.",
+     "tag": "off-by-one",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 04",
+       "target": "case-04"
+      },
+      {
+       "kind": "lines",
+       "label": "line 18",
+       "target": "code-line-18",
+       "lines": [
+        18,
+        18
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-012-f2",
+     "severity": "major",
+     "title": "Matching is quadratic",
+     "body": "Every ledger entry scans the whole statement. Index the statement by reference once, then each lookup is constant time.",
+     "tag": "quadratic-scan",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "lines 11-15",
+       "target": "code-line-11",
+       "lines": [
+        11,
+        15
+       ]
+      },
+      {
+       "kind": "probe",
+       "label": "probe n=10^5",
+       "target": "probe"
+      }
+     ]
+    },
+    {
+     "id": "sub-012-f3",
+     "severity": "major",
+     "title": "One statement line confirms many entries",
+     "body": "A matched line is never consumed, so two identical ledger entries are both confirmed by one line.",
+     "tag": "duplicates",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 06",
+       "target": "case-06"
+      },
+      {
+       "kind": "lines",
+       "label": "lines 13-15",
+       "target": "code-line-13",
+       "lines": [
+        13,
+        15
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-012-f4",
+     "severity": "minor",
+     "title": "A loop does nothing",
+     "body": "Lines 8 and 9 iterate the statement without using it.",
+     "tag": "dead-code",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "lines 8-9",
+       "target": "code-line-8",
+       "lines": [
+        8,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-012-f5",
+     "severity": "nit",
+     "title": "A list stands in for a set",
+     "body": "`seen` is only iterated; a list of tuples is fine, but the name suggests a membership test.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 47,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 0,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-011",
+   "problemId": "transfers-that-net-to-zero",
+   "problemTitle": "Two transfers that net to zero",
+   "language": "csharp",
+   "createdAt": "2026-10-03T19:03:00.000Z",
+   "verdict": "failed",
+   "score": 70,
+   "maxScore": 100,
+   "passed": 9,
+   "total": 10,
+   "tags": [
+    "mutation-order"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "public static int[] NetZeroPair(long[] cents)\n{\n    var firstAt = new Dictionary<long, int>();\n    for (var j = 0; j < cents.Length; j++)\n    {\n        firstAt.TryAdd(cents[j], j);\n        if (firstAt.TryGetValue(-cents[j], out var i) && i != j) return [i, j];\n    }\n    return [];\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 13
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 12
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 15
+    },
+    {
+     "caseId": "case-04",
+     "status": "fail",
+     "timeMs": 16,
+     "evidence": {
+      "input": "[0, 0]",
+      "expected": "[0, 1]",
+      "actual": "[]",
+      "diffAt": 0,
+      "tags": [
+       "zero amounts"
+      ]
+     },
+     "lines": [
+      6,
+      7
+     ]
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 13
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 14
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 16
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 40
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 36
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 35
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 1 hidden test failed."
+   },
+   "findings": [
+    {
+     "id": "sub-011-f1",
+     "severity": "major",
+     "title": "The current transfer is recorded before it is matched",
+     "body": "Line 6 stores index j before line 7 looks up its negation, so for two zeros the lookup finds j itself and the guard rejects it. Look up first, then record.",
+     "tag": "mutation-order",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 04",
+       "target": "case-04"
+      },
+      {
+       "kind": "lines",
+       "label": "lines 6-7",
+       "target": "code-line-6",
+       "lines": [
+        6,
+        7
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 63,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 7,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-010",
+   "problemId": "merge-overlapping-bookings",
+   "problemTitle": "Merge overlapping bookings",
+   "language": "csharp",
+   "createdAt": "2026-10-02T18:48:00.000Z",
+   "verdict": "failed",
+   "score": 65,
+   "maxScore": 100,
+   "passed": 10,
+   "total": 12,
+   "tags": [
+    "off-by-one"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "public static int[][] Merge(int[][] spans)\n{\n    if (spans.Length == 0) return [];\n    var sorted = spans.OrderBy(s => s[0]).ToArray();\n    var merged = new List<int[]> { sorted[0] };\n    foreach (var s in sorted.Skip(1))\n    {\n        var last = merged[^1];\n        if (s[0] < last[1]) last[1] = Math.Max(last[1], s[1]);\n        else merged.Add(s);\n    }\n    return [.. merged];\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 10
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 10
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 11
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 11
+    },
+    {
+     "caseId": "case-05",
+     "status": "fail",
+     "timeMs": 10,
+     "evidence": {
+      "input": "[[600, 660], [660, 690]]",
+      "expected": "[[600, 690]]",
+      "actual": "[[600, 660], [660, 690]]",
+      "diffAt": 3,
+      "tags": [
+       "touching bookings"
+      ]
+     },
+     "lines": [
+      9,
+      9
+     ]
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 11
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 9
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 10
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 12
+    },
+    {
+     "caseId": "case-10",
+     "status": "fail",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 36
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 32
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 2 hidden tests failed. Timing a wrong answer measures nothing useful."
+   },
+   "findings": [
+    {
+     "id": "sub-010-f1",
+     "severity": "major",
+     "title": "Touching bookings stay apart",
+     "body": "Line 9 compares with `<`, so a booking that starts the minute the last one ends opens a new block. The statement says touching bookings merge.",
+     "tag": "off-by-one",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 05",
+       "target": "case-05"
+      },
+      {
+       "kind": "lines",
+       "label": "line 9",
+       "target": "code-line-9",
+       "lines": [
+        9,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-010-f2",
+     "severity": "nit",
+     "title": "Name the comparison",
+     "body": "The lambda on line 4 sorts by start; a named key reads faster.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 4",
+       "target": "code-line-4",
+       "lines": [
+        4,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 58,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 7,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-009",
+   "problemId": "idempotent-payment-capture",
+   "problemTitle": "Idempotent payment capture",
+   "language": "python",
+   "createdAt": "2026-10-01T18:11:00.000Z",
+   "verdict": "failed",
+   "score": 56,
+   "maxScore": 100,
+   "passed": 12,
+   "total": 16,
+   "tags": [
+    "missing-branch",
+    "naming"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "def capture(requests):\n    seen = {}\n    balances = {}\n    rejected = []\n    for i, (key, account, cents) in enumerate(requests):\n        if key in seen:\n            continue\n        seen[key] = (account, cents)\n        balances[account] = balances.get(account, 0) + cents\n    return balances, rejected",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 31
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 20
+    },
+    {
+     "caseId": "case-04",
+     "status": "fail",
+     "timeMs": 30,
+     "evidence": {
+      "input": "[(k1, acc7, 1200), (k1, acc7, 1300)]",
+      "expected": "rejected: [1]",
+      "actual": "rejected: []",
+      "diffAt": 1,
+      "tags": [
+       "conflicting retry"
+      ]
+     },
+     "lines": [
+      6,
+      7
+     ]
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 29
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-07",
+     "status": "fail",
+     "timeMs": 27
+    },
+    {
+     "caseId": "case-08",
+     "status": "fail",
+     "timeMs": 25
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 21
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 20
+    },
+    {
+     "caseId": "case-12",
+     "status": "fail",
+     "timeMs": 20
+    },
+    {
+     "caseId": "case-13",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-14",
+     "status": "pass",
+     "timeMs": 73
+    },
+    {
+     "caseId": "case-15",
+     "status": "pass",
+     "timeMs": 67
+    },
+    {
+     "caseId": "case-16",
+     "status": "pass",
+     "timeMs": 86
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 4 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-009-f1",
+     "severity": "critical",
+     "title": "Conflicts are treated as retries",
+     "body": "Lines 6 and 7 skip any repeated key without comparing account and amount, so a request that reuses a key for a different payment is silently dropped instead of rejected.",
+     "tag": "missing-branch",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 04",
+       "target": "case-04"
+      },
+      {
+       "kind": "lines",
+       "label": "lines 6-7",
+       "target": "code-line-6",
+       "lines": [
+        6,
+        7
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-009-f2",
+     "severity": "minor",
+     "title": "rejected is never written",
+     "body": "The list on line 4 is returned but nothing appends to it, which hides the missing branch above.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 4",
+       "target": "code-line-4",
+       "lines": [
+        4,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 53,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 3,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-008",
+   "problemId": "sliding-window-maximum",
+   "problemTitle": "Sliding window maximum",
+   "language": "python",
+   "createdAt": "2026-09-30T19:25:00.000Z",
+   "verdict": "accepted",
+   "score": 100,
+   "maxScore": 100,
+   "passed": 14,
+   "total": 14,
+   "tags": [],
+   "translated": false,
+   "praised": true,
+   "contentVersion": "demo-2026.10",
+   "code": "from collections import deque\n\ndef window_max(readings, k):\n    candidates = deque()\n    out = []\n    for i, value in enumerate(readings):\n        while candidates and readings[candidates[-1]] <= value:\n            candidates.pop()\n        candidates.append(i)\n        if candidates[0] <= i - k:\n            candidates.popleft()\n        if i >= k - 1:\n            out.append(readings[candidates[0]])\n    return out",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 8
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 8
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 13
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 13
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 8
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 12
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 10
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 10
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 13
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 12
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 8
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 41
+    },
+    {
+     "caseId": "case-13",
+     "status": "pass",
+     "timeMs": 27
+    },
+    {
+     "caseId": "case-14",
+     "status": "pass",
+     "timeMs": 35
+    }
+   ],
+   "probe": {
+    "points": [
+     {
+      "n": 10000,
+      "ms": 3.2
+     },
+     {
+      "n": 100000,
+      "ms": 31
+     },
+     {
+      "n": 1000000,
+      "ms": 330
+     }
+    ],
+    "fit": {
+     "exponent": 1.01,
+     "r2": 0.99
+    },
+    "target": {
+     "label": "n",
+     "exponent": 1
+    }
+   },
+   "findings": [],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 70,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 20,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 10,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": "Linear, and the empty case falls out of the loop on its own.",
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-007",
+   "problemId": "sliding-window-maximum",
+   "problemTitle": "Sliding window maximum",
+   "language": "javascript",
+   "createdAt": "2026-09-30T18:50:00.000Z",
+   "verdict": "failed",
+   "score": 56,
+   "maxScore": 100,
+   "passed": 11,
+   "total": 14,
+   "tags": [
+    "empty-input",
+    "quadratic-scan"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "export function windowMax(readings, k) {\n  const out = []\n  const dq = []\n  for (let i = 0; i < readings.length; i++) {\n    while (dq.length && readings[dq[dq.length - 1]] <= readings[i]) dq.pop()\n    dq.push(i)\n    if (dq[0] <= i - k) dq.shift()\n    if (i >= k - 1) out.push(readings[dq[0]])\n  }\n  return out.length ? out : [readings[0]]\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "fail",
+     "timeMs": 15,
+     "evidence": {
+      "input": "readings: []\nk: 2",
+      "expected": "[]",
+      "actual": "[undefined]",
+      "diffAt": 1,
+      "tags": [
+       "empty input"
+      ]
+     },
+     "lines": [
+      10,
+      10
+     ]
+    },
+    {
+     "caseId": "case-02",
+     "status": "fail",
+     "timeMs": 17
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 18
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 25
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 19
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 20
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 18
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 18
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 75
+    },
+    {
+     "caseId": "case-13",
+     "status": "limit",
+     "timeMs": 1500
+    },
+    {
+     "caseId": "case-14",
+     "status": "pass",
+     "timeMs": 75
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 2 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-007-f1",
+     "severity": "critical",
+     "title": "Empty input returns a reading that does not exist",
+     "body": "Line 10 falls back to `readings[0]` when no window fits. With no readings that is `undefined`; with fewer than k readings it invents a window. Return the empty list.",
+     "tag": "empty-input",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 01",
+       "target": "case-01"
+      },
+      {
+       "kind": "lines",
+       "label": "line 10",
+       "target": "code-line-10",
+       "lines": [
+        10,
+        10
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-007-f2",
+     "severity": "major",
+     "title": "shift() makes the deque linear per step",
+     "body": "Array.shift on line 7 moves every element. On a million readings with a wide window the total cost is quadratic, which case 13 shows as a time limit.",
+     "tag": "quadratic-scan",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 13",
+       "target": "case-13"
+      },
+      {
+       "kind": "lines",
+       "label": "line 7",
+       "target": "code-line-7",
+       "lines": [
+        7,
+        7
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-007-f3",
+     "severity": "nit",
+     "title": "dq is short for nothing",
+     "body": "Call it `candidates` and the loop explains itself.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 55,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 1,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-006",
+   "problemId": "fewest-coins",
+   "problemTitle": "Fewest coins for change",
+   "language": "javascript",
+   "createdAt": "2026-09-28T18:37:00.000Z",
+   "verdict": "failed",
+   "score": 45,
+   "maxScore": 100,
+   "passed": 7,
+   "total": 12,
+   "tags": [
+    "wrong-algorithm"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "export function fewestCoins(coins, amount) {\n  const sorted = [...coins].sort((a, b) => b - a)\n  let left = amount\n  let count = 0\n  for (const c of sorted) {\n    count += Math.floor(left / c)\n    left %= c\n  }\n  return left === 0 ? count : -1\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 29
+    },
+    {
+     "caseId": "case-02",
+     "status": "fail",
+     "timeMs": 35,
+     "evidence": {
+      "input": "coins: [1, 5, 12]\namount: 15",
+      "expected": "3",
+      "actual": "4",
+      "diffAt": 0,
+      "tags": [
+       "greedy trap"
+      ]
+     },
+     "lines": [
+      5,
+      8
+     ]
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 34
+    },
+    {
+     "caseId": "case-04",
+     "status": "fail",
+     "timeMs": 34
+    },
+    {
+     "caseId": "case-05",
+     "status": "fail",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 36
+    },
+    {
+     "caseId": "case-07",
+     "status": "fail",
+     "timeMs": 32
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 32
+    },
+    {
+     "caseId": "case-10",
+     "status": "fail",
+     "timeMs": 79
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 104
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 71
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 5 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-006-f1",
+     "severity": "critical",
+     "title": "Greedy is not optimal for these coins",
+     "body": "Taking the largest coin first works for some coin systems, not all. With 1, 5 and 12, fifteen takes four coins greedily and three optimally. This needs dynamic programming over amounts.",
+     "tag": "wrong-algorithm",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 02",
+       "target": "case-02"
+      },
+      {
+       "kind": "lines",
+       "label": "lines 5-8",
+       "target": "code-line-5",
+       "lines": [
+        5,
+        8
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 41,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 4,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-005",
+   "problemId": "split-bill-to-the-cent",
+   "problemTitle": "Split a bill to the cent",
+   "language": "javascript",
+   "createdAt": "2026-09-27T18:02:00.000Z",
+   "verdict": "failed",
+   "score": 36,
+   "maxScore": 100,
+   "passed": 5,
+   "total": 10,
+   "tags": [
+    "rounding",
+    "overflow"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "export function split(total, weights) {\n  const sum = weights.reduce((a, b) => a + b, 0)\n  const shares = weights.map((w) => Math.round((total * w) / sum))\n  return shares\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "fail",
+     "timeMs": 37,
+     "evidence": {
+      "input": "total: 1000\nweights: [1, 1, 1]",
+      "expected": "[334, 333, 333]",
+      "actual": "[333, 333, 333]",
+      "diffAt": 1,
+      "tags": [
+       "remainder",
+       "rounding"
+      ]
+     },
+     "lines": [
+      3,
+      3
+     ]
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 40
+    },
+    {
+     "caseId": "case-03",
+     "status": "fail",
+     "timeMs": 34
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 40
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 41
+    },
+    {
+     "caseId": "case-06",
+     "status": "fail",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 29
+    },
+    {
+     "caseId": "case-08",
+     "status": "fail",
+     "timeMs": 86
+    },
+    {
+     "caseId": "case-09",
+     "status": "fail",
+     "timeMs": 77
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 108
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 5 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-005-f1",
+     "severity": "critical",
+     "title": "Shares do not add up to the total",
+     "body": "Rounding each share on its own loses or invents cents. Three equal shares of 1000 come to 999. Round down, then hand out the remainder by largest fraction.",
+     "tag": "rounding",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 01",
+       "target": "case-01"
+      },
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-005-f2",
+     "severity": "major",
+     "title": "Large totals lose precision",
+     "body": "`total * w` exceeds 2^53 for totals near 10^12 with large weights, so the result is no longer exact. Use BigInt for the product.",
+     "tag": "overflow",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 09",
+       "target": "case-09"
+      },
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 35,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 1,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-004",
+   "problemId": "slowest-endpoints",
+   "problemTitle": "Slowest endpoints in an access log",
+   "language": "python",
+   "createdAt": "2026-09-26T19:18:00.000Z",
+   "verdict": "failed",
+   "score": 62,
+   "maxScore": 100,
+   "passed": 8,
+   "total": 10,
+   "tags": [
+    "off-by-one",
+    "missing-branch"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "def slowest(lines, k):\n    times = {}\n    for line in lines:\n        parts = line.split()\n        if len(parts) != 4:\n            continue\n        method, path, status, ms = parts\n        times.setdefault(f\"{method} {path}\", []).append(int(ms))\n    medians = {e: sorted(t)[len(t) // 2] for e, t in times.items()}\n    return sorted(medians, key=lambda e: -medians[e])[:k]",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 36
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 40
+    },
+    {
+     "caseId": "case-03",
+     "status": "fail",
+     "timeMs": 40,
+     "evidence": {
+      "input": "k: 1\nGET /a 200 30\nGET /a 200 50\nPOST /b 201 45",
+      "expected": "[\"POST /b\"]",
+      "actual": "[\"GET /a\"]",
+      "diffAt": 0,
+      "tags": [
+       "even count median"
+      ]
+     },
+     "lines": [
+      9,
+      9
+     ]
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 39
+    },
+    {
+     "caseId": "case-05",
+     "status": "fail",
+     "timeMs": 28
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 35
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 94
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 102
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 114
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 2 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-004-f1",
+     "severity": "major",
+     "title": "Median of an even count takes the upper middle",
+     "body": "Line 9 picks index len // 2, which for two values is the larger one. The median of 30 and 50 is 40.",
+     "tag": "off-by-one",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 03",
+       "target": "case-03"
+      },
+      {
+       "kind": "lines",
+       "label": "line 9",
+       "target": "code-line-9",
+       "lines": [
+        9,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-004-f2",
+     "severity": "minor",
+     "title": "Ties are not broken by name",
+     "body": "Line 10 sorts by median only, so equal medians keep dictionary order instead of name order.",
+     "tag": "missing-branch",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 05",
+       "target": "case-05"
+      },
+      {
+       "kind": "lines",
+       "label": "line 10",
+       "target": "code-line-10",
+       "lines": [
+        10,
+        10
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 56,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 6,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-003",
+   "problemId": "token-bucket-limiter",
+   "problemTitle": "Token bucket rate limiter",
+   "language": "csharp",
+   "createdAt": "2026-09-25T18:44:00.000Z",
+   "verdict": "failed",
+   "score": 59,
+   "maxScore": 100,
+   "passed": 11,
+   "total": 14,
+   "tags": [
+    "integer-division",
+    "missing-branch"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "public static bool[] Allow(int capacity, int rate, List<Request> requests)\n{\n    var tokens = new Dictionary<string, double>();\n    var last = new Dictionary<string, long>();\n    var result = new bool[requests.Count];\n    for (var i = 0; i < requests.Count; i++)\n    {\n        var (at, client) = requests[i];\n        var t = tokens.GetValueOrDefault(client, capacity);\n        var since = at - last.GetValueOrDefault(client, at);\n        t = t + since / 1000 * rate;\n        last[client] = at;\n        result[i] = t >= 1;\n        tokens[client] = result[i] ? t - 1 : t;\n    }\n    return result;\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-03",
+     "status": "fail",
+     "timeMs": 20,
+     "evidence": {
+      "input": "capacity: 1, rate: 2\n[(0, c1), (600, c1)]",
+      "expected": "[true, true]",
+      "actual": "[true, false]",
+      "diffAt": 1,
+      "tags": [
+       "fractional refill"
+      ]
+     },
+     "lines": [
+      11,
+      11
+     ]
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 26
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 27
+    },
+    {
+     "caseId": "case-06",
+     "status": "fail",
+     "timeMs": 21
+    },
+    {
+     "caseId": "case-07",
+     "status": "fail",
+     "timeMs": 21
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 25
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 24
+    },
+    {
+     "caseId": "case-10",
+     "status": "pass",
+     "timeMs": 29
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 25
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 64
+    },
+    {
+     "caseId": "case-13",
+     "status": "pass",
+     "timeMs": 75
+    },
+    {
+     "caseId": "case-14",
+     "status": "pass",
+     "timeMs": 74
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 3 hidden tests failed."
+   },
+   "findings": [
+    {
+     "id": "sub-003-f1",
+     "severity": "major",
+     "title": "Refill truncates to whole seconds",
+     "body": "`since / 1000` on line 11 is integer division, so 600 ms refills nothing. The bucket refills continuously; divide as a double.",
+     "tag": "integer-division",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 03",
+       "target": "case-03"
+      },
+      {
+       "kind": "lines",
+       "label": "line 11",
+       "target": "code-line-11",
+       "lines": [
+        11,
+        11
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-003-f2",
+     "severity": "major",
+     "title": "The bucket can overfill",
+     "body": "Nothing caps `t` at capacity after a refill, so a quiet client banks unlimited tokens.",
+     "tag": "missing-branch",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 06",
+       "target": "case-06"
+      },
+      {
+       "kind": "lines",
+       "label": "line 11",
+       "target": "code-line-11",
+       "lines": [
+        11,
+        11
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 55,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 4,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-002",
+   "problemId": "ledger-reconciliation",
+   "problemTitle": "Ledger reconciliation",
+   "language": "python",
+   "createdAt": "2026-09-24T18:21:00.000Z",
+   "verdict": "failed",
+   "score": 47,
+   "maxScore": 100,
+   "passed": 8,
+   "total": 12,
+   "tags": [
+    "off-by-one",
+    "quadratic-scan",
+    "duplicates",
+    "dead-code"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "def reconcile(entries, statement):\n    \"\"\"Return ids in the ledger that the bank statement does not confirm.\"\"\"\n    seen = []\n    for entry in entries:\n        seen.append((entry.id, entry.cents))\n\n    missing = []\n    for line in statement:\n        pass\n\n    for entry_id, cents in seen:\n        matched = False\n        for line in statement:\n            if line.ref == entry_id and line.cents == cents:\n                matched = True\n        if not matched:\n            missing.append(entry_id)\n    return missing[:-1]",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 29
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 22
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 23
+    },
+    {
+     "caseId": "case-04",
+     "status": "fail",
+     "timeMs": 22,
+     "evidence": {
+      "input": "entries: [(a1, 1250), (a2, 900), (a3, 4000)]\nstatement: [(a1, 1250), (a3, 4000)]",
+      "expected": "[\"a2\"]",
+      "actual": "[]",
+      "diffAt": 1,
+      "tags": [
+       "single missing entry",
+       "last element"
+      ]
+     },
+     "lines": [
+      18,
+      18
+     ]
+    },
+    {
+     "caseId": "case-05",
+     "status": "pass",
+     "timeMs": 25
+    },
+    {
+     "caseId": "case-06",
+     "status": "fail",
+     "timeMs": 30,
+     "evidence": {
+      "input": "entries: [(b1, 300), (b1, 300)]\nstatement: [(b1, 300)]",
+      "expected": "[\"b1\"]",
+      "actual": "[]",
+      "diffAt": 1,
+      "tags": [
+       "duplicates"
+      ]
+     },
+     "lines": [
+      13,
+      15
+     ]
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 33
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 30
+    },
+    {
+     "caseId": "case-09",
+     "status": "limit",
+     "timeMs": 2000
+    },
+    {
+     "caseId": "case-10",
+     "status": "limit",
+     "timeMs": 2000
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 78
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 76
+    }
+   ],
+   "probe": {
+    "points": [
+     {
+      "n": 1000,
+      "ms": 4.1
+     },
+     {
+      "n": 10000,
+      "ms": 380
+     },
+     {
+      "n": 100000,
+      "ms": 37000
+     }
+    ],
+    "fit": {
+     "exponent": 1.97,
+     "r2": 0.99
+    },
+    "target": {
+     "label": "n log n",
+     "exponent": 1.1
+    }
+   },
+   "findings": [
+    {
+     "id": "sub-002-f1",
+     "severity": "major",
+     "title": "The last missing entry is dropped",
+     "body": "Line 18 slices off the final element, so a statement that misses only the last ledger entry reports nothing.",
+     "tag": "off-by-one",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 04",
+       "target": "case-04"
+      },
+      {
+       "kind": "lines",
+       "label": "line 18",
+       "target": "code-line-18",
+       "lines": [
+        18,
+        18
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-002-f2",
+     "severity": "major",
+     "title": "Matching is quadratic",
+     "body": "Every ledger entry scans the whole statement. Index the statement by reference once, then each lookup is constant time.",
+     "tag": "quadratic-scan",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "lines 11-15",
+       "target": "code-line-11",
+       "lines": [
+        11,
+        15
+       ]
+      },
+      {
+       "kind": "probe",
+       "label": "probe n=10^5",
+       "target": "probe"
+      }
+     ]
+    },
+    {
+     "id": "sub-002-f3",
+     "severity": "major",
+     "title": "One statement line confirms many entries",
+     "body": "A matched line is never consumed, so two identical ledger entries are both confirmed by one line.",
+     "tag": "duplicates",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 06",
+       "target": "case-06"
+      },
+      {
+       "kind": "lines",
+       "label": "lines 13-15",
+       "target": "code-line-13",
+       "lines": [
+        13,
+        15
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-002-f4",
+     "severity": "minor",
+     "title": "A loop does nothing",
+     "body": "Lines 8 and 9 iterate the statement without using it.",
+     "tag": "dead-code",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "lines 8-9",
+       "target": "code-line-8",
+       "lines": [
+        8,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-002-f5",
+     "severity": "nit",
+     "title": "A list stands in for a set",
+     "body": "`seen` is only iterated; a list of tuples is fine, but the name suggests a membership test.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 3",
+       "target": "code-line-3",
+       "lines": [
+        3,
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 47,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 0,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  },
+  {
+   "id": "sub-001",
+   "problemId": "merge-overlapping-bookings",
+   "problemTitle": "Merge overlapping bookings",
+   "language": "csharp",
+   "createdAt": "2026-09-23T19:06:00.000Z",
+   "verdict": "failed",
+   "score": 65,
+   "maxScore": 100,
+   "passed": 10,
+   "total": 12,
+   "tags": [
+    "off-by-one"
+   ],
+   "translated": false,
+   "praised": false,
+   "contentVersion": "demo-2026.10",
+   "code": "public static int[][] Merge(int[][] spans)\n{\n    if (spans.Length == 0) return [];\n    var sorted = spans.OrderBy(s => s[0]).ToArray();\n    var merged = new List<int[]> { sorted[0] };\n    foreach (var s in sorted.Skip(1))\n    {\n        var last = merged[^1];\n        if (s[0] < last[1]) last[1] = Math.Max(last[1], s[1]);\n        else merged.Add(s);\n    }\n    return [.. merged];\n}",
+   "cases": [
+    {
+     "caseId": "case-01",
+     "status": "pass",
+     "timeMs": 16
+    },
+    {
+     "caseId": "case-02",
+     "status": "pass",
+     "timeMs": 16
+    },
+    {
+     "caseId": "case-03",
+     "status": "pass",
+     "timeMs": 15
+    },
+    {
+     "caseId": "case-04",
+     "status": "pass",
+     "timeMs": 19
+    },
+    {
+     "caseId": "case-05",
+     "status": "fail",
+     "timeMs": 18,
+     "evidence": {
+      "input": "[[600, 660], [660, 690]]",
+      "expected": "[[600, 690]]",
+      "actual": "[[600, 660], [660, 690]]",
+      "diffAt": 3,
+      "tags": [
+       "touching bookings"
+      ]
+     },
+     "lines": [
+      9,
+      9
+     ]
+    },
+    {
+     "caseId": "case-06",
+     "status": "pass",
+     "timeMs": 15
+    },
+    {
+     "caseId": "case-07",
+     "status": "pass",
+     "timeMs": 21
+    },
+    {
+     "caseId": "case-08",
+     "status": "pass",
+     "timeMs": 19
+    },
+    {
+     "caseId": "case-09",
+     "status": "pass",
+     "timeMs": 19
+    },
+    {
+     "caseId": "case-10",
+     "status": "fail",
+     "timeMs": 46
+    },
+    {
+     "caseId": "case-11",
+     "status": "pass",
+     "timeMs": 70
+    },
+    {
+     "caseId": "case-12",
+     "status": "pass",
+     "timeMs": 52
+    }
+   ],
+   "probe": {
+    "skipped": "Skipped because 2 hidden tests failed. Timing a wrong answer measures nothing useful."
+   },
+   "findings": [
+    {
+     "id": "sub-001-f1",
+     "severity": "major",
+     "title": "Touching bookings stay apart",
+     "body": "Line 9 compares with `<`, so a booking that starts the minute the last one ends opens a new block. The statement says touching bookings merge.",
+     "tag": "off-by-one",
+     "evidence": [
+      {
+       "kind": "case",
+       "label": "case 05",
+       "target": "case-05"
+      },
+      {
+       "kind": "lines",
+       "label": "line 9",
+       "target": "code-line-9",
+       "lines": [
+        9,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sub-001-f2",
+     "severity": "nit",
+     "title": "Name the comparison",
+     "body": "The lambda on line 4 sorts by start; a named key reads faster.",
+     "tag": "naming",
+     "evidence": [
+      {
+       "kind": "lines",
+       "label": "line 4",
+       "target": "code-line-4",
+       "lines": [
+        4,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "scoreParts": [
+    {
+     "label": "Tests",
+     "value": 58,
+     "max": 70,
+     "kind": "tests"
+    },
+    {
+     "label": "Complexity",
+     "value": 0,
+     "max": 20,
+     "kind": "complexity"
+    },
+    {
+     "label": "Review",
+     "value": 7,
+     "max": 10,
+     "kind": "review"
+    }
+   ],
+   "praise": null,
+   "translation": null,
+   "isBoss": false
+  }
+ ]
+}

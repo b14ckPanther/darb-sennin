@@ -115,7 +115,9 @@ export function Catalogue() {
           </Specimen>
           <Specimen name="ComplexityPlot">
             <div className="grid gap-6 md:grid-cols-2">
-              <ComplexityPlot points={v.probe.points} fit={v.probe.fit} target={v.probe.target} />
+              {v.probe.skipped === undefined ? (
+                <ComplexityPlot points={v.probe.points} fit={v.probe.fit} target={v.probe.target} />
+              ) : null}
               <ComplexityPlot skipped={c.skippedReason} />
             </div>
           </Specimen>

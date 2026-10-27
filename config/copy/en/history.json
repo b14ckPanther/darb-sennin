@@ -1,0 +1,28 @@
+{
+  "$comment": "Copy for submission history (UI_DESIGN.md 2.8). Plain sentences, sentence case, no exclamation marks.",
+  "title": "History",
+  "lead": "Every graded submission, newest first",
+  "loading": "your history",
+  "problem": "Problem",
+  "verdict": "Verdict",
+  "tag": "Mistake",
+  "any": "Any",
+  "verdicts": {
+    "accepted": "Accepted",
+    "failed": "Failed",
+    "limit": "Time limit"
+  },
+  "cases": "{passed} of {total} cases",
+  "score": "{score} of {max}",
+  "translated": "Translated",
+  "earned": "Earned",
+  "count": "{n} submissions",
+  "emptyTitle": "No submissions yet",
+  "emptyBody": "Your graded submissions appear here, newest first. Each one opens its Verdict Sheet.",
+  "emptyAction": "Pick a problem",
+  "noMatchTitle": "No submission matches",
+  "noMatchBody": "Nothing in your history matches these filters.",
+  "clear": "Clear filters",
+  "filters": "Filters",
+  "filtersActive": "Filters, {n} on"
+}

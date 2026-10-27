@@ -4,10 +4,10 @@ Read this first after every context reset (then `git log --oneline -20`). If thi
 
 ## Current state
 
-- **Phase:** 2 done (design system). Next: Phase 3 (clickable prototype), not started.
-- **Branch:** `main` holds Phases 0, 1, 2 and the brand set, merged locally, not pushed.
+- **Phase:** 3 done (clickable prototype). Next: Phase 4 (content and config model), not started.
+- **Branch:** `main` holds Phases 0 to 3 and the brand set; Phase 3 merged locally and pushed with Nour's approval of pushing each phase.
 - **Authority:** Nour delegated Phase 1 answers, Phase 2 design choices and local merges of finished phases to the agent on 2026-10-26 ("any choice by u will be approved from my side"). Outward actions still need Nour (`docs/REVIEW_FOR_NOUR.md`).
-- **Overall:** 13%
+- **Overall:** 25%
 
 ## Phases
 
@@ -16,7 +16,7 @@ Read this first after every context reset (then `git log --oneline -20`). If thi
 | 0 | Repo bootstrap, CI, conventions | 4 | done, merged locally (9249444) | b15d4e1..80696d1 | merge decided by the agent under Nour's delegation (2026-10-26) |
 | 1 | Confirm the spec | 2 | done | see git log `phase/01-spec` | spec decided by the agent under Nour's delegation (2026-10-26) |
 | 2 | Design system | 7 | done | see git log `phase/02-design-system` | direction, components and merge decided by the agent under Nour's delegation (2026-10-26) |
-| 3 | Prototype on seed data | 12 | not started | | |
+| 3 | Prototype on seed data | 12 | done | 4c9d2f0..phase/03-prototype (see git log) | screens and merge decided by the agent under Nour's delegation (2026-10-26) |
 | 4 | Content and config model | 7 | not started | | |
 | 5 | Sandbox and judge | 15 | not started | | |
 | 6 | Grading and evidence | 10 | not started | | |
@@ -53,12 +53,18 @@ One row per completed task. "Skills" lists every skill invoked for the task.
 | 2026-10-27 | 2 | 1, 4. Verdict Sheet, earned variant, Today and catalogue comps; PraiseLine; reduced-motion snapshots; e2e axe | 7a0eadb | reduced-motion tests fail with motion on; axe found aria-controls to missing ids, unfocusable scroll regions and vermilion text at 3.9:1, all fixed; 34 Playwright | impeccable:impeccable (detector clean), web-design-guidelines, dataviz | |
 | 2026-10-27 | 2 | 5-6. Originality audit, ASSETS.md, direction recorded | see git log | marks byte-identical to `brand/exports`; no third-party names in shipped copy | audit-reference-originality, writing-guidelines | Clear in checked scope |
 | 2026-10-27 | 2 | Whole-branch review (fresh-context reviewer) and fixes | see git log | 157 Vitest, 38 Playwright (run twice), lint and build clean; new tests red first for each fix | superpowers:requesting-code-review, superpowers:receiving-code-review, superpowers:test-driven-development | Fixed: the word the agent manual forbids removed from docs; swipe no longer opens a row, tap closes open actions, reduced motion keeps the gesture; sheet drags only from handle and header, 44 pt handle, focus on Close, scroll lock, still under reduced motion; LargeTitle safe-area; score breakdown is a disclosure (WCAG 1.4.13); toasts render into persistent live regions; critical severity; case times, line ranges and difficulty scale moved to data; ledger announces its progress line; theme applied before first paint |
+| 2026-10-27 | 3 | 1-2. Demo seed (12 problems, 40 submissions, weakness, boss), API contract types, MockApi and fake hub stream | d296e46 | 15 mock tests red first (missing module) | superpowers:test-driven-development, frontend-design | ADR-045, ADR-049 |
+| 2026-10-27 | 3 | 3-4. Router, settings, motion override, Shell, Today, Library, CodeMirror workspace, live Verdict Sheet | cee3c03 | router, settings, motion, Segmented (arrow keys, Phase 2 deferral), Loadable, markdown, format, useLiveVerdict tests red first | frontend-design, react-best-practices, composition-patterns, tailwindcss, animation-systems, superpowers:test-driven-development | ADR-046, ADR-047 |
+| 2026-10-27 | 3 | 3. Weakness, Boss, History, Ranks, Settings, Profile, pseudo code verdict, empty and error states | 4ec64b1 | BossHp test; screenshots reviewed at 1440 and 390 px | dataviz, create-game-vfx, design:ux-copy, playwright-cli | ADR-050 |
+| 2026-10-27 | 3 | 5. Playwright flows and fixes; performance | 497c371 | 147 Playwright (twice); axe found a nameless glyph, unfocusable panes, a missing phone h1; Lighthouse desktop 99, mobile 87 | playwright-cli, design:accessibility-review, web-design-guidelines, optimize-web-animations, performance-profiling | ADR-048 |
+| 2026-10-27 | 3 | Whole-branch review (fresh-context reviewer) and fixes | 6ed50aa | 202 Vitest, 148 Playwright; new tests red first for paused-then-resumed runs, 404 vs offline, malformed URLs, focus on navigation, quiet live region, heading level; Vim exit checked in a browser | superpowers:requesting-code-review, superpowers:receiving-code-review, superpowers:test-driven-development | No criticals; ten important findings fixed |
 
 ## Screen approvals (Phases 2-3, and any later UI change)
 
 | Date | Screen / component | Viewport(s) | Nour's verdict | Notes |
 |---|---|---|---|---|
 | 2026-10-27 | Design system: Verdict Sheet, earned variant, Today, catalogue | 1440 px and 390 px, light and dark (`docs/screenshots/phase-02/`) | Decided by the agent under Nour's delegation (2026-10-26); Nour may still revise | Phase 3 screens are approved one by one |
+| 2026-10-27 | Phase 3: workspace, live and stored Verdict Sheet, earned variant, Today, Library, Weakness, Boss, boss verdict, History, Ranks, Settings, Profile, pseudo code verdict, offline, new account, judge paused, reviewer unavailable | 1440 px and 390 px, light and dark (`docs/screenshots/phase-03/`, 72 images) | Decided by the agent under Nour's delegation (2026-10-26); Nour may still revise any screen | One row covers all screens: Nour delegated screen approvals for this phase |
 
 ## Rulings
 
@@ -73,3 +79,5 @@ Decisions the agent made without Nour, cheapest reversible option. Each must say
 | 2026-10-27 | Review minors deferred to Phase 3: ComplexityPlot clipping of both ends and empty or non-positive input guards; sheet `dragElastic` tuning; theme radiogroup arrow keys; landscape left/right safe areas on all bars; evidence jumps moving focus and highlighting cases and the probe; catalogue specimen strings into seed; phone e2e project with `hasTouch` and a target-size assertion; drag-logic unit tests | Each touches components Phase 3 rebuilds into real screens; none blocks the comps | low | ruling, decided by the agent under Nour's delegation (2026-10-26) |
 | 2026-10-27 | Playwright browsers for local runs installed under a session cache (`PLAYWRIGHT_BROWSERS_PATH`) because another session held the shared cache lock | environment only, no repo change | low | ruling |
 | 2026-10-26 | Compose via `--env-file .env` + `tools/compose-up.sh`; perl emoji check; ESLint strict; Node 24 in CI; MIT; repo path (ADR-024) | plan defaults or cheapest reversible option | low | accepted in Phase 1 (decided by the agent under Nour's delegation, 2026-10-26) |
+| 2026-10-27 | Lighthouse mobile performance 87 on the workspace against the plan's 90 (desktop 99); accepted for the prototype, revisit in Phase 12 with the real API (ADR-048) | the demo seed and React runtime dominate the throttled-CPU run | low | ruling, decided by the agent under Nour's delegation (2026-10-26) |
+| 2026-10-27 | Real-phone check via the Vite LAN URL not done by the agent (no device); covered by the 390 px touch project, safe-area insets and the 44 pt target test | environment | low | ruling; Nour can open `npm run dev -- --host` on a phone |

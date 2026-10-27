@@ -1,10 +1,4 @@
-import {
-  AnimatePresence,
-  motion,
-  useDragControls,
-  useReducedMotion,
-  type PanInfo,
-} from 'motion/react'
+import { AnimatePresence, m, useDragControls, type PanInfo } from 'motion/react'
 import {
   useEffect,
   useId,
@@ -17,6 +11,7 @@ import {
 import { useCopy } from '../copy/copy'
 import { gesture, spring } from '../design/motion'
 import { Icon } from './Icon'
+import { useReduceMotion } from '../lib/motion'
 
 interface SheetProps {
   open: boolean
@@ -34,7 +29,7 @@ const focusable =
 /** Bottom sheet with detents, drag to resize or dismiss, focus kept inside while open. */
 export function Sheet({ open, title, detents, initialDetent, onClose, children }: SheetProps) {
   const copy = useCopy()
-  const reduce = useReducedMotion()
+  const reduce = useReduceMotion()
   const titleId = useId()
   const panel = useRef<HTMLDivElement>(null)
   const lastDetent = detents.length - 1
@@ -117,7 +112,7 @@ export function Sheet({ open, title, detents, initialDetent, onClose, children }
     <AnimatePresence>
       {open ? (
         <div className="fixed inset-0 z-40" onKeyDown={onKeyDown}>
-          <motion.div
+          <m.div
             aria-hidden="true"
             className="absolute inset-0 bg-ink/30"
             initial={reduce ? false : { opacity: 0 }}
@@ -125,7 +120,7 @@ export function Sheet({ open, title, detents, initialDetent, onClose, children }
             exit={{ opacity: 0 }}
             onClick={onClose}
           />
-          <motion.div
+          <m.div
             ref={panel}
             role="dialog"
             aria-modal="true"
@@ -175,7 +170,7 @@ export function Sheet({ open, title, detents, initialDetent, onClose, children }
             <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-5">
               {children}
             </div>
-          </motion.div>
+          </m.div>
         </div>
       ) : null}
     </AnimatePresence>

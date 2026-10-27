@@ -1,0 +1,12 @@
+{
+  "$comment": "Copy for the pseudo code verdict (UI_DESIGN.md 2.5, ADR-030). Plain sentences, sentence case, no exclamation marks.",
+  "banner": "These results come from a translation. If the translation is wrong, the grade is wrong: flag it.",
+  "flag": "Flag the translation",
+  "flagged": "Translation flagged. This submission no longer counts toward rank, streak or weakness.",
+  "flaggedToast": "Flagged. This submission is excluded from progression.",
+  "yours": "Your pseudo code",
+  "translation": "Translation to Python",
+  "mappingHint": "Point at a line to see where it went.",
+  "tier": "Ran on a translation",
+  "compare": "Compare with the translation"
+}

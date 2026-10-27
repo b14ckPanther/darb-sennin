@@ -12,6 +12,6 @@ test('home has no serious or critical axe violations', async ({ page }) => {
 
 test('home has a document title and language', async ({ page }) => {
   await page.goto('/')
-  await expect(page).toHaveTitle('Darb Sennin')
+  await expect(page).toHaveTitle(/Darb Sennin$/)
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
 })

@@ -1,0 +1,19 @@
+{
+  "$comment": "Copy for ranks and record (UI_DESIGN.md 2.9). Rank names and thresholds come from data, not here. No public leaderboard in v1.",
+  "title": "Ranks",
+  "lead": "Your record. Nobody else is on this page.",
+  "loading": "your record",
+  "ladder": "Ladder",
+  "points": "Points",
+  "from": "From {points}",
+  "current": "Current rank",
+  "reached": "Reached",
+  "ahead": "{left} points to go",
+  "record": "Record",
+  "streak": "Current streak",
+  "best": "Best streak",
+  "days": "{n} days",
+  "freezes": "Freezes left this month",
+  "bosses": "Bosses defeated",
+  "clean": "Problems solved cleanly"
+}

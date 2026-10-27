@@ -1,8 +1,9 @@
-import { animate, motion, useMotionValue, useReducedMotion, type PanInfo } from 'motion/react'
+import { animate, m, useMotionValue, type PanInfo } from 'motion/react'
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { fill, useCopy } from '../copy/copy'
 import { gesture, pressScale, spring } from '../design/motion'
 import { Icon, type IconName } from './Icon'
+import { useReduceMotion } from '../lib/motion'
 
 export interface RowAction {
   id: string
@@ -12,17 +13,26 @@ export interface RowAction {
 }
 
 interface ListRowProps {
+  /** A status mark before the title. */
+  leading?: ReactNode
   title: string
-  subtitle?: string
+  subtitle?: ReactNode
   trailing?: ReactNode
   actions?: RowAction[]
   onSelect: () => void
 }
 
 /** Native-style list row; swipe left for actions, which are also plain buttons for keyboard users. */
-export function ListRow({ title, subtitle, trailing, actions = [], onSelect }: ListRowProps) {
+export function ListRow({
+  leading,
+  title,
+  subtitle,
+  trailing,
+  actions = [],
+  onSelect,
+}: ListRowProps) {
   const copy = useCopy()
-  const reduce = useReducedMotion()
+  const reduce = useReduceMotion()
   const x = useMotionValue(0)
   const tray = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
@@ -79,7 +89,7 @@ export function ListRow({ title, subtitle, trailing, actions = [], onSelect }: L
       data-open={String(open)}
       className="relative overflow-hidden border-b border-line bg-surface last:border-b-0"
     >
-      <motion.div
+      <m.div
         style={{ x }}
         // Reduced motion removes the spring, not the gesture: settle() jumps straight to the end.
         drag={actions.length > 0 ? 'x' : false}
@@ -96,13 +106,14 @@ export function ListRow({ title, subtitle, trailing, actions = [], onSelect }: L
         }}
         className="relative z-10 bg-surface"
       >
-        <motion.button
+        <m.button
           type="button"
           onClick={onRowClick}
           whileTap={reduce ? undefined : { scale: pressScale }}
           transition={spring.ui}
           className="flex min-h-touch w-full items-center gap-3 px-4 py-3 text-left transition-colors duration-(--duration-micro) active:bg-surface-sunk"
         >
+          {leading ? <span className="shrink-0">{leading}</span> : null}
           <span className="min-w-0 flex-1">
             <span className="block truncate text-body text-ink">{title}</span>
             {subtitle ? (
@@ -111,8 +122,8 @@ export function ListRow({ title, subtitle, trailing, actions = [], onSelect }: L
           </span>
           {trailing ? <span className="num text-callout text-ink-muted">{trailing}</span> : null}
           <Icon name="chevron-right" size={18} className="text-ink-muted" />
-        </motion.button>
-      </motion.div>
+        </m.button>
+      </m.div>
       {actions.length > 0 ? (
         <div
           ref={tray}

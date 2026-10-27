@@ -45,7 +45,7 @@ The **web client** (React) sends a submission to the **API** (ASP.NET Core minim
 
 | Component | Project | Responsibility |
 |---|---|---|
-| Web client | `web/sennin-web` | Problem list, editor, live verdict, evidence sheet, profile, boss. Talks only to the API. |
+| Web client | `web/sennin-web` | Problem list, editor, live verdict, evidence sheet, profile, boss. Talks only to the API through `SenninApi` (`src/api/types.ts`); in demo mode a `MockApi` serves `config/seed/demo` (ADR-045). |
 | API | `src/DarbSennin.Api` | Minimal APIs (`MapGroup` per area), auth, rate limiting (`Microsoft.AspNetCore.RateLimiting`), validation, SignalR hub, hosted services. |
 | Domain | `src/DarbSennin.Domain` | Pure C#: `Problem`, `Submission`, `Verdict`, `Evidence`, `Finding`, `Score`, `WeaknessProfile`, `Rank`, `Streak`, `Boss`. No I/O. All numbers come from config objects passed in. |
 | Infrastructure | `src/DarbSennin.Infrastructure` | Mongo repositories, Service Bus sender/processor, config loaders + JSON Schema validation (`JsonSchema.Net`), LLM HTTP client, outbox. |

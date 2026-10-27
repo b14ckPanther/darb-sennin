@@ -151,3 +151,25 @@ Decision: `?view=catalogue` renders every component with its states on demo data
 
 ## ADR-044 Copy, comp data and interface behaviour values live in config — accepted
 Decision: interface copy in `config/copy/en/ui.json`, comp seed in `config/seed/demo/phase-02-comps.json` (shown under the "Demo data" banner), sheet detents and toast duration in `config/ui/behaviour.json`; the web client imports them through the `@config` alias. Schemas arrive in Phase 4. Motion springs, durations and gesture thresholds are design tokens in `src/design/motion.ts` and `tokens.css`. Cost if wrong: low.
+
+## Phase 3 decisions (2026-10-27)
+
+Decided by the agent under Nour's delegation (2026-10-26).
+
+## ADR-045 Prototype backend behind the real client contract — accepted
+Decision: `SenninApi` (`src/api/types.ts`) is the client contract; the prototype's `MockApi` serves it from `config/seed/demo`, and a fake stream replays recorded attempts as `caseResolved`, `graded` and `reviewed`. Screens use TanStack Query hooks only. Why: Phase 9 replaces one module, not every screen. Cost if wrong: low.
+
+## ADR-046 A small history router instead of a routing library — accepted
+Decision: `src/lib/router.ts` (pushState, a `Link`, pattern matching, focus moved to `#content` on navigation). Why: a dozen routes, no loaders, one dependency fewer; malformed URLs fall through to not found. Cost if wrong: low (TanStack Router can replace it behind `Link` and `navigate`).
+
+## ADR-047 CodeMirror 6, Vim on demand — accepted
+Decision: CodeMirror 6 with Python, C# (legacy clike mode) and JavaScript grammars loaded per language; Vim (`@replit/codemirror-vim`) loads only when chosen in Settings. Colours come from tokens. Escape then Tab leaves the editor; in Vim mode Escape twice (verified in a browser test). Cost if wrong: low.
+
+## ADR-048 Workspace performance budget — accepted, with a measured gap
+Decision: the demo backend, catalogue, Vim and grammars load on demand, Motion runs through `LazyMotion` with `m` elements, and the workspace paints its code as text before CodeMirror arrives. Measured (Lighthouse 12.8, local preview build): desktop performance 99, mobile (simulated slow 4G, 4x CPU) 87, accessibility 100, TBT 0 ms, CLS 0. The plan's target of 90 is met on desktop and missed by 3 points on the throttled mobile preset; the remaining LCP cost is the React and Query runtime on a throttled CPU. Ruling: accept for the prototype and revisit in Phase 12 (hardening) with the real API, where the demo seed leaves the bundle. Cost if wrong: low.
+
+## ADR-049 Demo grading numbers live only in the seed — accepted
+Decision: the prototype's scores are computed when the seed is authored and stored in `config/seed/demo/submissions.json`; the client never computes a score. Phase 6 brings `config/grading.yaml` and the real grader. Cost if wrong: low.
+
+## ADR-050 Phone Profile tab gathers Weakness, History, Ranks and Settings — accepted
+Decision: the four-tab bar stays Today, Library, Boss, Profile (UI_DESIGN.md 5); Profile is a grouped list into the other four. Desktop shows them in the top bar. Cost if wrong: low.

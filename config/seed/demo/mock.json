@@ -1,0 +1,6 @@
+{
+  "$comment": "Demo data (CLAUDE.md 1.2). Timing for the prototype's MockApi and fake SignalR stream, chosen to feel like a real judge on a small VM. Not used outside SENNIN_MODE=demo.",
+  "latencyMs": 140,
+  "stream": { "queuedMs": 520, "caseMs": [60, 230], "gradedMs": 420, "reviewedMs": 900 },
+  "sampleRunMs": 380
+}

@@ -1,8 +1,9 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { m } from 'motion/react'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { pressScale, spring } from '../design/motion'
 import { cx } from '../lib/cx'
 import { Icon, type IconName } from './Icon'
+import { useReduceMotion } from '../lib/motion'
 
 type Variant = 'primary' | 'secondary' | 'quiet'
 
@@ -31,9 +32,9 @@ export function Button({
   children,
   ...rest
 }: ButtonProps) {
-  const reduce = useReducedMotion()
+  const reduce = useReduceMotion()
   return (
-    <motion.button
+    <m.button
       type={type}
       data-variant={variant}
       disabled={disabled}
@@ -50,6 +51,6 @@ export function Button({
     >
       {icon ? <Icon name={icon} size={18} /> : null}
       <span>{children}</span>
-    </motion.button>
+    </m.button>
   )
 }
