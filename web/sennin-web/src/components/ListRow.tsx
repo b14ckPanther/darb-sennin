@@ -1,7 +1,7 @@
 import { animate, motion, useMotionValue, useReducedMotion, type PanInfo } from 'motion/react'
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { fill, useCopy } from '../copy/copy'
-import { gesture, spring } from '../design/motion'
+import { gesture, pressScale, spring } from '../design/motion'
 import { Icon, type IconName } from './Icon'
 
 export interface RowAction {
@@ -27,12 +27,17 @@ export function ListRow({ title, subtitle, trailing, actions = [], onSelect }: L
   const tray = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
   const [trayWidth, setTrayWidth] = useState(0)
+  // Refs, not state: they are read inside the same pointer sequence that changes them.
+  const openRef = useRef(false)
+  const openAtPress = useRef(false)
+  const dragged = useRef(false)
 
   useLayoutEffect(() => {
     setTrayWidth(tray.current?.offsetWidth ?? 0)
   }, [actions.length])
 
   const settle = (next: boolean) => {
+    openRef.current = next
     setOpen(next)
     const width = tray.current?.offsetWidth ?? 0
     const to = next ? -width : 0
@@ -43,11 +48,30 @@ export function ListRow({ title, subtitle, trailing, actions = [], onSelect }: L
     }
   }
 
+  // Decide from where the row ended up, so a small drag back from open keeps it open.
   const onDragEnd = (_: unknown, info: PanInfo) => {
     const width = tray.current?.offsetWidth ?? 0
-    const pastHalf = -info.offset.x > width * gesture.commitFraction
-    const flick = info.velocity.x < -gesture.flickVelocity
-    settle(pastHalf || flick)
+    const pastHalf = -x.get() > width * gesture.commitFraction
+    if (info.velocity.x < -gesture.flickVelocity) {
+      settle(true)
+    } else if (info.velocity.x > gesture.flickVelocity) {
+      settle(false)
+    } else {
+      settle(pastHalf)
+    }
+  }
+
+  // A tap on an open row closes it (as native lists do); a drag never counts as a tap.
+  const onRowClick = () => {
+    if (dragged.current) {
+      dragged.current = false
+      return
+    }
+    if (openAtPress.current) {
+      settle(false)
+      return
+    }
+    onSelect()
   }
 
   return (
@@ -57,15 +81,26 @@ export function ListRow({ title, subtitle, trailing, actions = [], onSelect }: L
     >
       <motion.div
         style={{ x }}
-        drag={actions.length > 0 && !reduce ? 'x' : false}
+        // Reduced motion removes the spring, not the gesture: settle() jumps straight to the end.
+        drag={actions.length > 0 ? 'x' : false}
         dragConstraints={{ left: -trayWidth, right: 0 }}
-        dragElastic={0.1}
+        dragElastic={reduce ? 0 : 0.1}
+        dragMomentum={!reduce}
+        onDragStart={() => {
+          dragged.current = true
+        }}
         onDragEnd={onDragEnd}
+        onPointerDownCapture={() => {
+          dragged.current = false
+          openAtPress.current = openRef.current
+        }}
         className="relative z-10 bg-surface"
       >
-        <button
+        <motion.button
           type="button"
-          onClick={onSelect}
+          onClick={onRowClick}
+          whileTap={reduce ? undefined : { scale: pressScale }}
+          transition={spring.ui}
           className="flex min-h-touch w-full items-center gap-3 px-4 py-3 text-left transition-colors duration-(--duration-micro) active:bg-surface-sunk"
         >
           <span className="min-w-0 flex-1">
@@ -76,7 +111,7 @@ export function ListRow({ title, subtitle, trailing, actions = [], onSelect }: L
           </span>
           {trailing ? <span className="num text-callout text-ink-muted">{trailing}</span> : null}
           <Icon name="chevron-right" size={18} className="text-ink-muted" />
-        </button>
+        </motion.button>
       </motion.div>
       {actions.length > 0 ? (
         <div

@@ -32,7 +32,7 @@ interface Finding {
   severity: Severity
   title: string
   body: string
-  evidence: { kind: EvidenceKind; label: string; target: string }[]
+  evidence: { kind: EvidenceKind; label: string; target: string; lines?: number[] }[]
 }
 
 interface SheetView {
@@ -58,10 +58,7 @@ function view(earned: boolean): SheetView {
       submittedAt: e.submittedAt,
       code: e.code,
       bracket: null,
-      cases: Array.from({ length: e.caseCount }, (_, i) => ({
-        status: 'pass' as const,
-        time: `${String(9 + (i % 4))} ms`,
-      })),
+      cases: e.cases as CaseView[],
       probe: e.probe,
       findings: e.findings as Finding[],
       score: e.score,
@@ -158,15 +155,11 @@ function EvidenceCard({ evidence, onShowCode }: { evidence: Evidence; onShowCode
   )
 }
 
+/** Line ranges travel as data on each evidence chip; never parsed from its label. */
 function lineRange(target: string, findings: Finding[]): [number, number] | null {
-  const match = /^code-line-(\d+)$/.exec(target)
-  if (!match?.[1]) {
-    return null
-  }
-  const start = Number(match[1])
   const chip = findings.flatMap((f) => f.evidence).find((e) => e.target === target)
-  const range = chip ? /(\d+)-(\d+)/.exec(chip.label) : null
-  return range?.[2] ? [start, Number(range[2])] : [start, start]
+  const [from, to] = chip?.lines ?? []
+  return from === undefined ? null : [from, to ?? from]
 }
 
 function CodePanel({
@@ -335,16 +328,12 @@ export function VerdictSheet({ earned = false }: { earned?: boolean }) {
             <Section
               title={c.ledger}
               aside={
-                <span className="num text-footnote text-ink-muted">
+                <span role="status" className="num text-footnote text-ink-muted">
                   {fill(copy.verdict.ledgerProgress, { done, total: data.cases.length })}
                 </span>
               }
             >
-              <ol
-                aria-live="polite"
-                aria-label={copy.verdict.ledgerLabel}
-                className="m-0 list-none p-0"
-              >
+              <ol aria-label={copy.verdict.ledgerLabel} className="m-0 list-none p-0">
                 {data.cases.map((item, i) => {
                   const id = `case-${String(i + 1).padStart(2, '0')}`
                   return (

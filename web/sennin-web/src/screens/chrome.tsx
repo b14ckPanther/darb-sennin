@@ -19,10 +19,11 @@ export function DemoBanner() {
 }
 
 export function Brand() {
+  const copy = useCopy()
   return (
-    <a href="?" className="flex items-center gap-2.5 rounded-control no-underline">
+    <a href="?" className="flex min-h-touch items-center gap-2.5 rounded-control no-underline">
       <Mark />
-      <span className="font-display text-title-3 text-ink">Sennin</span>
+      <span className="font-display text-title-3 text-ink">{copy.brand.name}</span>
     </a>
   )
 }

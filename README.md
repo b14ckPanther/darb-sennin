@@ -67,7 +67,7 @@ darb-sennin/
 
 ## How to start
 
-Open Claude Code in this folder and say:
+Open the coding agent in this folder and say:
 
 > start Phase 0
 

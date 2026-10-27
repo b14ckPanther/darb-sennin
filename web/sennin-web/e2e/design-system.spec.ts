@@ -12,7 +12,7 @@ for (const scheme of ['light', 'dark'] as const) {
         await page.goto(`/?view=${view}`)
         await page.evaluate(() => document.fonts.ready)
         // Scan settled pages: a fade caught halfway is not the colour the user reads.
-        await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished)))
+        await page.evaluate(() => Promise.allSettled(document.getAnimations().map((a) => a.finished)))
         const results = await new AxeBuilder({ page }).analyze()
         const blocking = results.violations.filter(
           (v) => v.impact === 'serious' || v.impact === 'critical',
@@ -67,4 +67,32 @@ test.describe('reduced motion', () => {
     await expect(stamp).toBeVisible()
     expect(await stamp.evaluate((el) => getComputedStyle(el).opacity)).toBe('1')
   })
+})
+
+test('the open sheet and a shown toast have no serious or critical axe violations', async ({
+  page,
+}) => {
+  await page.goto('/?view=catalogue')
+  await page.getByRole('button', { name: 'Show toast' }).click()
+  await page.getByRole('button', { name: 'Open sheet' }).click()
+  await page.evaluate(() => Promise.allSettled(document.getAnimations().map((a) => a.finished)))
+  const results = await new AxeBuilder({ page }).analyze()
+  const blocking = results.violations.filter(
+    (v) => v.impact === 'serious' || v.impact === 'critical',
+  )
+  expect(blocking.map((v) => v.id)).toEqual([])
+})
+
+test('a swipe on a list row does not open the item', async ({ page }) => {
+  await page.goto('/?view=today')
+  const row = page.getByRole('button', { name: /Sliding window maximum/ })
+  const box = await row.boundingBox()
+  if (!box) throw new Error('row not visible')
+  const y = box.y + box.height / 2
+  await page.mouse.move(box.x + box.width - 20, y)
+  await page.mouse.down()
+  await page.mouse.move(box.x + box.width - 200, y, { steps: 8 })
+  await page.mouse.up()
+  await expect(page.locator('li[data-open="true"]')).toHaveCount(1)
+  await expect(page).toHaveURL(/view=today$/)
 })

@@ -57,10 +57,10 @@ function Block({
   )
 }
 
-function Difficulty({ level, label }: { level: number; label: string }) {
+function Difficulty({ level, max, label }: { level: number; max: number; label: string }) {
   return (
     <span role="img" aria-label={label} className="inline-flex items-end gap-0.5">
-      {[1, 2, 3].map((step) => (
+      {Array.from({ length: max }, (_, i) => i + 1).map((step) => (
         <span
           key={step}
           className={cx('w-1 rounded-[1px]', step <= level ? 'bg-ink-muted' : 'bg-line')}
@@ -158,7 +158,8 @@ export function Today() {
                     trailing={
                       <Difficulty
                         level={p.difficulty}
-                        label={fill(t.difficulty, { n: p.difficulty })}
+                        max={data.difficultyMax}
+                        label={fill(t.difficulty, { n: p.difficulty, max: data.difficultyMax })}
                       />
                     }
                     onSelect={() => undefined}

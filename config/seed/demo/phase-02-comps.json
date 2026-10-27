@@ -125,7 +125,11 @@
           {
             "kind": "lines",
             "label": "line 18",
-            "target": "code-line-18"
+            "target": "code-line-18",
+            "lines": [
+              18,
+              18
+            ]
           }
         ]
       },
@@ -137,7 +141,11 @@
           {
             "kind": "lines",
             "label": "lines 11-15",
-            "target": "code-line-11"
+            "target": "code-line-11",
+            "lines": [
+              11,
+              15
+            ]
           },
           {
             "kind": "probe",
@@ -154,7 +162,11 @@
           {
             "kind": "lines",
             "label": "lines 8-9",
-            "target": "code-line-8"
+            "target": "code-line-8",
+            "lines": [
+              8,
+              9
+            ]
           }
         ]
       },
@@ -166,7 +178,11 @@
           {
             "kind": "lines",
             "label": "line 3",
-            "target": "code-line-3"
+            "target": "code-line-3",
+            "lines": [
+              3,
+              3
+            ]
           }
         ]
       }
@@ -217,7 +233,6 @@
       },
       "praise": "Linear after the sort, and every edge case handled.",
       "submittedAt": "Mon 26 Oct, 22:05",
-      "caseCount": 12,
       "probe": {
         "points": [
           {
@@ -251,7 +266,11 @@
             {
               "kind": "lines",
               "label": "line 4",
-              "target": "code-line-4"
+              "target": "code-line-4",
+              "lines": [
+                4,
+                4
+              ]
             }
           ]
         }
@@ -270,6 +289,56 @@
         "    }",
         "    return [.. merged];",
         "}"
+      ],
+      "cases": [
+        {
+          "status": "pass",
+          "time": "9 ms"
+        },
+        {
+          "status": "pass",
+          "time": "10 ms"
+        },
+        {
+          "status": "pass",
+          "time": "11 ms"
+        },
+        {
+          "status": "pass",
+          "time": "12 ms"
+        },
+        {
+          "status": "pass",
+          "time": "9 ms"
+        },
+        {
+          "status": "pass",
+          "time": "10 ms"
+        },
+        {
+          "status": "pass",
+          "time": "11 ms"
+        },
+        {
+          "status": "pass",
+          "time": "12 ms"
+        },
+        {
+          "status": "pass",
+          "time": "9 ms"
+        },
+        {
+          "status": "pass",
+          "time": "10 ms"
+        },
+        {
+          "status": "pass",
+          "time": "11 ms"
+        },
+        {
+          "status": "pass",
+          "time": "12 ms"
+        }
       ]
     }
   },
@@ -345,6 +414,7 @@
     "weakTags": [
       "empty input",
       "off-by-one"
-    ]
+    ],
+    "difficultyMax": 3
   }
 }

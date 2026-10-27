@@ -1,7 +1,7 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Toast } from './Toast'
+import { Toast, ToastRegion } from './Toast'
 
 describe('Toast', () => {
   afterEach(() => {
@@ -9,13 +9,19 @@ describe('Toast', () => {
   })
 
   it('announces politely by default', () => {
-    render(<Toast message="Submission queued." onDismiss={() => undefined} />)
+    render(<ToastRegion toast={{ message: 'Submission queued.' }} onDismiss={() => undefined} />)
     expect(screen.getByRole('status')).toHaveTextContent('Submission queued.')
   })
 
   it('announces errors assertively', () => {
-    render(<Toast tone="error" message="The judge is unreachable." onDismiss={() => undefined} />)
+    render(
+      <ToastRegion
+        toast={{ message: 'The judge is unreachable.', tone: 'error' }}
+        onDismiss={() => undefined}
+      />,
+    )
     expect(screen.getByRole('alert')).toHaveTextContent('The judge is unreachable.')
+    expect(screen.getByRole('status')).toBeEmptyDOMElement()
   })
 
   it('dismisses from its button', async () => {

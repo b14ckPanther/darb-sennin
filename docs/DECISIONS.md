@@ -86,7 +86,7 @@ Cost if wrong: low for each.
 
 ## Phase 1 decisions (2026-10-26)
 
-Decided by Claude under Nour's delegation (2026-10-26). Nour said: "the review must be up to u ... i trust ur recommendation ... any choice by u will be approved from my side". Every recommendation in `REVIEW_FOR_NOUR.md` was re-read against `VISION.md`, Nour's rules and what a recruiter sees; five were changed (marked **changed**). The one-page spec is `docs/specs/2026-10-26-phase-01-product-spec.md`. The delegation does not cover outward actions: creating repos, pushing, Azure resources, paid API keys and DNS still need Nour's "yes".
+Decided by the agent under Nour's delegation (2026-10-26). Nour said: "the review must be up to u ... i trust ur recommendation ... any choice by u will be approved from my side". Every recommendation in `REVIEW_FOR_NOUR.md` was re-read against `VISION.md`, Nour's rules and what a recruiter sees; five were changed (marked **changed**). The one-page spec is `docs/specs/2026-10-26-phase-01-product-spec.md`. The delegation does not cover outward actions: creating repos, pushing, Azure resources, paid API keys and DNS still need Nour's "yes".
 
 ## ADR-025 A session is one evening problem from the weakest tag — accepted (Q1)
 Decision: Today offers one problem from the weakest tag; the loop is submit, read the Verdict Sheet, fix one finding, resubmit. About 20 minutes. Cost if wrong: low (recommender ratios are config).
@@ -138,7 +138,7 @@ Note: a remote `origin` (`github.com/b14ckPanther/darb-sennin`) already exists l
 
 ## Phase 2 decisions (2026-10-26)
 
-Decided by Claude under Nour's delegation (2026-10-26).
+Decided by the agent under Nour's delegation (2026-10-26).
 
 ## ADR-041 Art direction: Examiner's Report on the Ensō brand — accepted
 Context: `UI_DESIGN.md` §4 offered A "Examiner's Report", B "Forge" and C "Instrument" (`docs/proposals/phase-02-directions.html`); Nour later approved the Ensō brand (forest, ivory, gold, Zen Antique, Geist). Decision: A, re-cast in the brand. Light is ivory paper with forest ink, dark is Darb night with ivory ink. Gold only in the mark and earned praise; vermilion only in the "Earned" stamp, with a darker `stamp-ink` token for its text after axe measured the brand vermilion below 4.5:1 on the canvas. Status is always mark plus word plus rule. Fonts: Zen Antique (display), Geist (UI), Geist Mono (code), self-hosted. Why: A is the only direction that fits a light paper brand and a brush-serif display; B's ember palette and C's near-black instrument panel fight the gold ensō. Cost if wrong: low (tokens are one file; components read tokens only).

@@ -43,3 +43,13 @@ describe('LargeTitle', () => {
     expect(bar).toHaveAttribute('data-collapsed', 'true')
   })
 })
+
+describe('LargeTitle safe area', () => {
+  it('pads the bar outside its fixed-height row', () => {
+    const { container } = render(<LargeTitle title="Today" />)
+    const bar = container.querySelector('[data-collapsed]')
+    expect(bar?.className).toMatch(/safe-area-inset-top/)
+    expect(bar?.className).not.toMatch(/\bh-14\b/)
+    expect(bar?.querySelector('.h-14')).not.toBeNull()
+  })
+})

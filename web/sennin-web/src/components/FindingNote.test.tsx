@@ -33,3 +33,12 @@ describe('FindingNote', () => {
     expect(screen.getByRole('article')).toHaveAttribute('data-severity', 'nit')
   })
 })
+
+describe('FindingNote critical', () => {
+  it('renders the top severity in words', () => {
+    render(<FindingNote severity="critical" title="Reads outside the array" />)
+    const note = screen.getByRole('article', { name: 'Reads outside the array' })
+    expect(note).toHaveAttribute('data-severity', 'critical')
+    expect(within(note).getByText(defaultCopy.severity.critical)).toBeInTheDocument()
+  })
+})

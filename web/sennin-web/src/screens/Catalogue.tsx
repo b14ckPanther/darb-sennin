@@ -12,7 +12,7 @@ import { Sheet } from '../components/Sheet'
 import { TabBar } from '../components/TabBar'
 import { Tag } from '../components/Tag'
 import { TestRow } from '../components/TestRow'
-import { Toast } from '../components/Toast'
+import { ToastRegion } from '../components/Toast'
 import { useCopy } from '../copy/copy'
 import { Brand, DemoBanner, ThemeSwitch } from './chrome'
 import behaviour from '@config/ui/behaviour.json'
@@ -206,15 +206,11 @@ export function Catalogue() {
       >
         <p className="text-callout text-ink-muted">{c.sheetBody}</p>
       </Sheet>
-      {toast ? (
-        <div className="fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-50 flex justify-center">
-          <Toast
-            message={c.toastBody}
-            durationMs={behaviour.toast.durationMs}
-            onDismiss={hideToast}
-          />
-        </div>
-      ) : null}
+      <ToastRegion
+        toast={toast ? { message: c.toastBody } : null}
+        durationMs={behaviour.toast.durationMs}
+        onDismiss={hideToast}
+      />
     </div>
   )
 }

@@ -2,7 +2,7 @@ import { useId, type ReactNode } from 'react'
 import { useCopy } from '../copy/copy'
 import { cx } from '../lib/cx'
 
-export type Severity = 'major' | 'minor' | 'nit'
+export type Severity = 'critical' | 'major' | 'minor' | 'nit'
 
 interface FindingNoteProps {
   severity: Severity
@@ -12,6 +12,7 @@ interface FindingNoteProps {
 }
 
 const titleClass: Record<Severity, string> = {
+  critical: 'font-semibold text-fail-ink',
   major: 'font-semibold text-ink',
   minor: 'font-normal text-ink',
   nit: 'font-normal text-ink-muted',
@@ -30,7 +31,11 @@ export function FindingNote({ severity, title, evidence, children }: FindingNote
       <p
         className={cx(
           'pt-0.5 text-footnote',
-          severity === 'major' ? 'font-semibold text-ink' : 'text-ink-muted',
+          severity === 'critical'
+            ? 'font-semibold tracking-wide text-fail-ink uppercase'
+            : severity === 'major'
+              ? 'font-semibold text-ink'
+              : 'text-ink-muted',
         )}
       >
         {copy.severity[severity]}

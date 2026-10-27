@@ -11,6 +11,7 @@ interface LargeTitleProps {
 /** iOS-style large title that collapses into a compact bar title once it scrolls away. */
 export function LargeTitle({ title, trailing, children }: LargeTitleProps) {
   const heading = useRef<HTMLHeadingElement>(null)
+  const bar = useRef<HTMLDivElement>(null)
   const [collapsed, setCollapsed] = useState(false)
 
   useEffect(() => {
@@ -25,7 +26,8 @@ export function LargeTitle({ title, trailing, children }: LargeTitleProps) {
           setCollapsed(!entry.isIntersecting)
         }
       },
-      { rootMargin: '-56px 0px 0px 0px' },
+      // Measured, so the safe-area inset above the bar row is included.
+      { rootMargin: `-${String(bar.current?.offsetHeight ?? 0)}px 0px 0px 0px` },
     )
     observer.observe(node)
     return () => {
@@ -36,22 +38,25 @@ export function LargeTitle({ title, trailing, children }: LargeTitleProps) {
   return (
     <>
       <div
+        ref={bar}
         data-collapsed={String(collapsed)}
         className={cx(
-          'sticky top-0 z-30 flex h-14 items-center justify-between gap-4 px-4 pt-[env(safe-area-inset-top)] transition-[background-color,border-color] duration-(--duration-state)',
+          'sticky top-0 z-30 pt-[env(safe-area-inset-top)] pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)] transition-[background-color,border-color] duration-(--duration-state)',
           collapsed ? 'material-bar border-b border-line' : 'border-b border-transparent',
         )}
       >
-        <span
-          aria-hidden="true"
-          className={cx(
-            'font-sans text-body font-semibold text-ink transition-opacity duration-(--duration-state)',
-            collapsed ? 'opacity-100' : 'opacity-0',
-          )}
-        >
-          {title}
-        </span>
-        <div className="flex items-center gap-1">{trailing}</div>
+        <div className="flex h-14 items-center justify-between gap-4 px-4">
+          <span
+            aria-hidden="true"
+            className={cx(
+              'font-sans text-body font-semibold text-ink transition-opacity duration-(--duration-state)',
+              collapsed ? 'opacity-100' : 'opacity-0',
+            )}
+          >
+            {title}
+          </span>
+          <div className="flex items-center gap-1">{trailing}</div>
+        </div>
       </div>
       <header className="px-4 pb-2">
         <h1 ref={heading} className="font-display text-large-title tracking-display text-ink">

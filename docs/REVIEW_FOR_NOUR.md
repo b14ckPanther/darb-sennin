@@ -1,6 +1,6 @@
 # For Nour
 
-Phases 0, 1 and 2 are done and merged into local `main`. Phase 1 questions and Phase 2 design choices were decided by Claude under your delegation of 2026-10-26; each is recorded in `docs/DECISIONS.md` and `docs/PROGRESS.md`.
+Phases 0, 1 and 2 are done and merged into local `main`. Phase 1 questions and Phase 2 design choices were decided by the agent under your delegation of 2026-10-26; each is recorded in `docs/DECISIONS.md` and `docs/PROGRESS.md`.
 
 ## What changed from the earlier recommendations
 

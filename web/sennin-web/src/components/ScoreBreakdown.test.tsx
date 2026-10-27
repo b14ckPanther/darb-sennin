@@ -24,3 +24,16 @@ describe('ScoreBreakdown', () => {
     expect(document.getElementById(id ?? '')).toHaveTextContent('Review -5')
   })
 })
+
+describe('ScoreBreakdown disclosure', () => {
+  it('toggles the breakdown on press and closes it on Escape', async () => {
+    const { default: userEvent } = await import('@testing-library/user-event')
+    render(<ScoreBreakdown score={55} max={100} parts={parts} />)
+    const score = screen.getByRole('button', { name: /55/ })
+    expect(score).toHaveAttribute('aria-expanded', 'false')
+    await userEvent.click(score)
+    expect(score).toHaveAttribute('aria-expanded', 'true')
+    await userEvent.keyboard('{Escape}')
+    expect(score).toHaveAttribute('aria-expanded', 'false')
+  })
+})

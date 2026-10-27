@@ -10,6 +10,7 @@
     "ledgerProgress": "{done} of {total} resolved"
   },
   "severity": {
+    "critical": "Critical",
     "major": "Major",
     "minor": "Minor",
     "nit": "Nit"
@@ -40,7 +41,8 @@
     "handle": "Drag to resize"
   },
   "toast": {
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "region": "Notifications"
   },
   "list": {
     "actions": "Actions for {title}"
@@ -83,7 +85,7 @@
       "boss": "Weekly boss",
       "bossHp": "{remaining} of {total} cases left",
       "bossDays": "{days} days left",
-      "difficulty": "Difficulty {n} of 3",
+      "difficulty": "Difficulty {n} of {max}",
       "week": {
         "done": "Graded",
         "frozen": "Freeze used",
@@ -117,5 +119,8 @@
       "emptyBody": "Your graded submissions appear here, newest first.",
       "skippedReason": "Skipped because 3 hidden tests failed."
     }
+  },
+  "brand": {
+    "name": "Sennin"
   }
 }

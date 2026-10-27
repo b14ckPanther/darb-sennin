@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { ListRow } from './ListRow'
@@ -43,5 +43,26 @@ describe('ListRow', () => {
     await userEvent.tab()
     await userEvent.tab()
     expect(container.querySelector('[data-open]')).toHaveAttribute('data-open', 'true')
+  })
+})
+
+describe('ListRow while its actions are open', () => {
+  it('closes the actions on tap instead of opening the item', async () => {
+    const onSelect = vi.fn()
+    const { container } = render(
+      <ListRow
+        title="Rate limiter"
+        onSelect={onSelect}
+        actions={[{ id: 'pin', label: 'Pin', icon: 'pin', onAction: () => undefined }]}
+      />,
+    )
+    // Opening the tray by keyboard, then moving the pointer back to the row.
+    act(() => {
+      screen.getByRole('button', { name: 'Pin' }).focus()
+    })
+    expect(container.querySelector('[data-open]')).toHaveAttribute('data-open', 'true')
+    await userEvent.click(screen.getByRole('button', { name: /Rate limiter/ }))
+    expect(onSelect).not.toHaveBeenCalled()
+    expect(container.querySelector('[data-open]')).toHaveAttribute('data-open', 'false')
   })
 })

@@ -1,5 +1,19 @@
-import { AnimatePresence, motion, useReducedMotion, type PanInfo } from 'motion/react'
-import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
+import {
+  AnimatePresence,
+  motion,
+  useDragControls,
+  useReducedMotion,
+  type PanInfo,
+} from 'motion/react'
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+  type ReactNode,
+} from 'react'
 import { useCopy } from '../copy/copy'
 import { gesture, spring } from '../design/motion'
 import { Icon } from './Icon'
@@ -24,17 +38,39 @@ export function Sheet({ open, title, detents, initialDetent, onClose, children }
   const titleId = useId()
   const panel = useRef<HTMLDivElement>(null)
   const lastDetent = detents.length - 1
-  const [detent, setDetent] = useState(initialDetent ?? Math.min(1, lastDetent))
+  const startDetent = initialDetent ?? Math.min(1, lastDetent)
+  const [detent, setDetent] = useState(startDetent)
+  const [wasOpen, setWasOpen] = useState(open)
+  const controls = useDragControls()
+  const close = useRef<HTMLButtonElement>(null)
   const height = detents[detent] ?? detents[lastDetent] ?? 1
+
+  // Every opening starts at the initial detent.
+  if (open !== wasOpen) {
+    setWasOpen(open)
+    if (open) {
+      setDetent(startDetent)
+    }
+  }
 
   useEffect(() => {
     if (!open) {
       return undefined
     }
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null
-    panel.current?.querySelector<HTMLElement>(focusable)?.focus()
-    return () => previous?.focus()
+    close.current?.focus()
+    // The page behind a modal sheet does not scroll.
+    const overflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = overflow
+      previous?.focus()
+    }
   }, [open])
+
+  const startDrag = (event: PointerEvent) => {
+    controls.start(event)
+  }
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Escape') {
@@ -95,14 +131,18 @@ export function Sheet({ open, title, detents, initialDetent, onClose, children }
             aria-modal="true"
             aria-labelledby={titleId}
             data-detent={detent}
-            drag={reduce ? false : 'y'}
+            // Drag starts only from the handle and header, so content scrolls and selects normally.
+            drag="y"
+            dragListener={false}
+            dragControls={controls}
             dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={0.4}
+            dragElastic={reduce ? 0 : 0.6}
             onDragEnd={onDragEnd}
             initial={reduce ? false : { y: '100%' }}
             animate={{ y: 0, height: `${String(height * 100)}dvh` }}
             exit={reduce ? { opacity: 0 } : { y: '100%' }}
-            transition={spring.sheet}
+            transition={reduce ? { duration: 0 } : spring.sheet}
+            style={{ touchAction: 'auto', userSelect: 'auto' }}
             className="absolute inset-x-0 bottom-0 mx-auto flex max-w-2xl flex-col rounded-t-panel border border-b-0 border-line bg-surface pb-[env(safe-area-inset-bottom)] shadow-sheet"
           >
             <button
@@ -111,15 +151,20 @@ export function Sheet({ open, title, detents, initialDetent, onClose, children }
               onClick={() => {
                 setDetent(detent >= lastDetent ? 0 : detent + 1)
               }}
-              className="mx-auto grid h-6 w-16 shrink-0 cursor-grab place-items-center rounded-chip"
+              onPointerDown={startDrag}
+              className="mx-auto grid min-h-touch w-24 shrink-0 cursor-grab touch-none place-items-center rounded-chip"
             >
               <span className="h-1 w-9 rounded-full bg-line-strong" />
             </button>
-            <header className="flex items-center justify-between gap-4 px-5 pb-2">
+            <header
+              onPointerDown={startDrag}
+              className="flex touch-none items-center justify-between gap-4 px-5 pb-2"
+            >
               <h2 id={titleId} className="font-display text-title-3 text-ink">
                 {title}
               </h2>
               <button
+                ref={close}
                 type="button"
                 onClick={onClose}
                 className="grid size-touch place-items-center rounded-control text-ink-muted hover:bg-surface-sunk hover:text-ink"
