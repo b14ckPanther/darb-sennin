@@ -135,3 +135,19 @@ Decision: as recommended. Creating the content repo and the DNS record are outwa
 
 ## ADR-040 MIT licence; repo b14ckPanther/darb-sennin — accepted (Q18, Q21)
 Note: a remote `origin` (`github.com/b14ckPanther/darb-sennin`) already exists locally with `main` and `phase/00-bootstrap` on it. Nothing is pushed by the agent; local `main` is ahead and waits for Nour's "yes" to push.
+
+## Phase 2 decisions (2026-10-26)
+
+Decided by Claude under Nour's delegation (2026-10-26).
+
+## ADR-041 Art direction: Examiner's Report on the Ensō brand — accepted
+Context: `UI_DESIGN.md` §4 offered A "Examiner's Report", B "Forge" and C "Instrument" (`docs/proposals/phase-02-directions.html`); Nour later approved the Ensō brand (forest, ivory, gold, Zen Antique, Geist). Decision: A, re-cast in the brand. Light is ivory paper with forest ink, dark is Darb night with ivory ink. Gold only in the mark and earned praise; vermilion only in the "Earned" stamp, with a darker `stamp-ink` token for its text after axe measured the brand vermilion below 4.5:1 on the canvas. Status is always mark plus word plus rule. Fonts: Zen Antique (display), Geist (UI), Geist Mono (code), self-hosted. Why: A is the only direction that fits a light paper brand and a brush-serif display; B's ember palette and C's near-black instrument panel fight the gold ensō. Cost if wrong: low (tokens are one file; components read tokens only).
+
+## ADR-042 Icons: Solar through one Icon component — accepted
+Decision: Solar (CC BY 4.0) with two variants, linear at rest and bold duotone for selected states. A build script (`npm run icons`) copies only the named glyphs from `@iconify-json/solar` into a generated JSON file; `<Icon>` is the only renderer, and an ESLint `no-restricted-imports` rule (tested) rejects every other icon package, Iconify runtime packages included. Why Solar over Lucide: the duotone variant gives the tab bar a native filled-selected state without a second set. Cost if wrong: low (one manifest).
+
+## ADR-043 Component catalogue is an in-app view, not Ladle or Storybook — accepted
+Decision: `?view=catalogue` renders every component with its states on demo data, in both themes with a theme switch. Playwright runs axe over it and over the comps at desktop and 390 px. Why: one toolchain fewer, the catalogue uses the real tokens, fonts and copy, and the same axe run covers it. Cost if wrong: low (components are independent of the catalogue; Ladle can be added later).
+
+## ADR-044 Copy, comp data and interface behaviour values live in config — accepted
+Decision: interface copy in `config/copy/en/ui.json`, comp seed in `config/seed/demo/phase-02-comps.json` (shown under the "Demo data" banner), sheet detents and toast duration in `config/ui/behaviour.json`; the web client imports them through the `@config` alias. Schemas arrive in Phase 4. Motion springs, durations and gesture thresholds are design tokens in `src/design/motion.ts` and `tokens.css`. Cost if wrong: low.

@@ -1,6 +1,6 @@
 # UI design
 
-Status: the signature ("every grade shows its evidence; praise only when earned"), the weekly boss, ranks and streaks come from the roadmap. Layouts, art directions, fonts and motion values are **proposed, confirm with Nour in Phase 1-2**. Nour picks one art direction in Phase 2 from side-by-side comps.
+Status: the signature ("every grade shows its evidence; praise only when earned"), the weekly boss, ranks and streaks come from the roadmap. Art direction, fonts, icons and motion values were decided in Phase 2 (ADR-041 to ADR-043); screen layouts are approved screen by screen in Phase 3.
 
 Quality bar: "jaw-dropping", never childish or template-looking. Restraint is the point: this is the product that does not flatter you, and the design should feel the same: precise, calm, a little severe.
 
@@ -71,18 +71,24 @@ Theme (system/light/dark), editor font size, keybindings (default, Vim via `@rep
 ## 3. Interaction and motion rules
 
 - **Purpose first:** motion shows causality (this test caused this card) or state (queued, running, done). No decorative loops.
-- **Springs, not linear.** Motion (formerly Framer Motion) springs: default `stiffness 420, damping 38` for UI, `stiffness 260, damping 30` for sheets (proposed; tokens in `motion.ts` generated from design tokens).
+- **Springs, not linear.** Motion (formerly Framer Motion) springs: default `stiffness 420, damping 38` for UI, `stiffness 260, damping 30` for sheets (tokens in `web/sennin-web/src/design/motion.ts`).
 - Durations for non-spring fades: 120 ms (micro), 200 ms (state), 320 ms (layout). Never longer than 400 ms for anything blocking.
 - Pressed state: scale 0.97 with a spring on buttons and rows.
 - Evidence linking: hover/focus on any chip highlights its target and draws a hairline connector; `Enter` jumps to it.
 - Keyboard first: `Ctrl/Cmd+Enter` submit, `Ctrl/Cmd+'` run samples, `J/K` move through findings, `E` jump to evidence, `G then L` library, `?` shortcut sheet. All rebindable later.
 - `prefers-reduced-motion: reduce` disables slides, expansions, connectors' draw animation and HP segment falls (state still changes instantly). User override in settings.
 
-## 4. Art direction candidates (Nour picks one in Phase 2)
+## 4. Art direction
+
+**Chosen: A, "Examiner's Report", carried on the Ensō brand (ADR-041).** Decided by Claude under Nour's delegation (2026-10-26). Light is ivory paper (`#FBF7EC` sheet on `#EFE6D2`) with forest ink; dark is Darb night (`#03110C`) with ivory ink. The sheet is a ruled report: hairline rules, severity by type weight, status as mark plus word plus rule. Gold appears only in the ensō mark and in earned praise; vermilion only in the "Earned" stamp. Type: **Zen Antique** (display, from the brand), **Geist** (interface), **Geist Mono** (code and evidence). Icons: **Solar**, linear for rest and bold duotone for the selected state (ADR-042). Tokens live in `web/sennin-web/src/design/tokens.css`; screenshots in `docs/screenshots/phase-02/`.
+
+Why A over B and C: the Ensō brand is forest, ivory and gold with a brush-serif display, which is A's paper-and-ink register. B's ember and contour texture compete with the gold ensō and lean theatrical; C's near-black signal-green panel discards the brand's light surface and its typeface. A's original fonts (Newsreader, Inter) are replaced by the brand's own faces; Inter is banned by the font rule anyway.
+
+The candidates as first proposed, kept for the record:
 
 All three: one modern SVG icon set (Solar via Iconify, `solar-duotone-bold`, or Lucide), Google Fonts only, no emoji, no gradient blobs, no stock illustration, no martial-arts kitsch (no bamboo, no brush-stroke dragons, no belts).
 
-### A. "Examiner's Report" (proposed default)
+### A. "Examiner's Report" (chosen)
 Warm off-white paper in light mode and deep graphite in dark. The Verdict Sheet looks like an engineering report: ruled lines, margin notes, a single red-ink accent reserved for failures. Type: **Newsreader** (headings), **Inter** (UI), **JetBrains Mono** (code and evidence). Feels rigorous and adult.
 
 ### B. "Forge"
@@ -91,7 +97,7 @@ Ties to Darb Budokai's night cartographer's table (Darb Budokai's Forge landmark
 ### C. "Instrument"
 A measuring-instrument panel: near-black, hairline grids, tabular numerals everywhere, evidence as calibrated readouts; accent a single signal green used only for earned praise. Type: **Geist** or **Inter Tight** (UI), **Geist Mono** (code). Feels like lab equipment.
 
-Phase 2 output: tokens (`color`, `type`, `space`, `radius`, `elevation`, `motion`) as CSS variables + Tailwind 4 `@theme`, light and dark, and the Verdict Sheet comped in each direction side by side.
+Phase 2 output: tokens (`color`, `type`, `space`, `radius`, `elevation`, `motion`) as CSS variables + Tailwind 4 `@theme`, light and dark; the three directions were compared side by side in `docs/proposals/phase-02-directions.html`, and the chosen one is comped on the Verdict Sheet, its earned variant and Today.
 
 ## 5. Native feel on phones (Rule 11)
 
