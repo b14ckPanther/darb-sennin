@@ -1,9 +1,14 @@
 import { cx } from '../lib/cx'
 
-/** Three-step difficulty mark (UI_DESIGN.md 2.2): rising bars, filled up to the level. */
+/** Three-step difficulty mark (UI_DESIGN.md 2.2). An empty label makes it decorative. */
 export function Difficulty({ level, max, label }: { level: number; max: number; label: string }) {
   return (
-    <span role="img" aria-label={label} className="inline-flex items-end gap-0.5">
+    <span
+      role={label ? 'img' : undefined}
+      aria-label={label || undefined}
+      aria-hidden={label ? undefined : true}
+      className="inline-flex items-end gap-0.5"
+    >
       {Array.from({ length: max }, (_, i) => i + 1).map((step) => (
         <span
           key={step}

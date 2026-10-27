@@ -15,7 +15,10 @@ export default defineConfig({
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
     // Native-feel checks run at 390 px (CLAUDE.md 7).
-    { name: 'phone', use: { ...devices['Desktop Chrome'], viewport: { width: 390, height: 844 } } },
+    {
+      name: 'phone',
+      use: { ...devices['Desktop Chrome'], viewport: { width: 390, height: 844 }, hasTouch: true },
+    },
   ],
   webServer: {
     command: `npm run build && npm run preview -- --port ${String(port)} --strictPort`,

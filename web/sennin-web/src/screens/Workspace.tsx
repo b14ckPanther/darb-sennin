@@ -1,5 +1,5 @@
 import behaviour from '@config/ui/behaviour.json'
-import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
+import { AnimatePresence, LayoutGroup, m } from 'motion/react'
 import { useCallback, useId, useRef, useState, type ReactNode } from 'react'
 import { useProblem, useRunSamples, useSubmission, useSubmit } from '../api/queries'
 import type { LanguageId, ProblemDetail, SampleRun, Submission } from '../api/types'
@@ -13,7 +13,8 @@ import { Tag } from '../components/Tag'
 import { ToastRegion } from '../components/Toast'
 import { fill, useCopy } from '../copy/copy'
 import { spring } from '../design/motion'
-import { CodeEditor, type CodeEditorHandle, type EditorMode } from '../editor/CodeEditor'
+import { LazyCodeEditor as CodeEditor } from '../editor/LazyCodeEditor'
+import type { CodeEditorHandle, EditorMode } from '../editor/types'
 import { cx } from '../lib/cx'
 import { editorMode, languageName, languages } from '../lib/format'
 import { Markdown } from '../lib/markdown'
@@ -45,7 +46,8 @@ function writeDraft(problemId: string, language: LanguageId, code: string) {
   }
 }
 
-function Statement({ problem }: { problem: ProblemDetail }) {
+function Statement({ problem, level = 1 }: { problem: ProblemDetail; level?: 1 | 2 }) {
+  const Heading = level === 1 ? 'h1' : 'h2'
   const c = useCopy().workspace
   const headingId = useId()
   return (
@@ -54,7 +56,9 @@ function Statement({ problem }: { problem: ProblemDetail }) {
         {problem.isBoss ? (
           <p className="mb-1 text-footnote font-medium text-ink-muted">{c.boss}</p>
         ) : null}
-        <h1 className="font-display text-title-1 tracking-display text-ink">{problem.title}</h1>
+        <Heading className="font-display text-title-1 tracking-display text-ink">
+          {problem.title}
+        </Heading>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {problem.tags.map((t) => (
             <Tag key={t}>{t}</Tag>
@@ -370,6 +374,7 @@ function WorkspaceBody({
           bracket={bracket}
           onSubmit={doSubmit}
           onRunSamples={doRun}
+          wrap={!wide}
         />
       </div>
       {runSamples.data ? <SampleResults runs={runSamples.data} problem={problem} /> : null}
@@ -445,9 +450,10 @@ function WorkspaceBody({
           <div className="flex min-h-0 flex-1 gap-0">
             <AnimatePresence initial={false} mode="popLayout">
               {!split ? (
-                <motion.section
+                <m.section
                   key="statement"
                   aria-label={c.statement}
+                  tabIndex={0}
                   layout
                   initial={reduce ? false : { opacity: 0, x: -24 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -458,10 +464,10 @@ function WorkspaceBody({
                   className="w-[40%] min-w-0 overflow-y-auto border-r border-line bg-surface"
                 >
                   <Statement problem={problem} />
-                </motion.section>
+                </m.section>
               ) : null}
             </AnimatePresence>
-            <motion.section
+            <m.section
               layout
               aria-label={c.code}
               transition={transition}
@@ -471,12 +477,13 @@ function WorkspaceBody({
               )}
             >
               {editorPanel}
-            </motion.section>
+            </m.section>
             <AnimatePresence initial={false}>
               {split ? (
-                <motion.section
+                <m.section
                   key="verdict"
                   aria-label={c.verdict}
+                  tabIndex={-1}
                   layout
                   initial={reduce ? false : { opacity: 0, x: 48 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -487,7 +494,7 @@ function WorkspaceBody({
                   className="w-[55%] min-w-0 overflow-y-auto border-l border-line bg-canvas p-6"
                 >
                   {sheet}
-                </motion.section>
+                </m.section>
               ) : null}
             </AnimatePresence>
           </div>
@@ -508,9 +515,9 @@ function WorkspaceBody({
       <div className="material-bar sticky top-0 z-30 border-b border-line pt-[env(safe-area-inset-top)] pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)]">
         <div className="flex h-12 items-center gap-2 px-4">
           {backLink}
-          <p className="min-w-0 flex-1 truncate text-center text-callout font-semibold text-ink">
+          <h1 className="min-w-0 flex-1 truncate text-center text-callout font-semibold text-ink">
             {problem.title}
-          </p>
+          </h1>
           <span className="w-16" />
         </div>
         <div className="px-4 pb-2">
@@ -527,7 +534,7 @@ function WorkspaceBody({
         </div>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto bg-surface">
-        {pane === 'statement' ? <Statement problem={problem} /> : editorPanel}
+        {pane === 'statement' ? <Statement problem={problem} level={2} /> : editorPanel}
       </div>
       <div className="material-bar border-t border-line px-4 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pr-[max(1rem,env(safe-area-inset-right))] pl-[max(1rem,env(safe-area-inset-left))]">
         <div className="flex justify-end">{actions}</div>

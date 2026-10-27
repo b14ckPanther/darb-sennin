@@ -1,16 +1,22 @@
+import { LazyMotion } from 'motion/react'
 import { lazy, Suspense, useEffect, type ReactNode } from 'react'
 import { BackendProvider } from './api/context'
 import { Skeleton } from './components/Loadable'
-import { useCopy } from './copy/copy'
+import { defaultCopy, useCopy } from './copy/copy'
 import { matchRoute, navigate, useLocation } from './lib/router'
 import { applyDocument } from './lib/settings'
-import { Catalogue } from './screens/Catalogue'
 import { NotFound } from './screens/NotFound'
 import { Today } from './screens/Today'
 
-// The workspace carries the editor; it loads on first visit so Today and the library stay light.
-const Workspace = lazy(() => import('./screens/Workspace'))
-const SubmissionPage = lazy(() => import('./screens/SubmissionPage'))
+// Screens load per route so Today stays light. The chunk for the address being opened starts
+// downloading at once, alongside the demo backend, instead of after it.
+const loadWorkspace = () => import('./screens/Workspace')
+const loadSubmission = () => import('./screens/SubmissionPage')
+const startPath = window.location.pathname
+if (startPath.startsWith('/problems/')) void loadWorkspace()
+if (startPath.startsWith('/submissions/')) void loadSubmission()
+const Workspace = lazy(loadWorkspace)
+const SubmissionPage = lazy(loadSubmission)
 const Library = lazy(() => import('./screens/Library'))
 const Weakness = lazy(() => import('./screens/Weakness'))
 const Boss = lazy(() => import('./screens/Boss'))
@@ -18,6 +24,7 @@ const History = lazy(() => import('./screens/History'))
 const Ranks = lazy(() => import('./screens/Ranks'))
 const Settings = lazy(() => import('./screens/Settings'))
 const Profile = lazy(() => import('./screens/Profile'))
+const Catalogue = lazy(() => import('./screens/Catalogue').then((m) => ({ default: m.Catalogue })))
 
 type Route = [string, (params: Record<string, string>) => ReactNode]
 
@@ -70,9 +77,12 @@ function App() {
     applyDocument()
   }, [])
   return (
-    <BackendProvider>
-      <Router />
-    </BackendProvider>
+    // Components use the slim `m` elements; drag, layout and springs arrive with this chunk.
+    <LazyMotion strict features={() => import('./design/motion-features').then((f) => f.default)}>
+      <BackendProvider fallback={<Skeleton what={defaultCopy.states.page} shape="sheet" />}>
+        <Router />
+      </BackendProvider>
+    </LazyMotion>
   )
 }
 

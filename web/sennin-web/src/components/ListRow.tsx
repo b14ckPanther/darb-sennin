@@ -1,4 +1,4 @@
-import { animate, motion, useMotionValue, type PanInfo } from 'motion/react'
+import { animate, m, useMotionValue, type PanInfo } from 'motion/react'
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { fill, useCopy } from '../copy/copy'
 import { gesture, pressScale, spring } from '../design/motion'
@@ -89,7 +89,7 @@ export function ListRow({
       data-open={String(open)}
       className="relative overflow-hidden border-b border-line bg-surface last:border-b-0"
     >
-      <motion.div
+      <m.div
         style={{ x }}
         // Reduced motion removes the spring, not the gesture: settle() jumps straight to the end.
         drag={actions.length > 0 ? 'x' : false}
@@ -106,7 +106,7 @@ export function ListRow({
         }}
         className="relative z-10 bg-surface"
       >
-        <motion.button
+        <m.button
           type="button"
           onClick={onRowClick}
           whileTap={reduce ? undefined : { scale: pressScale }}
@@ -122,8 +122,8 @@ export function ListRow({
           </span>
           {trailing ? <span className="num text-callout text-ink-muted">{trailing}</span> : null}
           <Icon name="chevron-right" size={18} className="text-ink-muted" />
-        </motion.button>
-      </motion.div>
+        </m.button>
+      </m.div>
       {actions.length > 0 ? (
         <div
           ref={tray}

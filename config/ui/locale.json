@@ -1,0 +1,4 @@
+{
+  "$comment": "Where the user's day is reckoned (spec: the day ends at 04:00 Asia/Jerusalem). Phase 8 moves the day boundary into config/progression.yaml and reads the zone from the profile.",
+  "timeZone": "Asia/Jerusalem"
+}

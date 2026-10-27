@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 import { pressScale, spring } from '../design/motion'
 import { cx } from '../lib/cx'
 import { Icon, type IconName } from './Icon'
@@ -30,7 +30,7 @@ export function TabBar({ label, items, activeId, onSelect }: TabBarProps) {
           const active = item.id === activeId
           return (
             <li key={item.id} className="flex-1">
-              <motion.button
+              <m.button
                 type="button"
                 aria-current={active ? 'page' : undefined}
                 onClick={() => {
@@ -45,7 +45,7 @@ export function TabBar({ label, items, activeId, onSelect }: TabBarProps) {
               >
                 <Icon name={item.icon} filled={active} size={24} />
                 <span>{item.label}</span>
-              </motion.button>
+              </m.button>
             </li>
           )
         })}

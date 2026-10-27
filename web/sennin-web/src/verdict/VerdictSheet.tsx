@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, m } from 'motion/react'
 import { useEffect, useId, useRef, type KeyboardEvent, type ReactNode } from 'react'
 import type { CaseEvidence, CaseResult, Finding, Submission } from '../api/types'
 import { BossHp } from '../components/BossHp'
@@ -187,7 +187,7 @@ function Appear({ show, children }: { show: boolean; children: ReactNode }) {
   return (
     <AnimatePresence initial={false}>
       {show ? (
-        <motion.div
+        <m.div
           initial={reduce ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={
@@ -195,7 +195,7 @@ function Appear({ show, children }: { show: boolean; children: ReactNode }) {
           }
         >
           {children}
-        </motion.div>
+        </m.div>
       ) : null}
     </AnimatePresence>
   )
@@ -371,14 +371,14 @@ export function VerdictSheet({
                   time={item ? formatMs(item.timeMs) : undefined}
                 >
                   {evidence ? (
-                    <motion.div
+                    <m.div
                       initial={reduce || !liveCases ? false : { height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       transition={reduce ? { duration: 0 } : spring.ui}
                       className="overflow-hidden"
                     >
                       <EvidenceCard evidence={evidence} lines={item?.lines} onShow={onShowLines} />
-                    </motion.div>
+                    </m.div>
                   ) : null}
                 </TestRow>
               )

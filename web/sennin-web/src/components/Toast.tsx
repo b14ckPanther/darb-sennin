@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { useCopy } from '../copy/copy'
 import { spring } from '../design/motion'
@@ -39,7 +39,7 @@ export function Toast({ message, tone = 'info', durationMs, onDismiss }: ToastPr
   }
 
   return (
-    <motion.div
+    <m.div
       initial={reduce ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={spring.ui}
@@ -62,7 +62,7 @@ export function Toast({ message, tone = 'info', durationMs, onDismiss }: ToastPr
       >
         <Icon name="fail" size={18} label={copy.toast.dismiss} />
       </button>
-    </motion.div>
+    </m.div>
   )
 }
 

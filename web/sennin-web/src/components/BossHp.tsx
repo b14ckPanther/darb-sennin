@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 import { spring } from '../design/motion'
 import { cx } from '../lib/cx'
 import { useReduceMotion } from '../lib/motion'
@@ -37,7 +37,7 @@ export function BossHp({ total, fallen, label, size = 'compact' }: BossHpProps) 
               large ? 'h-7 md:h-10' : 'h-3',
             )}
           >
-            <motion.span
+            <m.span
               aria-hidden="true"
               className="absolute -inset-px rounded-[2px] bg-ink"
               initial={false}

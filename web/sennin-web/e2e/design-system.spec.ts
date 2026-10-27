@@ -10,6 +10,9 @@ for (const scheme of ['light', 'dark'] as const) {
     for (const view of views) {
       test(`${view} has no serious or critical axe violations`, async ({ page }) => {
         await page.goto(`/?view=${view}`)
+        // Screens arrive as lazy chunks after the demo backend; wait for one before measuring.
+        await expect(page.locator('h1').first()).toBeAttached()
+        await page.waitForLoadState('networkidle')
         await page.evaluate(() => document.fonts.ready)
         // Scan settled pages: a fade caught halfway is not the colour the user reads.
         await page.evaluate(() =>
@@ -86,7 +89,7 @@ test('the open sheet and a shown toast have no serious or critical axe violation
 })
 
 test('a swipe on a list row does not open the item', async ({ page }) => {
-  await page.goto('/?view=today')
+  await page.goto('/library')
   const row = page.getByRole('button', { name: /Sliding window maximum/ })
   const box = await row.boundingBox()
   if (!box) throw new Error('row not visible')
@@ -96,5 +99,5 @@ test('a swipe on a list row does not open the item', async ({ page }) => {
   await page.mouse.move(box.x + box.width - 200, y, { steps: 8 })
   await page.mouse.up()
   await expect(page.locator('li[data-open="true"]')).toHaveCount(1)
-  await expect(page).toHaveURL(/view=today$/)
+  await expect(page).toHaveURL(/\/library$/)
 })

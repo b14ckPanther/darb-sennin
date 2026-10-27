@@ -90,18 +90,21 @@ function SubmissionBody({ sub }: { sub: Submission }) {
   const c = copy.screens.verdict
   const reduce = useReduceMotion()
   const wide = useMediaQuery('(min-width: 64rem)')
-  const [lit, setLit] = useState<[number, number] | null>(null)
+  // A hovered chip lights lines for a moment; a jump keeps them lit until the next jump.
+  const [hovered, setHovered] = useState<[number, number] | null>(null)
+  const [jumped, setJumped] = useState<[number, number] | null>(null)
+  const lit = hovered ?? jumped
   const [codeOpen, setCodeOpen] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
   const dispute = useDisputeTranslation()
   const firstFail = sub.cases.find((x) => x.status === 'fail')
   const highlight = useCallback((range: [number, number] | null) => {
-    setLit(range)
+    setHovered(range)
   }, [])
 
   const showLines = (range: [number, number]) => {
     setCodeOpen(true)
-    setLit(range)
+    setJumped(range)
     requestAnimationFrame(() => {
       const el = document.getElementById(`code-line-${String(range[0])}`)
       el?.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' })

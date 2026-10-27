@@ -150,31 +150,34 @@ function Row({ t, rank, profile }: { t: WeaknessTag; rank: number; profile: Weak
 function Table({ profile }: { profile: WeaknessProfile }) {
   const c = useCopy().weakness
   return (
-    <table className="sr-only">
-      <caption>{c.tableCaption}</caption>
-      <thead>
-        <tr>
-          <th scope="col">{c.tag}</th>
-          <th scope="col">{c.now}</th>
-          {Array.from({ length: profile.weeks }, (_, i) => (
-            <th key={i} scope="col">
-              {fill(c.week, { n: i + 1 })}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {profile.tags.map((t) => (
-          <tr key={t.tag}>
-            <th scope="row">{t.tag}</th>
-            <td>{t.score}</td>
-            {t.trend.map((v, i) => (
-              <td key={i}>{v}</td>
+    // Tables ignore width: 1px, so the screen-reader table sits in a clipped wrapper.
+    <div className="sr-only">
+      <table>
+        <caption>{c.tableCaption}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{c.tag}</th>
+            <th scope="col">{c.now}</th>
+            {Array.from({ length: profile.weeks }, (_, i) => (
+              <th key={i} scope="col">
+                {fill(c.week, { n: i + 1 })}
+              </th>
             ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {profile.tags.map((t) => (
+            <tr key={t.tag}>
+              <th scope="row">{t.tag}</th>
+              <td>{t.score}</td>
+              {t.trend.map((v, i) => (
+                <td key={i}>{v}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 

@@ -9,9 +9,9 @@ describe('App shell', () => {
     expect(screen.getByRole('link', { name: /Sennin/ })).toHaveAttribute('href', '/')
   })
 
-  it('renders inside a main landmark with a skip link to it', () => {
+  it('renders inside a main landmark with a skip link to it', async () => {
     render(<App />)
-    expect(screen.getByRole('main')).toHaveAttribute('id', 'content')
+    expect(await screen.findByRole('main')).toHaveAttribute('id', 'content')
     expect(screen.getByRole('link', { name: 'Skip to content' })).toHaveAttribute(
       'href',
       '#content',

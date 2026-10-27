@@ -1,10 +1,9 @@
-import profile from '@config/seed/demo/profile.json'
 import languageConfig from '@config/ui/languages.json'
+import locale from '@config/ui/locale.json'
 import type { LanguageId } from '../api/types'
 
 // The user's day is reckoned in their time zone (spec: the day ends at 04:00 Asia/Jerusalem).
-// Phase 8 reads it from the profile; the prototype takes it from the demo profile.
-const timeZone = profile.clock.timeZone
+const timeZone = locale.timeZone
 
 const dateTime = new Intl.DateTimeFormat('en-GB', {
   weekday: 'short',

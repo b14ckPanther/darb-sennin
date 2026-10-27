@@ -1,6 +1,4 @@
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands'
-import { javascript } from '@codemirror/lang-javascript'
-import { python } from '@codemirror/lang-python'
 import {
   bracketMatching,
   HighlightStyle,
@@ -8,7 +6,6 @@ import {
   StreamLanguage,
   syntaxHighlighting,
 } from '@codemirror/language'
-import { csharp } from '@codemirror/legacy-modes/mode/clike'
 import {
   Compartment,
   EditorState,
@@ -27,31 +24,9 @@ import {
   type DecorationSet,
 } from '@codemirror/view'
 import { tags as t } from '@lezer/highlight'
-import { vim } from '@replit/codemirror-vim'
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 
-export type EditorMode = 'python' | 'csharp' | 'javascript' | 'plain'
-
-export interface CodeEditorHandle {
-  /** Lights lines (hover on an evidence chip); null clears. */
-  highlight: (range: [number, number] | null) => void
-  /** Scrolls the lines into view, lights them and moves focus to the editor. */
-  reveal: (range: [number, number]) => void
-  focus: () => void
-}
-
-interface CodeEditorProps {
-  value: string
-  onChange: (value: string) => void
-  mode: EditorMode
-  fontSize: number
-  vimMode: boolean
-  label: string
-  /** Lines the reviewer tied to the first failure: a bracket in the margin. */
-  bracket: [number, number] | null
-  onSubmit: () => void
-  onRunSamples: () => void
-}
+import type { CodeEditorHandle, CodeEditorProps, EditorMode } from './types'
 
 // Colours come from the design tokens, so both themes and the contrast tests cover the editor.
 const theme = EditorView.theme({
@@ -135,14 +110,15 @@ function rangeField(effect: typeof setLit, cls: string) {
 const litField = rangeField(setLit, 'cm-lit')
 const bracketField = rangeField(setBracket, 'cm-bracket')
 
-function language(mode: EditorMode): Extension {
+/** Grammars load per language on demand, so the editor paints before any parser arrives. */
+async function language(mode: EditorMode): Promise<Extension> {
   switch (mode) {
     case 'python':
-      return python()
+      return (await import('@codemirror/lang-python')).python()
     case 'javascript':
-      return javascript()
+      return (await import('@codemirror/lang-javascript')).javascript()
     case 'csharp':
-      return StreamLanguage.define(csharp)
+      return StreamLanguage.define((await import('@codemirror/legacy-modes/mode/clike')).csharp)
     case 'plain':
       return []
   }
@@ -153,7 +129,18 @@ function language(mode: EditorMode): Extension {
  * documented pattern), so the keyboard is never trapped.
  */
 export const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(function CodeEditor(
-  { value, onChange, mode, fontSize, vimMode, label, bracket, onSubmit, onRunSamples },
+  {
+    value,
+    onChange,
+    mode,
+    fontSize,
+    vimMode,
+    label,
+    bracket,
+    onSubmit,
+    onRunSamples,
+    wrap = false,
+  },
   ref,
 ) {
   const host = useRef<HTMLDivElement>(null)
@@ -164,6 +151,7 @@ export const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(function
     lang: new Compartment(),
     size: new Compartment(),
     vim: new Compartment(),
+    wrap: new Compartment(),
   })
 
   useEffect(() => {
@@ -174,7 +162,8 @@ export const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(function
       state: EditorState.create({
         doc: value,
         extensions: [
-          c.vim.of(vimMode ? vim() : []),
+          c.vim.of([]),
+          c.wrap.of(wrap ? EditorView.lineWrapping : []),
           lineNumbers(),
           highlightActiveLine(),
           highlightActiveLineGutter(),
@@ -197,7 +186,7 @@ export const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(function
             ...defaultKeymap,
             ...historyKeymap,
           ]),
-          c.lang.of(language(mode)),
+          c.lang.of([]),
           c.size.of(EditorView.theme({ '.cm-scroller': { fontSize: `${String(fontSize)}px` } })),
           theme,
           litField,
@@ -226,7 +215,13 @@ export const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(function
   }, [value])
 
   useEffect(() => {
-    view.current?.dispatch({ effects: compartments.current.lang.reconfigure(language(mode)) })
+    let live = true
+    void language(mode).then((ext) => {
+      if (live) view.current?.dispatch({ effects: compartments.current.lang.reconfigure(ext) })
+    })
+    return () => {
+      live = false
+    }
   }, [mode])
 
   useEffect(() => {
@@ -237,9 +232,26 @@ export const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(function
     })
   }, [fontSize])
 
+  // Vim loads only for people who turn it on in Settings.
   useEffect(() => {
-    view.current?.dispatch({ effects: compartments.current.vim.reconfigure(vimMode ? vim() : []) })
+    if (!vimMode) {
+      view.current?.dispatch({ effects: compartments.current.vim.reconfigure([]) })
+      return undefined
+    }
+    let live = true
+    void import('@replit/codemirror-vim').then(({ vim }) => {
+      if (live) view.current?.dispatch({ effects: compartments.current.vim.reconfigure(vim()) })
+    })
+    return () => {
+      live = false
+    }
   }, [vimMode])
+
+  useEffect(() => {
+    view.current?.dispatch({
+      effects: compartments.current.wrap.reconfigure(wrap ? EditorView.lineWrapping : []),
+    })
+  }, [wrap])
 
   useEffect(() => {
     view.current?.dispatch({ effects: setBracket.of(bracket) })

@@ -158,7 +158,10 @@ function TodayBody({ data }: { data: TodayView }) {
         <Block
           title={t.boss}
           action={
-            <Link href="/boss" className="text-footnote text-ink-muted hover:text-ink">
+            <Link
+              href="/boss"
+              className="-my-3 inline-flex min-h-touch items-center text-footnote text-ink-muted hover:text-ink"
+            >
               {t.openBoss}
             </Link>
           }
@@ -181,7 +184,10 @@ function TodayBody({ data }: { data: TodayView }) {
         <Block
           title={t.rank}
           action={
-            <Link href="/ranks" className="text-footnote text-ink-muted hover:text-ink">
+            <Link
+              href="/ranks"
+              className="-my-3 inline-flex min-h-touch items-center text-footnote text-ink-muted hover:text-ink"
+            >
               {t.openRanks}
             </Link>
           }

@@ -228,7 +228,10 @@ export default function Settings() {
         </Group>
 
         <p className="px-4 text-footnote md:px-0">
-          <Link href="/catalogue" className="text-ink-muted hover:text-ink">
+          <Link
+            href="/catalogue"
+            className="inline-flex min-h-touch items-center text-ink-muted hover:text-ink"
+          >
             {c.catalogue}
           </Link>
         </p>
