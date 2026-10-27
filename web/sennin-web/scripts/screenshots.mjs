@@ -12,33 +12,36 @@ mkdirSync(out, { recursive: true })
 
 const views = ['verdict', 'verdict-earned', 'today', 'catalogue']
 const viewports = {
-  desktop: { width: 1440, height: 900, deviceScaleFactor: 1 },
-  phone: { width: 390, height: 844, deviceScaleFactor: 2 },
+    desktop: { width: 1440, height: 900, deviceScaleFactor: 1 },
+    phone: { width: 390, height: 844, deviceScaleFactor: 2 },
 }
 
 const browser = await chromium.launch()
 for (const scheme of ['light', 'dark']) {
-  for (const [device, viewport] of Object.entries(viewports)) {
-    const context = await browser.newContext({
-      viewport: { width: viewport.width, height: viewport.height },
-      deviceScaleFactor: viewport.deviceScaleFactor,
-      colorScheme: scheme,
-      reducedMotion: 'reduce',
-    })
-    const page = await context.newPage()
-    for (const view of views) {
-      await page.goto(`${base}/?view=${view}`)
-      await page.evaluate(() => document.fonts.ready)
-      // Phones: the first screen as the user sees it (fixed bars in place), then the full length.
-      // Full-page captures draw fixed elements where the viewport was, so the tab bar can float.
-      const file = resolve(out, `${view}-${device}-${scheme}.png`)
-      await page.screenshot({ path: file, fullPage: device === 'desktop' })
-      if (device === 'phone') {
-        await page.screenshot({ path: resolve(out, `${view}-${device}-${scheme}-full.png`), fullPage: true })
-      }
-      console.log(file)
+    for (const [device, viewport] of Object.entries(viewports)) {
+        const context = await browser.newContext({
+            viewport: { width: viewport.width, height: viewport.height },
+            deviceScaleFactor: viewport.deviceScaleFactor,
+            colorScheme: scheme,
+            reducedMotion: 'reduce',
+        })
+        const page = await context.newPage()
+        for (const view of views) {
+            await page.goto(`${base}/?view=${view}`)
+            await page.evaluate(() => document.fonts.ready)
+            // Phones: the first screen as the user sees it (fixed bars in place), then the full length.
+            // Full-page captures draw fixed elements where the viewport was, so the tab bar can float.
+            const file = resolve(out, `${view}-${device}-${scheme}.png`)
+            await page.screenshot({ path: file, fullPage: device === 'desktop' })
+            if (device === 'phone') {
+                await page.screenshot({
+                    path: resolve(out, `${view}-${device}-${scheme}-full.png`),
+                    fullPage: true,
+                })
+            }
+            console.log(file)
+        }
+        await context.close()
     }
-    await context.close()
-  }
 }
 await browser.close()

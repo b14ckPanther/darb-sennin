@@ -12,7 +12,9 @@ for (const scheme of ['light', 'dark'] as const) {
         await page.goto(`/?view=${view}`)
         await page.evaluate(() => document.fonts.ready)
         // Scan settled pages: a fade caught halfway is not the colour the user reads.
-        await page.evaluate(() => Promise.allSettled(document.getAnimations().map((a) => a.finished)))
+        await page.evaluate(() =>
+          Promise.allSettled(document.getAnimations().map((a) => a.finished)),
+        )
         const results = await new AxeBuilder({ page }).analyze()
         const blocking = results.violations.filter(
           (v) => v.impact === 'serious' || v.impact === 'critical',
