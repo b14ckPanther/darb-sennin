@@ -1,0 +1,565 @@
+{
+ "$comment": "Demo data (CLAUDE.md 1.2): one practising user, seen on the clock below. Rank names and thresholds move to config/ranks.yaml in Phase 4.",
+ "clock": {
+  "now": "2026-10-27T20:10:00.000Z",
+  "timeZone": "Asia/Jerusalem"
+ },
+ "today": {
+  "greeting": "Tuesday evening",
+  "streak": {
+   "days": 9,
+   "week": [
+    "done",
+    "done",
+    "frozen",
+    "done",
+    "done",
+    "done",
+    "done"
+   ],
+   "weekLabels": [
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun",
+    "Mon",
+    "Tue"
+   ],
+   "freezesLeft": 1
+  },
+  "rank": {
+   "name": "Journeyman",
+   "next": "Adept",
+   "points": 1340,
+   "nextAt": 1600
+  },
+  "boss": {
+   "problemId": "double-entry-ledger",
+   "title": "The double-entry ledger",
+   "line": "Every debit has a twin. Find the ones that do not.",
+   "total": 24,
+   "remaining": 15,
+   "daysLeft": 4
+  },
+  "continue": {
+   "problemId": "ledger-reconciliation",
+   "title": "Ledger reconciliation",
+   "detail": "Last attempt 47, 3 major findings open"
+  },
+  "recommended": [
+   {
+    "problemId": "sliding-window-maximum",
+    "title": "Sliding window maximum",
+    "tags": [
+     "empty-input",
+     "deque"
+    ],
+    "difficulty": 2,
+    "reason": "You missed empty-input cases 4 times in the last four weeks."
+   },
+   {
+    "problemId": "idempotent-payment-capture",
+    "title": "Idempotent payment capture",
+    "tags": [
+     "missing-branch",
+     "fintech"
+    ],
+    "difficulty": 2,
+    "reason": "Unsolved after three attempts. The conflict branch is still missing."
+   },
+   {
+    "problemId": "slowest-endpoints",
+    "title": "Slowest endpoints in an access log",
+    "tags": [
+     "off-by-one",
+     "parsing"
+    ],
+    "difficulty": 1,
+    "reason": "Off-by-one is your second weakest tag. This one has an even-count median."
+   }
+  ],
+  "weakTags": [
+   "missing-branch",
+   "off-by-one",
+   "quadratic-scan"
+  ],
+  "difficultyMax": 3
+ },
+ "weakness": {
+  "scoreMax": 100,
+  "weeks": 8,
+  "tags": [
+   {
+    "tag": "missing-branch",
+    "description": "A case the statement names that the code never handles.",
+    "score": 100,
+    "trend": [
+     0,
+     0,
+     0,
+     15,
+     32,
+     65,
+     77,
+     100
+    ],
+    "lastHits": [
+     {
+      "submissionId": "sub-034",
+      "problemTitle": "The double-entry ledger",
+      "createdAt": "2026-10-24T19:20:00.000Z"
+     },
+     {
+      "submissionId": "sub-029",
+      "problemTitle": "Token bucket rate limiter",
+      "createdAt": "2026-10-21T18:36:00.000Z"
+     },
+     {
+      "submissionId": "sub-028",
+      "problemTitle": "Slowest endpoints in an access log",
+      "createdAt": "2026-10-20T18:47:00.000Z"
+     }
+    ],
+    "practiseProblemId": "idempotent-payment-capture"
+   },
+   {
+    "tag": "off-by-one",
+    "description": "Boundaries one step out: slices, < against <=, the middle of an even count.",
+    "score": 74,
+    "trend": [
+     0,
+     0,
+     0,
+     33,
+     47,
+     44,
+     67,
+     74
+    ],
+    "lastHits": [
+     {
+      "submissionId": "sub-040",
+      "problemTitle": "Ledger reconciliation",
+      "createdAt": "2026-10-27T19:42:00.000Z"
+     },
+     {
+      "submissionId": "sub-037",
+      "problemTitle": "Merge overlapping bookings",
+      "createdAt": "2026-10-26T19:31:00.000Z"
+     },
+     {
+      "submissionId": "sub-028",
+      "problemTitle": "Slowest endpoints in an access log",
+      "createdAt": "2026-10-20T18:47:00.000Z"
+     }
+    ],
+    "practiseProblemId": "merge-overlapping-bookings"
+   },
+   {
+    "tag": "quadratic-scan",
+    "description": "A scan inside a scan where an index, set or deque would do.",
+    "score": 73,
+    "trend": [
+     0,
+     0,
+     0,
+     11,
+     49,
+     58,
+     70,
+     73
+    ],
+    "lastHits": [
+     {
+      "submissionId": "sub-040",
+      "problemTitle": "Ledger reconciliation",
+      "createdAt": "2026-10-27T19:42:00.000Z"
+     },
+     {
+      "submissionId": "sub-030",
+      "problemTitle": "Sliding window maximum",
+      "createdAt": "2026-10-21T19:01:00.000Z"
+     },
+     {
+      "submissionId": "sub-027",
+      "problemTitle": "Fewest transfers between stations",
+      "createdAt": "2026-10-19T17:53:00.000Z"
+     }
+    ],
+    "practiseProblemId": "ledger-reconciliation"
+   },
+   {
+    "tag": "duplicates",
+    "description": "Repeated items counted, matched or dropped the wrong number of times.",
+    "score": 53,
+    "trend": [
+     0,
+     0,
+     0,
+     11,
+     20,
+     14,
+     21,
+     53
+    ],
+    "lastHits": [
+     {
+      "submissionId": "sub-040",
+      "problemTitle": "Ledger reconciliation",
+      "createdAt": "2026-10-27T19:42:00.000Z"
+     },
+     {
+      "submissionId": "sub-034",
+      "problemTitle": "The double-entry ledger",
+      "createdAt": "2026-10-24T19:20:00.000Z"
+     },
+     {
+      "submissionId": "sub-024",
+      "problemTitle": "Ledger reconciliation",
+      "createdAt": "2026-10-16T19:12:00.000Z"
+     }
+    ],
+    "practiseProblemId": "ledger-reconciliation"
+   },
+   {
+    "tag": "empty-input",
+    "description": "Nothing in, something wrong out: empty lists, zero amounts, k larger than n.",
+    "score": 51,
+    "trend": [
+     0,
+     0,
+     0,
+     0,
+     20,
+     61,
+     43,
+     51
+    ],
+    "lastHits": [
+     {
+      "submissionId": "sub-030",
+      "problemTitle": "Sliding window maximum",
+      "createdAt": "2026-10-21T19:01:00.000Z"
+     },
+     {
+      "submissionId": "sub-020",
+      "problemTitle": "Sliding window maximum",
+      "createdAt": "2026-10-12T18:18:00.000Z"
+     },
+     {
+      "submissionId": "sub-015",
+      "problemTitle": "Sliding window maximum",
+      "createdAt": "2026-10-07T18:33:00.000Z"
+     }
+    ],
+    "practiseProblemId": "sliding-window-maximum"
+   },
+   {
+    "tag": "wrong-algorithm",
+    "description": "An approach that is fast but not correct for every input.",
+    "score": 43,
+    "trend": [
+     0,
+     0,
+     0,
+     26,
+     19,
+     37,
+     26,
+     43
+    ],
+    "lastHits": [
+     {
+      "submissionId": "sub-035",
+      "problemTitle": "Fewest coins for change",
+      "createdAt": "2026-10-25T18:44:00.000Z"
+     },
+     {
+      "submissionId": "sub-018",
+      "problemTitle": "Fewest coins for change",
+      "createdAt": "2026-10-10T18:55:00.000Z"
+     },
+     {
+      "submissionId": "sub-006",
+      "problemTitle": "Fewest coins for change",
+      "createdAt": "2026-09-28T18:37:00.000Z"
+     }
+    ],
+    "practiseProblemId": "fewest-coins"
+   },
+   {
+    "tag": "rounding",
+    "description": "Cents lost or invented by rounding each part on its own.",
+    "score": 40,
+    "trend": [
+     0,
+     0,
+     0,
+     25,
+     18,
+     37,
+     26,
+     40
+    ],
+    "lastHits": [
+     {
+      "submissionId": "sub-031",
+      "problemTitle": "Split a bill to the cent",
+      "createdAt": "2026-10-22T18:24:00.000Z"
+     },
+     {
+      "submissionId": "sub-019",
+      "problemTitle": "Split a bill to the cent",
+      "createdAt": "2026-10-11T17:40:00.000Z"
+     },
+     {
+      "submissionId": "sub-005",
+      "problemTitle": "Split a bill to the cent",
+      "createdAt": "2026-09-27T18:02:00.000Z"
+     }
+    ],
+    "practiseProblemId": "split-bill-to-the-cent"
+   },
+   {
+    "tag": "overflow",
+    "description": "Values past the range or precision of the number type.",
+    "score": 20,
+    "trend": [
+     0,
+     0,
+     0,
+     12,
+     9,
+     19,
+     13,
+     20
+    ],
+    "lastHits": [
+     {
+      "submissionId": "sub-031",
+      "problemTitle": "Split a bill to the cent",
+      "createdAt": "2026-10-22T18:24:00.000Z"
+     },
+     {
+      "submissionId": "sub-019",
+      "problemTitle": "Split a bill to the cent",
+      "createdAt": "2026-10-11T17:40:00.000Z"
+     },
+     {
+      "submissionId": "sub-005",
+      "problemTitle": "Split a bill to the cent",
+      "createdAt": "2026-09-27T18:02:00.000Z"
+     }
+    ],
+    "practiseProblemId": "split-bill-to-the-cent"
+   },
+   {
+    "tag": "integer-division",
+    "description": "Division that truncates where the statement wants a fraction.",
+    "score": 18,
+    "trend": [
+     0,
+     0,
+     0,
+     11,
+     8,
+     16,
+     12,
+     18
+    ],
+    "lastHits": [
+     {
+      "submissionId": "sub-029",
+      "problemTitle": "Token bucket rate limiter",
+      "createdAt": "2026-10-21T18:36:00.000Z"
+     },
+     {
+      "submissionId": "sub-016",
+      "problemTitle": "Token bucket rate limiter",
+      "createdAt": "2026-10-08T19:14:00.000Z"
+     },
+     {
+      "submissionId": "sub-003",
+      "problemTitle": "Token bucket rate limiter",
+      "createdAt": "2026-09-25T18:44:00.000Z"
+     }
+    ],
+    "practiseProblemId": "token-bucket-limiter"
+   },
+   {
+    "tag": "mutation-order",
+    "description": "State recorded before it is read, or changed while it is walked.",
+    "score": 11,
+    "trend": [
+     0,
+     0,
+     0,
+     0,
+     12,
+     8,
+     16,
+     11
+    ],
+    "lastHits": [
+     {
+      "submissionId": "sub-022",
+      "problemTitle": "Two transfers that net to zero",
+      "createdAt": "2026-10-14T18:27:00.000Z"
+     },
+     {
+      "submissionId": "sub-011",
+      "problemTitle": "Two transfers that net to zero",
+      "createdAt": "2026-10-03T19:03:00.000Z"
+     }
+    ],
+    "practiseProblemId": "transfers-that-net-to-zero"
+   },
+   {
+    "tag": "dead-code",
+    "description": "Code that runs and changes nothing.",
+    "score": 10,
+    "trend": [
+     0,
+     0,
+     0,
+     4,
+     7,
+     5,
+     7,
+     10
+    ],
+    "lastHits": [
+     {
+      "submissionId": "sub-040",
+      "problemTitle": "Ledger reconciliation",
+      "createdAt": "2026-10-27T19:42:00.000Z"
+     },
+     {
+      "submissionId": "sub-024",
+      "problemTitle": "Ledger reconciliation",
+      "createdAt": "2026-10-16T19:12:00.000Z"
+     },
+     {
+      "submissionId": "sub-012",
+      "problemTitle": "Ledger reconciliation",
+      "createdAt": "2026-10-04T18:26:00.000Z"
+     }
+    ],
+    "practiseProblemId": "ledger-reconciliation"
+   },
+   {
+    "tag": "complexity",
+    "description": "Correct, but doing more work than the target needs.",
+    "score": 5,
+    "trend": [
+     0,
+     0,
+     0,
+     0,
+     4,
+     3,
+     2,
+     5
+    ],
+    "lastHits": [
+     {
+      "submissionId": "sub-033",
+      "problemTitle": "Top merchants by volume",
+      "createdAt": "2026-10-24T18:16:00.000Z"
+     },
+     {
+      "submissionId": "sub-013",
+      "problemTitle": "Top merchants by volume",
+      "createdAt": "2026-10-05T17:57:00.000Z"
+     }
+    ],
+    "practiseProblemId": "top-merchants"
+   }
+  ]
+ },
+ "boss": {
+  "problemId": "double-entry-ledger",
+  "title": "The double-entry ledger",
+  "line": "Every debit has a twin. Find the ones that do not.",
+  "total": 24,
+  "fallen": 9,
+  "daysLeft": 4,
+  "defeatedAt": null,
+  "lastSubmissionId": "sub-034",
+  "record": [
+   {
+    "weekOf": "2026-10-19",
+    "text": "The reconciling clerk. Defeated Thu 22 Oct, 20 of 20 cases.",
+    "defeated": true
+   },
+   {
+    "weekOf": "2026-10-12",
+    "text": "The overdraft gate. Unbeaten. 17 of 20 cases passed.",
+    "defeated": false
+   },
+   {
+    "weekOf": "2026-10-05",
+    "text": "The settlement queue. Defeated Sat 10 Oct, 18 of 18 cases.",
+    "defeated": true
+   },
+   {
+    "weekOf": "2026-09-28",
+    "text": "The currency table. Defeated Sun 4 Oct, 22 of 22 cases.",
+    "defeated": true
+   }
+  ]
+ },
+ "ranks": {
+  "ladder": [
+   {
+    "id": "apprentice",
+    "name": "Apprentice",
+    "threshold": 0,
+    "description": "Submits, reads the sheet, fixes what it cites."
+   },
+   {
+    "id": "journeyman",
+    "name": "Journeyman",
+    "threshold": 800,
+    "description": "Passes most hidden tests on the first attempt."
+   },
+   {
+    "id": "adept",
+    "name": "Adept",
+    "threshold": 1600,
+    "description": "Meets the target complexity without being told."
+   },
+   {
+    "id": "examiner",
+    "name": "Examiner",
+    "threshold": 3200,
+    "description": "Finds the breaking input before the judge does."
+   },
+   {
+    "id": "master",
+    "name": "Master",
+    "threshold": 6400,
+    "description": "Clean sheets across every family of problem."
+   }
+  ],
+  "currentRankId": "journeyman",
+  "points": 1340,
+  "streak": {
+   "current": 9,
+   "best": 16,
+   "freezesLeft": 1
+  },
+  "bossesDefeated": 3,
+  "solvedClean": 6
+ },
+ "admin": {
+  "contentVersion": "demo-2026.10",
+  "importStatus": "Imported 12 problems, 0 errors",
+  "importedAt": "2026-10-26T18:04:00.000Z",
+  "rubricVersion": "v1",
+  "llmMode": "fixture",
+  "spendMonthUsd": 0,
+  "spendCapUsd": 5
+ }
+}

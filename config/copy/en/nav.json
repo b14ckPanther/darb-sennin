@@ -1,0 +1,29 @@
+{
+  "$comment": "Navigation labels and the keyboard shortcut sheet (UI_DESIGN.md 3).",
+  "label": "Main",
+  "skip": "Skip to content",
+  "today": "Today",
+  "library": "Library",
+  "boss": "Boss",
+  "profile": "Profile",
+  "weakness": "Weakness",
+  "history": "History",
+  "ranks": "Ranks",
+  "settings": "Settings",
+  "back": "Back",
+  "shortcuts": {
+    "title": "Keyboard shortcuts",
+    "open": "Keyboard shortcuts",
+    "items": [
+      { "keys": ["Ctrl or Cmd", "Enter"], "does": "Submit" },
+      { "keys": ["Ctrl or Cmd", "'"], "does": "Run samples" },
+      { "keys": ["J"], "does": "Next finding" },
+      { "keys": ["K"], "does": "Previous finding" },
+      { "keys": ["E"], "does": "Jump to the evidence of the current finding" },
+      { "keys": ["G", "L"], "does": "Go to the library" },
+      { "keys": ["G", "T"], "does": "Go to Today" },
+      { "keys": ["Esc", "Tab"], "does": "Leave the editor" },
+      { "keys": ["?"], "does": "Show this sheet" }
+    ]
+  }
+}
