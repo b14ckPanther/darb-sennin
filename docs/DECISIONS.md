@@ -3,7 +3,7 @@
 Format: number, title, status (`fixed` = from Nour's roadmap or rules; `proposed` = confirm with Nour in Phase 1; `accepted` / `rejected` after Phase 1), context, decision, consequences. Add new ADRs at the bottom; never rewrite an accepted one, supersede it.
 
 ## ADR-001 Stack: C#, ASP.NET Core, MongoDB, Azure — fixed
-Context: roadmap; mirrors Israeli fintech .NET roles (ADR-027). Decision: C# 13 language level or newer (see ADR-013), ASP.NET Core minimal APIs, MongoDB, Azure. Consequences: all services are .NET; the web client is the only non-.NET part.
+Context: roadmap; mirrors Israeli enterprise .NET roles (ADR-027). Decision: C# 13 language level or newer (see ADR-013), ASP.NET Core minimal APIs, MongoDB, Azure. Consequences: all services are .NET; the web client is the only non-.NET part.
 
 ## ADR-002 User code runs only in hardened Docker sandboxes — fixed
 Context: brief. Decision: one throwaway container per run, `--network none`, CPU/memory/pids/wall-clock limits, custom seccomp, read-only root, non-root user, all caps dropped, enforced by a profile validator (`SECURITY.md`). Consequences: judge needs a Docker host; Azure Container Apps alone cannot host it.
@@ -94,8 +94,8 @@ Decision: Today offers one problem from the weakest tag; the loop is submit, rea
 ## ADR-026 Reviewer voice is strict, no humour — accepted (Q3)
 Decision: plain statements, evidence first, no humour, no exclamation marks; tone rules live in the rubric. Cost if wrong: low (rubric is data).
 
-## ADR-027 Problem families: classic, practical, fintech — accepted, **changed** (Q11)
-Decision: as recommended, but the public repo no longer names a single employer. Why changed: README and docs tied the stack to one named employer's intern role; a recruiter from any other company reads that as a project built for someone else. Wording is now "Israeli fintech and enterprise .NET roles". Cost if wrong: low.
+## ADR-027 Problem families: classic, practical, games and sport — accepted, **changed** (Q11, revised 2026-10-27)
+Decision: as recommended, but the public repo no longer names a single employer. Why changed: README and docs tied the stack to one named employer's intern role; a recruiter from any other company reads that as a project built for someone else. Wording is now "Israeli enterprise and product .NET roles". Revised 2026-10-27 (ADR-051): the third family is games and sport; Sennin's content stays on neutral themes. Cost if wrong: low.
 
 ## ADR-028 Weekly boss: multi-part, untimed, no penalty — accepted (Q13)
 Decision: the boss stays until beaten; losing costs nothing; a losing week is shown honestly. Cost if wrong: low.
@@ -113,7 +113,7 @@ Decision: three runtimes as recommended, with current versions. Why changed: Pyt
 Decision: as recommended; a missed day never resets rank or points (anti-goal: grind for grind's sake). Cost if wrong: low (config).
 
 ## ADR-033 Reviewer: Anthropic Claude API, claude-sonnet-5-5, 5 USD monthly cap — accepted, **changed** (Q6)
-Decision: provider as recommended, now with explicit models: `claude-sonnet-5-5` for review and pseudo-code translation, `claude-haiku-5-5` as the configured low-budget fallback, all ids in config. Hard cap 5 USD per month in `config/limits.yaml`; recorded fixtures in CI. Why changed: the earlier answer named no model. Sizing: a review is roughly 6k input and 1.5k output tokens, about 0.03 USD at Sonnet 5.5 rates (2 / 10 USD per million tokens), so 60 reviews a month stay near 2 USD. Phase 7 reads the `claude-api` skill again before writing code (structured output, refusal handling, fallbacks). Enabling a live key still needs Nour's "yes". Cost if wrong: low (model id is config).
+Decision: provider as recommended, now with explicit models: `claude-sonnet-5-5` for review and pseudo-code translation, `claude-haiku-5-5` as the configured fallback when spend runs low, all ids in config. Hard cap 5 USD per month in `config/limits.yaml`; recorded fixtures in CI. Why changed: the earlier answer named no model. Sizing: a review is roughly 6k input and 1.5k output tokens, about 0.03 USD at Sonnet 5.5 rates (2 / 10 USD per million tokens), so 60 reviews a month stay near 2 USD. Phase 7 reads the `claude-api` skill again before writing code (structured output, refusal handling, fallbacks). Enabling a live key still needs Nour's "yes". Cost if wrong: low (model id is config).
 
 ## ADR-034 Rank names: Apprentice, Journeyman, Adept, Examiner, Master — accepted (Q16)
 Decision: names and thresholds in `config/ranks.yaml`. Severe register, no belts or kyu/dan. Cost if wrong: low.
@@ -128,7 +128,7 @@ Decision: `LangVersion 14` in `Directory.Build.props`; README says C# 14. Build 
 Decision: all data access through `MongoDB.Driver` 3.x. Why changed: the boss transaction in Phase 8 updates profile, boss and outbox atomically; with EF Core on two aggregates and the driver on the outbox, one transaction would span two data-access stacks and two session models. Two ways to reach the same database is also harder to defend in an interview than one used well. EF Core is not part of the stack listed in `VISION.md` goal 7. Cost if wrong: low to medium (repositories hide the choice).
 
 ## ADR-038 Hosting: Atlas M0 on Azure, judge VM with gVisor, Container Apps API — accepted (Q9, Q10)
-Decision: as recommended. Nothing is created without Nour's "yes" and a budget alert. Cost if wrong: medium (behind `ISandbox` and repositories).
+Decision: as recommended. Nothing is created without Nour's "yes" and a spend alert. Cost if wrong: medium (behind `ISandbox` and repositories).
 
 ## ADR-039 Private content repo, Darb Budokai v1 mapping, React 19 + Vite, sennin.zangeel.dev — accepted (Q5, Q12, Q19, Q20)
 Decision: as recommended. Creating the content repo and the DNS record are outward actions waiting for Nour. Cost if wrong: low.
@@ -150,7 +150,7 @@ Decision: Solar (CC BY 4.0) with two variants, linear at rest and bold duotone f
 Decision: `?view=catalogue` renders every component with its states on demo data, in both themes with a theme switch. Playwright runs axe over it and over the comps at desktop and 390 px. Why: one toolchain fewer, the catalogue uses the real tokens, fonts and copy, and the same axe run covers it. Cost if wrong: low (components are independent of the catalogue; Ladle can be added later).
 
 ## ADR-044 Copy, comp data and interface behaviour values live in config — accepted
-Decision: interface copy in `config/copy/en/ui.json`, comp seed in `config/seed/demo/phase-02-comps.json` (shown under the "Demo data" banner), sheet detents and toast duration in `config/ui/behaviour.json`; the web client imports them through the `@config` alias. Schemas arrive in Phase 4. Motion springs, durations and gesture thresholds are design tokens in `src/design/motion.ts` and `tokens.css`. Cost if wrong: low.
+Decision: interface copy in `config/copy/en/ui.json`, comp seed in `config/seed/demo/phase-02-comps.json` (shown under the "Demo data" banner; removed 2026-10-27, the comps now read the Phase 3 seed), sheet detents and toast duration in `config/ui/behaviour.json`; the web client imports them through the `@config` alias. Schemas arrive in Phase 4. Motion springs, durations and gesture thresholds are design tokens in `src/design/motion.ts` and `tokens.css`. Cost if wrong: low.
 
 ## Phase 3 decisions (2026-10-27)
 
@@ -165,7 +165,7 @@ Decision: `src/lib/router.ts` (pushState, a `Link`, pattern matching, focus move
 ## ADR-047 CodeMirror 6, Vim on demand — accepted
 Decision: CodeMirror 6 with Python, C# (legacy clike mode) and JavaScript grammars loaded per language; Vim (`@replit/codemirror-vim`) loads only when chosen in Settings. Colours come from tokens. Escape then Tab leaves the editor; in Vim mode Escape twice (verified in a browser test). Cost if wrong: low.
 
-## ADR-048 Workspace performance budget — accepted, with a measured gap
+## ADR-048 Workspace performance target — accepted, with a measured gap
 Decision: the demo backend, catalogue, Vim and grammars load on demand, Motion runs through `LazyMotion` with `m` elements, and the workspace paints its code as text before CodeMirror arrives. Measured (Lighthouse 12.8, local preview build): desktop performance 99, mobile (simulated slow 4G, 4x CPU) 87, accessibility 100, TBT 0 ms, CLS 0. The plan's target of 90 is met on desktop and missed by 3 points on the throttled mobile preset; the remaining LCP cost is the React and Query runtime on a throttled CPU. Ruling: accept for the prototype and revisit in Phase 12 (hardening) with the real API, where the demo seed leaves the bundle. Cost if wrong: low.
 
 ## ADR-049 Demo grading numbers live only in the seed — accepted
@@ -173,3 +173,6 @@ Decision: the prototype's scores are computed when the seed is authored and stor
 
 ## ADR-050 Phone Profile tab gathers Weakness, History, Ranks and Settings — accepted
 Decision: the four-tab bar stays Today, Library, Boss, Profile (UI_DESIGN.md 5); Profile is a grouped list into the other four. Desktop shows them in the top bar. Cost if wrong: low.
+
+## ADR-051 Neutral demo themes — accepted (Nour, 2026-10-27)
+Decision: Nour's standing rule applies to Sennin: demo content uses neutral themes (games and sport, maps and routes, text, scheduling, logs and events, music). The third problem family is "games and sport". Seven demo problems were re-themed with the same teaching point, weakness tags, difficulty, case counts and recorded results, so the weakness profile, boss week, ranks and history are unchanged. The unused Phase 2 comp seed was removed. Cost if wrong: low.

@@ -8,7 +8,7 @@ const onPhone = () => test.info().project.name === 'phone'
 const screens = [
   ['today', '/'],
   ['library', '/library'],
-  ['workspace', '/problems/ledger-reconciliation'],
+  ['workspace', '/problems/broadcast-log-check'],
   ['verdict', '/submissions/sub-040'],
   ['verdict earned', '/submissions/sub-038'],
   ['pseudo verdict', '/submissions/sub-039'],
@@ -68,7 +68,7 @@ for (const [name, path] of screens) {
 }
 
 test('submit and watch the verdict resolve, evidence before the score', async ({ page }) => {
-  await page.goto('/problems/ledger-reconciliation')
+  await page.goto('/problems/broadcast-log-check')
   await page.getByRole('button', { name: 'Submit' }).click()
   const sheet = page
     .getByRole('article')
@@ -91,7 +91,7 @@ test('submit and watch the verdict resolve, evidence before the score', async ({
 
 test('fixed code earns the stamp, and the new attempt lands in history', async ({ page }) => {
   test.skip(onPhone(), 'covered on desktop; the editor input is the same on phones')
-  await page.goto('/problems/ledger-reconciliation')
+  await page.goto('/problems/broadcast-log-check')
   const editor = page.locator('.cm-content')
   await editor.click()
   await page.keyboard.press('ControlOrMeta+a')
@@ -100,9 +100,9 @@ test('fixed code earns the stamp, and the new attempt lands in history', async (
   await expect(page.getByText('Earned', { exact: true })).toBeVisible({ timeout: 15_000 })
   // The demo backend lives in memory, so move within the app rather than reloading it.
   await page.getByRole('link', { name: 'History', exact: true }).click()
-  await expect(page.getByRole('button', { name: /Ledger reconciliation/ }).first()).toContainText(
-    'Accepted',
-  )
+  await expect(
+    page.getByRole('button', { name: /Missing tracks in a broadcast log/ }).first(),
+  ).toContainText('Accepted')
 })
 
 test('jump from a finding chip to its evidence by keyboard', async ({ page }) => {
@@ -148,14 +148,14 @@ test('keyboard only: skip link, nav, shortcut sheet and the G then L jump', asyn
   await page.keyboard.press('l')
   await expect(page).toHaveURL(/\/library$/)
   await page.getByRole('searchbox', { name: 'Search titles' }).focus()
-  await page.keyboard.type('coins')
+  await page.keyboard.type('tiles')
   await page.keyboard.press('Tab')
-  await expect(page.getByRole('button', { name: /Fewest coins for change/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: /Fewest tiles for a row/ })).toBeVisible()
 })
 
 test('the editor never traps Tab: Escape then Tab leaves it', async ({ page }) => {
   test.skip(onPhone(), 'hardware keyboard path')
-  await page.goto('/problems/fewest-coins')
+  await page.goto('/problems/fewest-tiles')
   await page.locator('.cm-content').click()
   await page.keyboard.press('Tab')
   await expect(page.locator('.cm-content')).toBeFocused()
@@ -170,7 +170,7 @@ test('with Vim on, the editor still lets go of the keyboard', async ({ page }) =
   await page.evaluate(() => {
     localStorage.setItem('sennin.settings', JSON.stringify({ keymap: 'vim' }))
   })
-  await page.goto('/problems/fewest-coins')
+  await page.goto('/problems/fewest-tiles')
   await page.locator('.cm-content').click()
   await expect(page.locator('.cm-vimMode')).toBeAttached()
   await page.keyboard.press('Escape')
@@ -180,15 +180,17 @@ test('with Vim on, the editor still lets go of the keyboard', async ({ page }) =
 })
 
 test('run samples reports each sample in words', async ({ page }) => {
-  await page.goto('/problems/ledger-reconciliation')
+  await page.goto('/problems/broadcast-log-check')
   await page.getByRole('button', { name: 'Run samples' }).click()
   await expect(page.getByText('1 of 2 samples pass')).toBeVisible()
 })
 
 test('library filters live in the URL and the filter sheet opens on phones', async ({ page }) => {
   await page.goto('/library?status=clean')
-  await expect(page.getByRole('button', { name: /Ledger reconciliation/ })).toHaveCount(0)
-  await expect(page.getByRole('button', { name: /Fewest coins for change/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: /Missing tracks in a broadcast log/ })).toHaveCount(
+    0,
+  )
+  await expect(page.getByRole('button', { name: /Fewest tiles for a row/ })).toBeVisible()
   if (onPhone()) {
     await page.getByRole('button', { name: /Filters/ }).click()
     await expect(page.getByRole('dialog', { name: 'Filters' })).toBeVisible()
@@ -198,7 +200,7 @@ test('library filters live in the URL and the filter sheet opens on phones', asy
 test.describe('empty and error states', () => {
   test('a paused judge queues the run and says so', async ({ page }) => {
     await setDemo(page, { judgePaused: true })
-    await page.goto('/problems/fewest-coins')
+    await page.goto('/problems/fewest-tiles')
     await page.getByRole('button', { name: 'Submit' }).click()
     await expect(page.getByText('Submission queued. It runs when the judge is back.')).toBeVisible()
     await expect(
@@ -208,7 +210,7 @@ test.describe('empty and error states', () => {
 
   test('a reviewer outage keeps the grade and says why there are no findings', async ({ page }) => {
     await setDemo(page, { reviewerDown: true })
-    await page.goto('/problems/fewest-coins')
+    await page.goto('/problems/fewest-tiles')
     await page.getByRole('button', { name: 'Submit' }).click()
     await expect(
       page
@@ -240,7 +242,7 @@ test.describe('reduced motion', () => {
 
   test('the verdict opens split at once and rows switch without transitions', async ({ page }) => {
     test.skip(onPhone(), 'the split layout is desktop')
-    await page.goto('/problems/ledger-reconciliation')
+    await page.goto('/problems/broadcast-log-check')
     await page.getByRole('button', { name: 'Submit' }).click()
     const verdict = page.getByRole('region', { name: 'Verdict' })
     await expect(verdict).toBeVisible()

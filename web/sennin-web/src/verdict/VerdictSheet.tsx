@@ -225,7 +225,7 @@ function liveSummary(cases: (CaseResult | null)[], copy: ReturnType<typeof useCo
 }
 
 /**
- * The signature (docs/UI_DESIGN.md section 1): ruled header, test ledger resolving case by case,
+ * The signature (docs/UI_DESIGN.md section 1): ruled header, list of hidden tests resolving case by case,
  * the first failure opening into evidence, the complexity plate, findings, and the score last.
  */
 export function VerdictSheet({
@@ -334,11 +334,11 @@ export function VerdictSheet({
       </header>
       <div className="space-y-8">
         <Section
-          id="ledger"
-          title={c.ledger}
+          id="tests"
+          title={c.tests}
           aside={
             <span className="num text-footnote text-ink-muted">
-              {fill(copy.verdict.ledgerProgress, { done, total: cases.length })}
+              {fill(copy.verdict.testsProgress, { done, total: cases.length })}
             </span>
           }
         >
@@ -362,7 +362,7 @@ export function VerdictSheet({
               <Waiting text={c.queued} />
             </div>
           ) : null}
-          <ol aria-label={copy.verdict.ledgerLabel} className="m-0 list-none p-0">
+          <ol aria-label={copy.verdict.testsLabel} className="m-0 list-none p-0">
             {cases.map((item, i) => {
               const id = `case-${String(i + 1).padStart(2, '0')}`
               const evidence = i === firstFail ? item?.evidence : undefined

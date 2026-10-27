@@ -9,12 +9,12 @@
 | Q3 | How harsh is "never flatters"? | Strict: plain statements, evidence first, no humour. | 026 |
 | Q4 | Who uses it? | Owner submits (GitHub allow-list); visitors get a read-only demo on seed data; no leaderboard. **Changed.** | 029 |
 | Q5 | Where do hidden tests live? | Private repo `b14ckPanther/darb-sennin-content` (created only with Nour's "yes"). | 039 |
-| Q6 | Reviewer provider and budget | Anthropic Claude API, `claude-sonnet-5-5` (fallback `claude-haiku-5-5`), 5 USD monthly cap, fixtures in CI. **Changed** (model named). | 033 |
+| Q6 | Reviewer provider and spend cap | Anthropic Claude API, `claude-sonnet-5-5` (fallback `claude-haiku-5-5`), 5 USD monthly cap, fixtures in CI. **Changed** (model named). | 033 |
 | Q7 | Pseudo code | Translated to Python, run, labelled, translation shown, disputable. | 030 |
 | Q8 | EF Core | Not used; `MongoDB.Driver` only. **Changed.** | 037 |
 | Q9 | Judge hosting | Small Linux VM, rootless Docker + gVisor, started when needed. | 038 |
 | Q10 | MongoDB hosting | Atlas M0 in an Azure region. | 038 |
-| Q11 | Which problems? | Classic, practical and a fintech set; no employer named in the repo. **Changed.** | 027 |
+| Q11 | Which problems? | Classic, practical and a games and sport set (revised by ADR-051); no employer named in the repo. **Changed.** | 027 |
 | Q12 | Darb Budokai contract | Map onto `review.completed` v1. | 039 |
 | Q13 | Weekly boss | Multi-part, untimed, no penalty, stays until beaten. | 028 |
 | Q14 | Languages in v1 | Python 3.14, C# 14, JavaScript on Node 24 LTS. **Changed.** | 031 |

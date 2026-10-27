@@ -36,7 +36,7 @@ Over weeks it learns which mistakes Nour repeats (off-by-one, empty input, integ
 
 ## 5. Why this stack for the Israeli junior market
 
-- C# and .NET are common in Israeli fintech and enterprise. Israeli fintech and enterprise .NET roles ask for .NET, MongoDB and Azure; this project is that stack end to end.
+- C# and .NET are common in Israeli enterprise and product companies. Israeli enterprise and product .NET roles ask for .NET, MongoDB and Azure; this project is that stack end to end.
 - From 431 Israeli listings: Azure 72, MongoDB 65, Microservices 127, Cloud 256, AI 287. Darb Sennin touches all of them with real depth: a queue-backed worker service, a document store with real modelling choices, cloud deployment, and an LLM used with a rubric and evidence instead of as a chatbot.
 - Sandboxed execution of untrusted code is a recognised hard backend problem. Being able to explain seccomp, cgroups, namespaces and prompt-injection defences in an interview is rare for a junior.
 - It fills the main gap in Nour's GitHub, which is about 90% Next.js, Supabase and TypeScript. This repo shows they can work in a typed, compiled, enterprise backend stack.

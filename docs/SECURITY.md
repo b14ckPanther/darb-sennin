@@ -11,7 +11,7 @@ Status: the requirement (hardened Docker sandboxes with no network, CPU/memory/t
 | Hidden tests and expected outputs | Leaking them makes grades meaningless. |
 | Other submissions and profiles | Privacy, and cheating. |
 | Score integrity | The product's whole promise is honest grades. |
-| Availability and cost | A single submission must not exhaust the judge, the queue or the LLM budget. |
+| Availability and cost | A single submission must not exhaust the judge, the queue or the LLM spend cap. |
 
 ## 2. Threats (STRIDE-style, condensed)
 

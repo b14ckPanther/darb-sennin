@@ -7,9 +7,13 @@ describe('ListRow', () => {
   it('opens its item from the row', async () => {
     const onSelect = vi.fn()
     render(
-      <ListRow title="Ledger reconciliation" subtitle="hashing, sorting" onSelect={onSelect} />,
+      <ListRow
+        title="Missing tracks in a broadcast log"
+        subtitle="hashing, sorting"
+        onSelect={onSelect}
+      />,
     )
-    await userEvent.click(screen.getByRole('button', { name: /Ledger reconciliation/ }))
+    await userEvent.click(screen.getByRole('button', { name: /Missing tracks in a broadcast log/ }))
     expect(onSelect).toHaveBeenCalledOnce()
   })
 
@@ -17,7 +21,7 @@ describe('ListRow', () => {
     const onPin = vi.fn()
     render(
       <ListRow
-        title="Ledger reconciliation"
+        title="Missing tracks in a broadcast log"
         onSelect={() => undefined}
         actions={[
           { id: 'pin', label: 'Pin', icon: 'pin', onAction: onPin },
@@ -26,7 +30,7 @@ describe('ListRow', () => {
       />,
     )
     expect(
-      screen.getByRole('group', { name: 'Actions for Ledger reconciliation' }),
+      screen.getByRole('group', { name: 'Actions for Missing tracks in a broadcast log' }),
     ).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Pin' }))
     expect(onPin).toHaveBeenCalledOnce()

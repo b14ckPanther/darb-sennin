@@ -2,12 +2,12 @@
  "$comment": "Demo data (CLAUDE.md 1.2). Twelve original problems for the Phase 3 prototype; hidden tests are not here, only their recorded outcomes in submissions.json.",
  "problems": [
   {
-   "id": "ledger-reconciliation",
-   "title": "Ledger reconciliation",
-   "family": "fintech",
+   "id": "broadcast-log-check",
+   "title": "Missing tracks in a broadcast log",
+   "family": "practical",
    "tags": [
     "hashing",
-    "fintech"
+    "music"
    ],
    "difficulty": 2,
    "isBoss": false,
@@ -17,29 +17,29 @@
    "pinned": true,
    "hidden": false,
    "contentVersion": "demo-2026.10",
-   "statementMd": "Your ledger records every payment you expect to clear. The bank sends a statement of what actually cleared. An entry is **confirmed** when the statement holds a line with the same reference and the same amount in cents.\n\nReturn the ids of ledger entries the statement does not confirm, in ledger order.\n\nA statement line confirms at most one ledger entry. If the ledger holds the same reference and amount twice, the statement must hold it twice too.",
+   "statementMd": "A radio station plans a playlist: each entry is a track id and its length in seconds. The play log records what actually went on air. A planned track is **confirmed** when the log holds a line with the same track id and the same length.\n\nReturn the ids of planned tracks the log does not confirm, in playlist order.\n\nA log line confirms at most one planned track. If the playlist holds the same track twice, the log must hold it twice too.",
    "constraints": [
-    "0 ≤ entries, statement lines ≤ 2 · 10^5",
-    "Amounts are whole cents, 1 ≤ cents ≤ 10^9",
-    "References are 1 to 16 letters and digits"
+    "0 ≤ planned tracks, log lines ≤ 2 · 10^5",
+    "Lengths are whole seconds, 1 ≤ seconds ≤ 10^6",
+    "Track ids are 1 to 16 letters and digits"
    ],
    "samples": [
     {
-     "input": "entries: [(a1, 1250), (a2, 900), (a3, 4000)]\nstatement: [(a1, 1250), (a3, 4000)]",
-     "output": "[\"a2\"]",
-     "note": "a2 never cleared."
+     "input": "planned: [(t1, 215), (t2, 190), (t3, 242)]\naired: [(t1, 215), (t3, 242)]",
+     "output": "[\"t2\"]",
+     "note": "t2 never went on air."
     },
     {
-     "input": "entries: [(a1, 500), (a1, 500)]\nstatement: [(a1, 500)]",
-     "output": "[\"a1\"]",
-     "note": "One line confirms one entry."
+     "input": "planned: [(t1, 180), (t1, 180)]\naired: [(t1, 180)]",
+     "output": "[\"t1\"]",
+     "note": "One log line confirms one planned track."
     }
    ],
    "starters": {
-    "python": "def reconcile(entries, statement):\n    \"\"\"Return ids in the ledger that the bank statement does not confirm.\"\"\"\n    ...\n",
-    "csharp": "public static List<string> Reconcile(List<Entry> entries, List<Line> statement)\n{\n    throw new NotImplementedException();\n}\n",
-    "javascript": "export function reconcile(entries, statement) {\n  // return ids the statement does not confirm\n}\n",
-    "pseudo": "function reconcile(entries, statement)\n  // return ids the statement does not confirm\nend\n"
+    "python": "def missing_tracks(planned, aired):\n    \"\"\"Return planned tracks that the play log does not confirm.\"\"\"\n    ...\n",
+    "csharp": "public static List<string> MissingTracks(List<Track> planned, List<Play> aired)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function missingTracks(planned, aired) {\n  // return ids the log does not confirm\n}\n",
+    "pseudo": "function missingTracks(planned, aired)\n  // return ids the log does not confirm\nend\n"
    },
    "limits": {
     "timeMs": 2000,
@@ -48,7 +48,7 @@
    "caseCount": 12,
    "draft": {
     "language": "python",
-    "code": "def reconcile(entries, statement):\n    \"\"\"Return ids in the ledger that the bank statement does not confirm.\"\"\"\n    seen = []\n    for entry in entries:\n        seen.append((entry.id, entry.cents))\n\n    missing = []\n    for line in statement:\n        pass\n\n    for entry_id, cents in seen:\n        matched = False\n        for line in statement:\n            if line.ref == entry_id and line.cents == cents:\n                matched = True\n        if not matched:\n            missing.append(entry_id)\n    return missing[:-1]"
+    "code": "def missing_tracks(planned, aired):\n    \"\"\"Return planned tracks that the play log does not confirm.\"\"\"\n    seen = []\n    for track in planned:\n        seen.append((track.id, track.seconds))\n\n    missing = []\n    for line in aired:\n        pass\n\n    for track_id, seconds in seen:\n        matched = False\n        for line in aired:\n            if line.track == track_id and line.seconds == seconds:\n                matched = True\n        if not matched:\n            missing.append(track_id)\n    return missing[:-1]"
    }
   },
   {
@@ -148,12 +148,12 @@
    }
   },
   {
-   "id": "idempotent-payment-capture",
-   "title": "Idempotent payment capture",
-   "family": "fintech",
+   "id": "idempotent-score-submit",
+   "title": "Idempotent score submission",
+   "family": "games",
    "tags": [
     "hashing",
-    "fintech"
+    "games"
    ],
    "difficulty": 2,
    "isBoss": false,
@@ -163,27 +163,27 @@
    "pinned": false,
    "hidden": false,
    "contentVersion": "demo-2026.10",
-   "statementMd": "A payment gateway retries requests when the network drops, so the same capture can arrive more than once. Each request carries an idempotency key, an account and an amount in cents.\n\nProcess the requests in order. The first request with a key captures the amount. A later request with the same key and the same account and amount is a retry: it captures nothing and returns the first result. A later request with the same key but a different account or amount is rejected as a conflict.\n\nReturn the balance captured per account, and the list of rejected request indexes.",
+   "statementMd": "A game client resends a score when the network drops, so the same submission can reach the leaderboard more than once. Each request carries a request key, a player and a number of points.\n\nProcess the requests in order. The first request with a key records its points. A later request with the same key and the same player and points is a retry: it records nothing. A later request with the same key but a different player or points is rejected as a conflict.\n\nReturn the points recorded per player, and the list of rejected request indexes.",
    "constraints": [
     "0 ≤ requests ≤ 2 · 10^5",
-    "1 ≤ cents ≤ 10^9",
-    "Balances fit in a 64-bit signed integer"
+    "1 ≤ points ≤ 10^9",
+    "Totals fit in a 64-bit signed integer"
    ],
    "samples": [
     {
-     "input": "[(k1, acc7, 1200), (k1, acc7, 1200), (k2, acc7, 300)]",
-     "output": "balances: {acc7: 1500}\nrejected: []"
+     "input": "[(k1, ana, 1200), (k1, ana, 1200), (k2, ana, 300)]",
+     "output": "totals: {ana: 1500}\nrejected: []"
     },
     {
-     "input": "[(k1, acc7, 1200), (k1, acc7, 1300)]",
-     "output": "balances: {acc7: 1200}\nrejected: [1]"
+     "input": "[(k1, ana, 1200), (k1, ana, 1300)]",
+     "output": "totals: {ana: 1200}\nrejected: [1]"
     }
    ],
    "starters": {
-    "python": "def capture(requests):\n    ...\n",
-    "csharp": "public static Result Capture(List<Request> requests)\n{\n    throw new NotImplementedException();\n}\n",
-    "javascript": "export function capture(requests) {\n}\n",
-    "pseudo": "function capture(requests)\nend\n"
+    "python": "def submit_scores(requests):\n    ...\n",
+    "csharp": "public static Result SubmitScores(List<Request> requests)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function submitScores(requests) {\n}\n",
+    "pseudo": "function submitScores(requests)\nend\n"
    },
    "limits": {
     "timeMs": 1500,
@@ -192,16 +192,16 @@
    "caseCount": 16,
    "draft": {
     "language": "python",
-    "code": "def capture(requests):\n    seen = {}\n    balances = {}\n    rejected = []\n    for i, (key, account, cents) in enumerate(requests):\n        if key in seen:\n            continue\n        seen[key] = (account, cents)\n        balances[account] = balances.get(account, 0) + cents\n    return balances, rejected"
+    "code": "def submit_scores(requests):\n    seen = {}\n    totals = {}\n    rejected = []\n    for i, (key, player, points) in enumerate(requests):\n        if key in seen:\n            continue\n        seen[key] = (player, points)\n        totals[player] = totals.get(player, 0) + points\n    return totals, rejected"
    }
   },
   {
-   "id": "split-bill-to-the-cent",
-   "title": "Split a bill to the cent",
-   "family": "fintech",
+   "id": "split-match-time",
+   "title": "Split match time to the millisecond",
+   "family": "games",
    "tags": [
     "rounding",
-    "fintech"
+    "sports"
    ],
    "difficulty": 1,
    "isBoss": false,
@@ -211,10 +211,10 @@
    "pinned": false,
    "hidden": false,
    "contentVersion": "demo-2026.10",
-   "statementMd": "Split a bill of `total` cents between people by weight. Each person's share is their weight's fraction of the total, rounded down to a whole cent. The cents left over go one each to the people with the largest discarded fractions, ties broken by position.\n\nThe shares must add up to the total exactly.",
+   "statementMd": "A coach shares `total` milliseconds of playing time between players by weight. Each player's share is their weight's fraction of the total, rounded down to a whole millisecond. The milliseconds left over go one each to the players with the largest discarded fractions, ties broken by position.\n\nThe shares must add up to the total exactly.",
    "constraints": [
     "0 ≤ total ≤ 10^12",
-    "1 ≤ people ≤ 10^5",
+    "1 ≤ players ≤ 10^5",
     "1 ≤ weight ≤ 10^6"
    ],
    "samples": [
@@ -379,8 +379,8 @@
    }
   },
   {
-   "id": "fewest-coins",
-   "title": "Fewest coins for change",
+   "id": "fewest-tiles",
+   "title": "Fewest tiles for a row",
    "family": "classic",
    "tags": [
     "dynamic programming"
@@ -393,28 +393,28 @@
    "pinned": false,
    "hidden": false,
    "contentVersion": "demo-2026.10",
-   "statementMd": "A till holds unlimited coins of each listed value. Return the fewest coins that add up to `amount` exactly, or `-1` when no combination does. An amount of zero needs zero coins.",
+   "statementMd": "A tiler has unlimited tiles of each listed length. Return the fewest tiles that fill a row of exactly `length` units, or `-1` when no combination does. A row of length zero needs zero tiles.",
    "constraints": [
-    "1 ≤ coin values ≤ 50",
-    "1 ≤ value ≤ 10^4",
-    "0 ≤ amount ≤ 10^5"
+    "1 ≤ tile lengths ≤ 50",
+    "1 ≤ tile length ≤ 10^4",
+    "0 ≤ length ≤ 10^5"
    ],
    "samples": [
     {
-     "input": "coins: [1, 5, 12]\namount: 15",
+     "input": "tiles: [1, 5, 12]\nlength: 15",
      "output": "3",
-     "note": "Five plus five plus five; twelve first needs four coins."
+     "note": "Three tiles of five; starting with twelve needs four."
     },
     {
-     "input": "coins: [4]\namount: 6",
+     "input": "tiles: [4]\nlength: 6",
      "output": "-1"
     }
    ],
    "starters": {
-    "python": "def fewest_coins(coins, amount):\n    ...\n",
-    "csharp": "public static int FewestCoins(int[] coins, int amount)\n{\n    throw new NotImplementedException();\n}\n",
-    "javascript": "export function fewestCoins(coins, amount) {\n}\n",
-    "pseudo": "function fewestCoins(coins, amount)\nend\n"
+    "python": "def fewest_tiles(tiles, length):\n    ...\n",
+    "csharp": "public static int FewestTiles(int[] tiles, int length)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function fewestTiles(tiles, length) {\n}\n",
+    "pseudo": "function fewestTiles(tiles, length)\nend\n"
    },
    "limits": {
     "timeMs": 2000,
@@ -423,12 +423,12 @@
    "caseCount": 12,
    "draft": {
     "language": "python",
-    "code": "def fewest_coins(coins, amount):\n    best = [0] + [amount + 1] * amount\n    for value in range(1, amount + 1):\n        for c in coins:\n            if c <= value and best[value - c] + 1 < best[value]:\n                best[value] = best[value - c] + 1\n    return best[amount] if best[amount] <= amount else -1"
+    "code": "def fewest_tiles(tiles, length):\n    best = [0] + [length + 1] * length\n    for size in range(1, length + 1):\n        for t in tiles:\n            if t <= size and best[size - t] + 1 < best[size]:\n                best[size] = best[size - t] + 1\n    return best[length] if best[length] <= length else -1"
    }
   },
   {
-   "id": "transfers-that-net-to-zero",
-   "title": "Two transfers that net to zero",
+   "id": "moves-that-cancel",
+   "title": "Two moves that cancel out",
    "family": "classic",
    "tags": [
     "hashing",
@@ -442,10 +442,10 @@
    "pinned": false,
    "hidden": false,
    "contentVersion": "demo-2026.10",
-   "statementMd": "An audit flags pairs of transfers that cancel each other out. Given signed amounts in cents, return the indexes `[i, j]` with `i < j` of the first pair, in order of `j`, whose amounts add up to zero. Return an empty list when there is none.",
+   "statementMd": "A robot on a rail logs each move as a signed number of steps. Given the log, return the indexes `[i, j]` with `i < j` of the first pair, in order of `j`, whose moves add up to zero. Return an empty list when there is none.",
    "constraints": [
-    "0 ≤ transfers ≤ 10^6",
-    "-10^9 ≤ cents ≤ 10^9"
+    "0 ≤ moves ≤ 10^6",
+    "-10^9 ≤ steps ≤ 10^9"
    ],
    "samples": [
     {
@@ -459,10 +459,10 @@
     }
    ],
    "starters": {
-    "python": "def net_zero_pair(cents):\n    ...\n",
-    "csharp": "public static int[] NetZeroPair(long[] cents)\n{\n    throw new NotImplementedException();\n}\n",
-    "javascript": "export function netZeroPair(cents) {\n}\n",
-    "pseudo": "function netZeroPair(cents)\nend\n"
+    "python": "def cancelling_pair(steps):\n    ...\n",
+    "csharp": "public static int[] CancellingPair(long[] steps)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function cancellingPair(steps) {\n}\n",
+    "pseudo": "function cancellingPair(steps)\nend\n"
    },
    "limits": {
     "timeMs": 1000,
@@ -472,9 +472,9 @@
    "draft": null
   },
   {
-   "id": "top-merchants",
-   "title": "Top merchants by volume",
-   "family": "fintech",
+   "id": "top-players",
+   "title": "Top players by net points",
+   "family": "games",
    "tags": [
     "heaps",
     "hashing"
@@ -487,22 +487,22 @@
    "pinned": false,
    "hidden": false,
    "contentVersion": "demo-2026.10",
-   "statementMd": "Card transactions stream in as `(merchant, cents)`. Return the `k` merchants with the highest total volume, highest first, ties broken by merchant name. Refunds arrive as negative amounts and count against the total.",
+   "statementMd": "Match events stream in as `(player, points)`. Return the `k` players with the highest net points, highest first, ties broken by player name. Penalties arrive as negative points and count against the total.",
    "constraints": [
-    "0 ≤ transactions ≤ 10^6",
+    "0 ≤ events ≤ 10^6",
     "1 ≤ k ≤ 1000"
    ],
    "samples": [
     {
-     "input": "k: 2\n[(m1, 900), (m2, 400), (m1, -600), (m3, 350)]",
-     "output": "[\"m2\", \"m3\"]"
+     "input": "k: 2\n[(p1, 900), (p2, 400), (p1, -600), (p3, 350)]",
+     "output": "[\"p2\", \"p3\"]"
     }
    ],
    "starters": {
-    "python": "def top_merchants(transactions, k):\n    ...\n",
-    "csharp": "public static List<string> TopMerchants(List<Txn> transactions, int k)\n{\n    throw new NotImplementedException();\n}\n",
-    "javascript": "export function topMerchants(transactions, k) {\n}\n",
-    "pseudo": "function topMerchants(transactions, k)\nend\n"
+    "python": "def top_players(events, k):\n    ...\n",
+    "csharp": "public static List<string> TopPlayers(List<Event> events, int k)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function topPlayers(events, k) {\n}\n",
+    "pseudo": "function topPlayers(events, k)\nend\n"
    },
    "limits": {
     "timeMs": 1500,
@@ -511,16 +511,16 @@
    "caseCount": 12,
    "draft": {
     "language": "javascript",
-    "code": "export function topMerchants(transactions, k) {\n  const volume = new Map()\n  for (const [m, cents] of transactions) {\n    volume.set(m, (volume.get(m) ?? 0) + cents)\n  }\n  return [...volume.entries()]\n    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))\n    .slice(0, k)\n    .map(([m]) => m)\n}"
+    "code": "export function topPlayers(events, k) {\n  const net = new Map()\n  for (const [player, points] of events) {\n    net.set(player, (net.get(player) ?? 0) + points)\n  }\n  return [...net.entries()]\n    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))\n    .slice(0, k)\n    .map(([player]) => player)\n}"
    }
   },
   {
-   "id": "double-entry-ledger",
-   "title": "The double-entry ledger",
-   "family": "fintech",
+   "id": "mirrored-scorebook",
+   "title": "The mirrored scorebook",
+   "family": "games",
    "tags": [
     "graphs",
-    "fintech",
+    "sports",
     "hashing"
    ],
    "difficulty": 3,
@@ -531,23 +531,23 @@
    "pinned": false,
    "hidden": false,
    "contentVersion": "demo-2026.10",
-   "statementMd": "Every posting in a double-entry ledger debits one account and credits another by the same amount, under a journal id. A journal is **balanced** when its debits equal its credits.\n\nYou receive postings in arrival order, some of them duplicated by a faulty importer and some journals cut short.\n\n1. Drop exact duplicate postings (same journal, accounts, amount and sequence number).\n2. Report every journal that is still unbalanced, with the amount it is off by.\n3. For the balanced journals, return each account's closing balance.\n\nReport journals in the order their first posting arrived.",
+   "statementMd": "A league scorebook writes every point twice: once for the team that scored and once against the team that conceded, under a match id. A match is **consistent** when its scored and conceded points agree.\n\nYou receive entries in arrival order, some duplicated by a faulty scanner and some matches cut short.\n\n1. Drop exact duplicate entries (same match, teams, points and sequence number).\n2. Report every match that is still inconsistent, with the points it is off by.\n3. For the consistent matches, return each team's closing tally.\n\nReport matches in the order their first entry arrived.",
    "constraints": [
-    "0 ≤ postings ≤ 5 · 10^5",
-    "Amounts are whole cents up to 10^12",
-    "Up to 10^5 accounts"
+    "0 ≤ entries ≤ 5 · 10^5",
+    "Points are whole numbers up to 10^12",
+    "Up to 10^5 teams"
    ],
    "samples": [
     {
-     "input": "[(j1, cash, sales, 500, 1), (j1, cash, sales, 500, 1), (j2, bank, cash, 200, 1)]",
-     "output": "unbalanced: []\nbalances: {cash: 300, sales: -500, bank: 200}"
+     "input": "[(m1, owls, foxes, 5, 1), (m1, owls, foxes, 5, 1), (m2, bears, owls, 2, 1)]",
+     "output": "inconsistent: []\ntallies: {owls: 3, foxes: -5, bears: 2}"
     }
    ],
    "starters": {
-    "python": "def close_books(postings):\n    ...\n",
-    "csharp": "public static Books CloseBooks(List<Posting> postings)\n{\n    throw new NotImplementedException();\n}\n",
-    "javascript": "export function closeBooks(postings) {\n}\n",
-    "pseudo": "function closeBooks(postings)\nend\n"
+    "python": "def close_scorebook(entries):\n    ...\n",
+    "csharp": "public static Book CloseScorebook(List<Entry> entries)\n{\n    throw new NotImplementedException();\n}\n",
+    "javascript": "export function closeScorebook(entries) {\n}\n",
+    "pseudo": "function closeScorebook(entries)\nend\n"
    },
    "limits": {
     "timeMs": 3000,
@@ -556,7 +556,7 @@
    "caseCount": 24,
    "draft": {
     "language": "python",
-    "code": "def close_books(postings):\n    seen = set()\n    journals = {}\n    balances = {}\n    for p in postings:\n        key = (p.journal, p.debit, p.credit, p.cents)\n        if key in seen:\n            continue\n        seen.add(key)\n        j = journals.setdefault(p.journal, 0)\n        journals[p.journal] = j + p.cents - p.cents\n        balances[p.debit] = balances.get(p.debit, 0) + p.cents\n        balances[p.credit] = balances.get(p.credit, 0) - p.cents\n    unbalanced = [j for j, off in journals.items() if off != 0]\n    return unbalanced, balances"
+    "code": "def close_scorebook(entries):\n    seen = set()\n    matches = {}\n    tallies = {}\n    for e in entries:\n        key = (e.match, e.scorer, e.conceder, e.points)\n        if key in seen:\n            continue\n        seen.add(key)\n        m = matches.setdefault(e.match, 0)\n        matches[e.match] = m + e.points - e.points\n        tallies[e.scorer] = tallies.get(e.scorer, 0) + e.points\n        tallies[e.conceder] = tallies.get(e.conceder, 0) - e.points\n    inconsistent = [m for m, off in matches.items() if off != 0]\n    return inconsistent, tallies"
    }
   }
  ]

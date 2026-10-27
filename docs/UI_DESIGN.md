@@ -9,7 +9,7 @@ Quality bar: "jaw-dropping", never childish or template-looking. Restraint is th
 You press **Submit** (`Ctrl/Cmd + Enter`).
 
 1. The editor dims slightly and slides left to 45% width. On the right, the **Verdict Sheet** appears as a blank document with a ruled header: problem, language, time, content version.
-2. **Test ledger:** one thin row per hidden test, all grey and unlabelled ("case 01" ... "case 24"). As SignalR `caseResolved` events arrive, each row resolves in order: a short ink tick for pass, a hard red rule for fail, amber for time limit. No bouncing, no sound by default. Rows resolve as fast as results come in; nothing waits for animation.
+2. **Test list:** one thin row per hidden test, all grey and unlabelled ("case 01" ... "case 24"). As SignalR `caseResolved` events arrive, each row resolves in order: a short ink tick for pass, a hard red rule for fail, amber for time limit. No bouncing, no sound by default. Rows resolve as fast as results come in; nothing waits for animation.
 3. **The first failure opens.** The failing row expands into an **evidence card**:
    - the input that broke it (scrollable, monospace, long inputs collapsed with size shown);
    - expected vs actual as an aligned diff with the first differing token marked;
@@ -111,7 +111,7 @@ Phase 2 output: tokens (`color`, `type`, `space`, `radius`, `elevation`, `motion
 
 - WCAG 2.2 AA: text contrast 4.5:1 (body), 3:1 (large text, UI components, chart marks against background). Pass/fail never by colour alone: ticks, rules and words ("pass", "fail", "time limit").
 - Everything keyboard reachable with visible focus (2 px outline, offset 2 px, token colour with 3:1 against both backgrounds). The editor's `Tab` key is trapped only while editing; `Esc` then `Tab` leaves it (CodeMirror's documented pattern), stated on screen.
-- Screen readers: the test ledger is a live region (`aria-live="polite"`) summarising "case 7 failed, 6 passed so far"; the complexity plot has a text table alternative; evidence chips are links with full labels.
+- Screen readers: the test list is a live region (`aria-live="polite"`) summarising "case 7 failed, 6 passed so far"; the complexity plot has a text table alternative; evidence chips are links with full labels.
 - `prefers-reduced-motion` and `prefers-color-scheme` respected; user overrides in settings.
 - Zoom to 200% without loss; layout from 320 px works.
 - Playwright + axe on every screen in CI: zero serious/critical violations.

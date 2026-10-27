@@ -13,7 +13,7 @@ This repo's full agent manual is **`CLAUDE.md`**. Every agent tool (Codex, Curso
 7. **UI first.** Design system, then a clickable prototype on seed data, approved screen by screen, before backend work. Responsive, keyboard accessible, `prefers-reduced-motion`, WCAG AA contrast. One modern SVG icon set (Solar or Lucide). **No emoji anywhere.**
 8. **Sandbox safety.** User code only ever runs inside the hardened sandbox profile in `docs/SECURITY.md`. Never weaken a sandbox flag without an ADR and Nour's approval.
 9. **Skills.** Check the installed skill list before each task and invoke the matching skill first (`CLAUDE.md` section 3).
-10. **Workflow:** brainstorm → written spec (`docs/specs/`) → plan (`docs/plans/`) → execute with a ledger (`docs/PROGRESS.md`) → whole-branch review → finish.
+10. **Workflow:** brainstorm → written spec (`docs/specs/`) → plan (`docs/plans/`) → execute with a log (`docs/PROGRESS.md`) → whole-branch review → finish.
 
 ## Before every push
 

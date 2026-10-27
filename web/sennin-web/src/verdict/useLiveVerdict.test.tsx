@@ -26,7 +26,7 @@ describe('useLiveVerdict', () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
       <BackendProvider backend={{ api, stream }}>{children}</BackendProvider>
     )
-    const pending = api.submit('ledger-reconciliation', 'python', 'return missing[:-1]')
+    const pending = api.submit('broadcast-log-check', 'python', 'return missing[:-1]')
     await vi.runOnlyPendingTimersAsync()
     const { submissionId } = await pending
     const { result } = renderHook(() => useLiveVerdict(submissionId, 12), { wrapper })

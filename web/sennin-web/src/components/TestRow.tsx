@@ -35,7 +35,7 @@ interface TestRowProps {
   children?: ReactNode
 }
 
-/** One line of the test ledger. Status is a mark, a word and a rule, never colour alone. */
+/** One line of the list of hidden tests. Status is a mark, a word and a rule, never colour alone. */
 export function TestRow({ id, index, status, time, children }: TestRowProps) {
   const copy = useCopy()
   const label = fill(copy.verdict.caseLabel, { n: String(index).padStart(2, '0') })

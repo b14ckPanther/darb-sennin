@@ -12,8 +12,17 @@
   "difficulty": "Difficulty",
   "status": "Status",
   "any": "Any",
-  "statuses": { "unsolved": "Unsolved", "failed": "Failed", "solved": "Solved", "clean": "Solved cleanly" },
-  "families": { "classic": "Classic", "practical": "Practical", "fintech": "Fintech" },
+  "statuses": {
+    "unsolved": "Unsolved",
+    "failed": "Failed",
+    "solved": "Solved",
+    "clean": "Solved cleanly"
+  },
+  "families": {
+    "classic": "Classic",
+    "practical": "Practical",
+    "games": "Games and sport"
+  },
   "pinned": "Pinned",
   "all": "All problems",
   "pin": "Pin",

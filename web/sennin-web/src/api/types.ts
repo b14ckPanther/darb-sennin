@@ -9,7 +9,7 @@ export type EvidenceKind = 'case' | 'lines' | 'probe'
 export type ProblemStatus = 'unsolved' | 'failed' | 'solved' | 'clean'
 /** Overall result of one graded submission. */
 export type Verdict = 'accepted' | 'failed' | 'limit'
-export type ProblemFamily = 'classic' | 'practical' | 'fintech'
+export type ProblemFamily = 'classic' | 'practical' | 'games'
 
 export interface ProblemSummary {
   id: string

@@ -70,7 +70,7 @@ You may freely: create branches, commit locally, push **feature branches** once 
 - Write the failing test first, run it, **watch it fail for the right reason**, then implement the minimum to pass, then refactor. Use `superpowers:test-driven-development`.
 - MongoDB and Service Bus integration tests use **Testcontainers for .NET** (`Testcontainers.MongoDb`, Service Bus emulator container). No in-memory fakes for the database in integration tests.
 - Sandbox tests run real Docker (GitHub Actions `ubuntu-24.04` runners have it). The malicious-code corpus (`tests/DarbSennin.Sandbox.SecurityTests/corpus/`) must pass on every PR.
-- **Never call a live LLM or any live third-party service in tests or CI.** The reviewer is tested with recorded responses served by WireMock.Net (`tests/fixtures/llm/*.json`). Re-recording is a manual, labelled step (`SENNIN_LLM_RECORD=1`) that needs Nour's approval because it costs money.
+- **Never call a live LLM or any live third-party service in tests or CI.** The reviewer is tested with recorded responses served by WireMock.Net (`tests/fixtures/llm/*.json`). Re-recording is a manual, labelled step (`SENNIN_LLM_RECORD=1`) that needs Nour's approval because it has a real cost.
 
 ### 1.8 UI/UX and frontend first
 
@@ -97,7 +97,7 @@ Nour: "the apps must feel as native as a SWIFT UI when it comes to mobile apps..
 
 ### 1.11 No paid services without asking; defensive security only
 
-- Zero paid services by default. Local development and CI run on free tooling only. Azure and LLM spend need Nour's "yes" (§1.5) and a budget alert set first.
+- Zero paid services by default. Local development and CI run on free tooling only. Azure and LLM spend need Nour's "yes" (§1.5) and a spend alert set first.
 - Security work here is defensive: it protects the platform from submitted code. Do not build tooling that attacks anything outside the local sandbox.
 
 ---
@@ -109,12 +109,12 @@ Every phase runs this loop:
 1. **Brainstorm** with `superpowers:brainstorming`. Ask Nour one question at a time when a choice is theirs to make.
 2. **Write the spec** to `docs/specs/YYYY-MM-DD-phase-NN-<topic>.md`. Ask Nour to approve it.
 3. **Write the plan** with `superpowers:writing-plans` to `docs/plans/YYYY-MM-DD-phase-NN-<topic>.md`, starting from the phase's task list in `docs/PLAN.md`. Bite-sized, TDD-ordered tasks.
-4. **Execute** with `superpowers:executing-plans` (native, in this session; `superpowers:subagent-driven-development` for independent tasks). After each task: run the tests, commit, and append a row to the ledger in `docs/PROGRESS.md`.
+4. **Execute** with `superpowers:executing-plans` (native, in this session; `superpowers:subagent-driven-development` for independent tasks). After each task: run the tests, commit, and append a row to the log in `docs/PROGRESS.md`.
 5. Use `superpowers:systematic-debugging` for any failure you do not understand. Never "fix" by deleting or skipping a test.
 6. Before claiming anything is done, use `superpowers:verification-before-completion`: run the commands, read the output.
 7. **Final whole-branch review** with `superpowers:requesting-code-review` over `git diff main...HEAD` (plus `security-review` for any phase touching the sandbox, judge, auth or reviewer). Handle feedback with `superpowers:receiving-code-review`. Fix findings, then `superpowers:finishing-a-development-branch`. Ask Nour before merging into `main`.
 
-Rulings: when you must decide something Nour has not decided, pick the cheapest reversible option, log it in the ledger's "Rulings" table with its **cost if wrong**, and mark it "proposed, confirm with Nour". If the cost if wrong is high, stop and ask.
+Rulings: when you must decide something Nour has not decided, pick the cheapest reversible option, log it in the log's "Rulings" table with its **cost if wrong**, and mark it "proposed, confirm with Nour". If the cost if wrong is high, stop and ask.
 
 ---
 
@@ -124,7 +124,7 @@ Nour: "each agent must use installed skills ... especially making 3d/UI".
 
 - **Before every task**, check the installed skill list for skills that match the task.
 - **Invoke the matching skill with the Skill tool before starting the work**, not halfway through.
-- **Record the skills you used** in the phase's ledger rows in `docs/PROGRESS.md` (column "Skills").
+- **Record the skills you used** in the phase's log rows in `docs/PROGRESS.md` (column "Skills").
 - Each phase in `docs/PLAN.md` has a "Skills:" line. Treat it as the minimum.
 
 Skills that fit this project (exact names):
@@ -152,7 +152,7 @@ Skills that fit this project (exact names):
 5. Run the test suite for what exists (§5) so you know the baseline is green.
 6. Tell Nour in two lines where things stand and what you will do next. Then continue.
 
-If the ledger and `git log` disagree, `git log` is the truth; fix the ledger first.
+If the log and `git log` disagree, `git log` is the truth; fix the log first.
 
 ---
 
@@ -212,14 +212,14 @@ git log --format=%B | grep -ciE 'co-authored|claude|anthropic|generated with'
 - `tools/check-emoji.sh` passes: no emoji code points in `src/`, `web/`, `config/`, `content/` (it greps for `[\x{1F000}-\x{1FAFF}\x{2600}-\x{27BF}\x{2B00}-\x{2BFF}\x{FE0F}]` with `grep -rnP` and exits non-zero on a match). A hit fails the review.
 - Icons come only from the chosen SVG set (or custom SVG); no raster icons.
 - Docs touched if behaviour, contracts, config keys or commands changed (`ARCHITECTURE.md`, `SECURITY.md`, `INTEGRATION.md`, `.env.example`).
-- Committed as Nour with an honest message, ledger row (with skills used) added to `docs/PROGRESS.md`.
+- Committed as Nour with an honest message, log row (with skills used) added to `docs/PROGRESS.md`.
 
 ## 7. Definition of done (every phase)
 
 - All of the task-level items above.
 - The phase's "tests that prove it" from `docs/PLAN.md` exist and pass.
 - `docker compose ... up` plus the phase's smoke check works from a clean checkout.
-- UI screens touched in the phase are approved by Nour (recorded in the ledger).
+- UI screens touched in the phase are approved by Nour (recorded in the log).
 - Accessibility: Playwright + axe shows zero serious/critical violations on touched screens; keyboard path walked by hand once.
 - Native-feel check on a 390 px viewport for touched screens (safe areas, 44 pt targets, springs, pressed states).
 - Security: if the phase touched sandbox, judge, auth or reviewer, `security-review` run and the malicious corpus is green.
@@ -263,7 +263,7 @@ Pushing to `main` or merging always needs Nour's "yes" (§1.5).
 - How untrusted code is contained: `docs/SECURITY.md`
 - The look: `docs/UI_DESIGN.md`
 - Darb Budokai events: `docs/INTEGRATION.md`
-- The plan and the ledger: `docs/PLAN.md`, `docs/PROGRESS.md`
+- The plan and the log: `docs/PLAN.md`, `docs/PROGRESS.md`
 - Decisions and questions: `docs/DECISIONS.md`, `docs/OPEN_QUESTIONS.md`
 - Style: `docs/CONVENTIONS.md`
 

@@ -28,6 +28,9 @@ for (const scheme of ['light', 'dark']) {
         const page = await context.newPage()
         for (const view of views) {
             await page.goto(`${base}/?view=${view}`)
+            // Screens load on demand after the demo backend; wait for one before capturing.
+            await page.locator('h1').first().waitFor({ state: 'attached' })
+            await page.waitForLoadState('networkidle')
             await page.evaluate(() => document.fonts.ready)
             // Phones: the first screen as the user sees it (fixed bars in place), then the full length.
             // Full-page captures draw fixed elements where the viewport was, so the tab bar can float.
