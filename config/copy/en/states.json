@@ -13,7 +13,8 @@
   },
   "judgePaused": {
     "title": "Runs are paused",
-    "body": "Runs are paused. Your submission is queued and will run when the judge is back."
+    "body": "Runs are paused. Your submission is queued and will run when the judge is back.",
+    "notice": "Runs are paused. Submissions queue and run when the judge is back."
   },
   "reviewerDown": {
     "title": "Review unavailable",

@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useId, useRef, type KeyboardEvent, type ReactNode } from 'react'
 import type { CaseEvidence, CaseResult, Finding, Submission } from '../api/types'
+import { BossHp } from '../components/BossHp'
 import { Button } from '../components/Button'
 import { ComplexityPlot } from '../components/ComplexityPlot'
 import { EvidenceChip } from '../components/EvidenceChip'
@@ -340,6 +341,18 @@ export function VerdictSheet({
                 : liveSummary(cases, lastResolved, copy)
               : ''}
           </p>
+          {s.isBoss ? (
+            <div className="mb-4">
+              <BossHp
+                total={cases.length}
+                fallen={cases.filter((x) => x?.status === 'pass').length}
+                label={fill(copy.boss.hpLabel, {
+                  remaining: cases.length - cases.filter((x) => x?.status === 'pass').length,
+                  total: cases.length,
+                })}
+              />
+            </div>
+          ) : null}
           {phase === 'queued' ? (
             <div className="mb-3">
               <Waiting text={c.queued} />

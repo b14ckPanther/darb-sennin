@@ -1,3 +1,19 @@
 {
-  "$comment": "Copy for the boss screen. Plain sentences, sentence case, no exclamation marks."
+  "$comment": "Copy for the weekly boss (UI_DESIGN.md 2.7, spec: multi-part, untimed, losing costs nothing). Flavour lines come with the boss in the seed. Plain sentences, no exclamation marks.",
+  "title": "Weekly boss",
+  "loading": "the boss",
+  "eyebrow": "This week",
+  "hp": "{remaining} of {total} cases left",
+  "hpLabel": "Boss health: {remaining} of {total} hidden cases still standing",
+  "days": "{days} days left this week",
+  "attempt": "Attempt the boss",
+  "lastAttempt": "Read the last attempt",
+  "rules": "Untimed. Each hidden case you pass knocks out one segment, and the boss stays down only when all of them fall. Losing costs nothing; an unbeaten boss stays until you beat it.",
+  "unbeaten": "Unbeaten. {passed} of {total} cases passed.",
+  "defeated": "Defeated {when}.",
+  "record": "Record",
+  "recordDefeated": "Defeated",
+  "recordUnbeaten": "Unbeaten",
+  "inputsHidden": "Breaking inputs stay hidden on boss problems; failures show the case tags and input size only.",
+  "lastLine": "Last attempt {when}: {score} of {max}."
 }

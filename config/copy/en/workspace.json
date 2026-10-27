@@ -28,6 +28,5 @@
   "queuedToast": "Submission queued. It runs when the judge is back.",
   "openVerdict": "Open verdict",
   "closeVerdict": "Back to code",
-  "timer": "Time on this problem",
   "boss": "Weekly boss"
 }

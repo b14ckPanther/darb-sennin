@@ -1,3 +1,21 @@
 {
-  "$comment": "Copy for the weakness screen. Plain sentences, sentence case, no exclamation marks."
+  "$comment": "Copy for the weakness profile (UI_DESIGN.md 2.6). Plain sentences, sentence case, no exclamation marks.",
+  "title": "Weakness",
+  "lead": "Mistakes the reviewer cited, weighted by severity and fading with time. Higher is weaker.",
+  "loading": "your weakness profile",
+  "score": "Weakness {score} of {max}",
+  "trend": "Last {weeks} weeks",
+  "trendLabel": "{tag} over the last {weeks} weeks, oldest first: {values}",
+  "week": "Week {n}",
+  "hits": "Last hit by",
+  "practise": "Practise this",
+  "tableCaption": "Weakness by mistake tag, with weekly values oldest first",
+  "tag": "Mistake",
+  "now": "Now",
+  "rising": "Rising",
+  "falling": "Fading",
+  "steady": "Steady",
+  "emptyTitle": "No weaknesses yet",
+  "emptyBody": "Each reviewed submission adds the mistakes it was cited for. Solve one problem and this page starts to fill.",
+  "emptyAction": "Open the library"
 }

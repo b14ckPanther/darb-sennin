@@ -28,7 +28,7 @@ function TranslationBanner({
   const disputed = sub.translation?.disputed ?? false
   return (
     <div className="mb-6 flex flex-wrap items-start gap-3 border-y border-line-strong py-3">
-      <Icon name="translate" size={20} className="mt-0.5 shrink-0 text-limit-mark" />
+      <Icon name="pseudo" size={20} className="mt-0.5 shrink-0 text-limit-mark" />
       <p role={disputed ? 'status' : undefined} className="min-w-0 flex-1 text-callout text-ink">
         <span className="font-semibold">{c.tier}. </span>
         {disputed ? c.flagged : c.banner}
@@ -52,7 +52,7 @@ function TranslationColumns({ sub, lit }: { sub: Submission; lit: [number, numbe
   const toPseudo = (n: number | null) => mapping.find(([, py]) => py === n)?.[0] ?? null
   if (!sub.translation) return null
   return (
-    <div className="grid gap-4 xl:grid-cols-2">
+    <div className="grid gap-4 md:grid-cols-2">
       <section className="min-w-0 rounded-panel border border-line bg-surface-sunk">
         <h2 className="border-b border-line px-4 py-2.5 text-footnote font-medium text-ink-muted">
           {c.yours}
@@ -80,7 +80,7 @@ function TranslationColumns({ sub, lit }: { sub: Submission; lit: [number, numbe
           onHoverLine={setPythonLine}
         />
       </section>
-      <p className="text-footnote text-ink-muted xl:col-span-2">{c.mappingHint}</p>
+      <p className="text-footnote text-ink-muted md:col-span-2">{c.mappingHint}</p>
     </div>
   )
 }
@@ -135,13 +135,13 @@ function SubmissionBody({ sub }: { sub: Submission }) {
     <div
       className={cx(
         'grid grid-cols-[minmax(0,1fr)] gap-6 px-4 pb-16 md:px-0 lg:gap-10',
-        sub.translation
-          ? 'lg:grid-cols-[minmax(0,0.5fr)_minmax(0,0.5fr)]'
-          : 'lg:grid-cols-[minmax(0,0.45fr)_minmax(0,0.55fr)]',
+        !sub.translation && 'lg:grid-cols-[minmax(0,0.45fr)_minmax(0,0.55fr)]',
       )}
     >
-      <div className="order-2 min-w-0 lg:order-1">{code}</div>
-      <div className="order-1 min-w-0 lg:order-2">
+      <div className={cx('min-w-0', sub.translation ? 'order-1' : 'order-2 lg:order-1')}>
+        {code}
+      </div>
+      <div className={cx('min-w-0', sub.translation ? 'order-2 max-w-4xl' : 'order-1 lg:order-2')}>
         <VerdictSheet
           submission={sub}
           onHighlightLines={highlight}

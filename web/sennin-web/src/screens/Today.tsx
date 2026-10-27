@@ -2,6 +2,7 @@ import { useId, type ReactNode } from 'react'
 import { useToday } from '../api/queries'
 import type { DayState, TodayView } from '../api/types'
 import { Shell } from '../app/Shell'
+import { BossHp } from '../components/BossHp'
 import { Difficulty } from '../components/Difficulty'
 import { Icon } from '../components/Icon'
 import { ListRow } from '../components/ListRow'
@@ -58,35 +59,6 @@ function Block({
       </div>
       {children}
     </section>
-  )
-}
-
-export function BossBar({
-  total,
-  fallen,
-  label,
-}: {
-  total: number
-  fallen: number
-  label: string
-}) {
-  return (
-    <div
-      role="img"
-      aria-label={label}
-      className="grid gap-[3px]"
-      style={{ gridTemplateColumns: `repeat(${String(total)}, minmax(0, 1fr))` }}
-    >
-      {Array.from({ length: total }, (_, i) => (
-        <span
-          key={i}
-          className={cx(
-            'h-3 rounded-[2px]',
-            i < fallen ? 'border border-dashed border-line-strong' : 'bg-ink',
-          )}
-        />
-      ))}
-    </div>
   )
 }
 
@@ -193,7 +165,7 @@ function TodayBody({ data }: { data: TodayView }) {
         >
           <h3 className="font-display text-title-2 text-ink">{data.boss.title}</h3>
           <p className="mt-1 mb-4 text-callout text-ink-muted">{data.boss.line}</p>
-          <BossBar
+          <BossHp
             total={data.boss.total}
             fallen={fallen}
             label={fill(t.bossHp, { remaining: data.boss.remaining, total: data.boss.total })}

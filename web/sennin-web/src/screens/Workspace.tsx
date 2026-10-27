@@ -354,7 +354,7 @@ function WorkspaceBody({
       </div>
       {language === 'pseudo' ? (
         <p className="flex items-start gap-2 border-b border-line bg-surface-sunk px-4 py-2 text-footnote text-ink">
-          <Icon name="translate" size={16} className="mt-px shrink-0 text-ink-muted" />
+          <Icon name="pseudo" size={16} className="mt-px shrink-0 text-ink-muted" />
           {c.pseudoNote}
         </p>
       ) : null}

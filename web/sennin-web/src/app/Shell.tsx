@@ -92,7 +92,7 @@ function StatusNotice() {
   const status = useStatus()
   if (!status.data) return null
   const notes = [
-    !status.data.judgeRunning && { icon: 'queue' as const, text: copy.judgePaused.body },
+    !status.data.judgeRunning && { icon: 'queue' as const, text: copy.judgePaused.notice },
     !status.data.reviewerAvailable && { icon: 'info' as const, text: copy.reviewerDown.body },
   ].filter((n) => n !== false)
   if (notes.length === 0) return null
@@ -250,6 +250,9 @@ export function Shell({
         </main>
       ) : variant === 'full' ? (
         <>
+          <div className="flex justify-end px-4 pt-[calc(0.75rem+env(safe-area-inset-top))] md:hidden">
+            <DemoBanner />
+          </div>
           <StatusNotice />
           <main id="content" tabIndex={-1} className="outline-none">
             {children}
